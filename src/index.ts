@@ -21,8 +21,11 @@ const port = process.env.PORT || 3000;
 /* Define a route for the root path ("/")
  using the HTTP GET method */
 app.get("/", async (req: Request, res: Response) => {
-  const result = await user.create({ name: "David" });
-  // Insert a single document
+  res.send("Deport them back 🚢");
+});
+
+app.get("/user", async (req: Request, res: Response) => {
+  const result = await user.create({ name: "John Doe" });
   res.send(result);
 });
 
