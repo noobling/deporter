@@ -1,12 +1,5 @@
-import { Model } from "./model";
+import db from "./db";
 
-interface IMedia {
-  uploaded_by: string;
-  type: string;
-}
+const collection = db.collection("media");
 
-export class Media extends Model<IMedia> {
-  constructor() {
-    super("media");
-  }
-}
+function createMedia() {}
