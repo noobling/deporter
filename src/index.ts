@@ -1,8 +1,8 @@
 // src/index.ts
-import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import { createUser } from "./user";
-import { createEvent } from "./api";
+import express, { Express, Request, Response } from "express";
+import { addEventExpense, createEvent, getEvent, getUser } from "./api";
+import swagger from "./swagger";
 
 /*
  * Load up and parse configuration details from
@@ -25,19 +25,16 @@ app.get("/", async (req: Request, res: Response) => {
 });
 
 // User API
-app.post("/user", async (req: Request, res: Response) => {
-  const result = await createUser({ name: "John Doe", photo: undefined });
-  res.send(result);
-});
+app.get("/user", getUser);
 
 // Event API
-app.get("/event/:id", getEvent)
+app.get("/event/:id", getEvent);
 app.post("/event", createEvent);
-app.post("/event/:id/expense" addEventExpense)
-app.post("/event/:id:/message")
-app.post("/event/:id:/participant")
+app.post("/event/:id/expense", addEventExpense);
+app.post("/event/:id/message");
+app.post("/event/:id/participant");
 
-
+swagger(app);
 /* Start the Express app and listen
  for incoming requests on the specified port */
 app.listen(port, () => {

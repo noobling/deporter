@@ -1,4 +1,4 @@
-interface Event {
+export interface Event {
   created_by: string;
   name: string;
   photo: string;
@@ -8,24 +8,24 @@ interface Event {
   start_time: Date;
 }
 
-interface Message {
+export interface Message {
   sent_by: string;
   content: string;
   timestamp: Date;
   media: string[];
 }
 
-interface Media {
+export interface Media {
   uploaded_by: string;
   type: string;
 }
 
-interface User {
+export interface User {
   name: string;
   photo?: string;
 }
 
-interface Expense {
+export interface Expense {
   created_by: string;
   name: string;
   amount: number;

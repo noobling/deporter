@@ -1,5 +1,6 @@
 import { ObjectId, PushOperator } from "mongodb";
 import db from "./db";
+import { Expense, Message } from "./types";
 
 const collection = db.collection("event");
 
