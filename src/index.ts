@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
 import {
   addEventExpense,
+  addEventMessage,
   createEvent,
   createUser,
   getEvent,
@@ -37,7 +38,7 @@ app.post("/user", createUser);
 app.get("/event/:id", getEvent);
 app.post("/event", createEvent);
 app.post("/event/:id/expense", addEventExpense);
-app.post("/event/:id/message");
+app.post("/event/:id/message", addEventMessage);
 app.post("/event/:id/participant");
 
 swagger(app);

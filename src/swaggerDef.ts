@@ -57,7 +57,7 @@ export default {
           "200": {
             description: "User created successfully",
             schema: {
-              $ref: "#/definitions/CreateUserResponse",
+              $ref: "#/definitions/User",
             },
           },
         },
@@ -75,6 +75,7 @@ export default {
             description: "ID of the event to retrieve",
             required: true,
             type: "string",
+            example: "66091716d83206a549f25de3",
           },
         ],
         responses: {
@@ -108,8 +109,78 @@ export default {
           },
         ],
         responses: {
-          "201": {
+          "200": {
             description: "Event created successfully",
+            schema: {
+              $ref: "#/definitions/Event",
+            },
+          },
+        },
+      },
+    },
+    "/event/{id}/expense": {
+      post: {
+        summary: "Add expense to event",
+        description: "Add expense to event",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        parameters: [
+          {
+            in: "body",
+            name: "expense",
+            description: "Expense object to be created",
+            required: true,
+            schema: {
+              $ref: "#/definitions/CreateExpenseRequest",
+            },
+          },
+          {
+            name: "id",
+            in: "path",
+            description: "ID of the event to add expense",
+            required: true,
+            type: "string",
+            example: "66091716d83206a549f25de3",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Expense created successfully",
+            schema: {
+              $ref: "#/definitions/Event",
+            },
+          },
+        },
+      },
+    },
+    "/event/{id}/message": {
+      post: {
+        summary: "Add message to event",
+        description: "Add message to event",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        parameters: [
+          {
+            in: "body",
+            name: "message",
+            description: "Message object to be created",
+            required: true,
+            schema: {
+              $ref: "#/definitions/CreateMessageRequest",
+            },
+          },
+          {
+            name: "id",
+            in: "path",
+            description: "ID of the event to add message",
+            required: true,
+            type: "string",
+            example: "66091716d83206a549f25de3",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Message created successfully",
             schema: {
               $ref: "#/definitions/Event",
             },
@@ -132,6 +203,11 @@ export default {
           type: "string",
           format: "date-time",
         },
+      },
+      example: {
+        name: "My Event",
+        photo: "https://example.com/photo.jpg",
+        start_time: "2024-03-31T07:39:21.758Z",
       },
     },
     Event: {
@@ -181,15 +257,11 @@ export default {
     Message: {
       type: "object",
       properties: {
-        sent_by: {
+        created_by: {
           type: "string",
         },
         content: {
           type: "string",
-        },
-        timestamp: {
-          type: "string",
-          format: "date-time",
         },
         media: {
           type: "array",
@@ -197,14 +269,19 @@ export default {
             type: "string",
           },
         },
+        created_at: {
+          type: "string",
+          format: "date-time",
+        },
+        updated_at: {
+          type: "string",
+          format: "date-time",
+        },
       },
     },
     CreateExpenseRequest: {
       type: "object",
       properties: {
-        created_by: {
-          type: "string",
-        },
         name: {
           type: "string",
         },
@@ -224,6 +301,12 @@ export default {
             type: "string",
           },
         },
+      },
+      example: {
+        name: "My Expense Name",
+        amount: 100.23,
+        media: ["photo_url.com"],
+        applicable_to: ["6608cb6a9ba84d871e155dbd"],
       },
     },
     Expense: {
@@ -303,6 +386,25 @@ export default {
           type: "string",
           format: "date-time",
         },
+      },
+    },
+    CreateMessageRequest: {
+      type: "object",
+      properties: {
+        content: {
+          type: "string",
+        },
+
+        media: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+      },
+      example: {
+        content: "My message",
+        media: ["photo_url.com"],
       },
     },
   },

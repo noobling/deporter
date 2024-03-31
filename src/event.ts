@@ -1,6 +1,13 @@
 import { ObjectId, PushOperator } from "mongodb";
 import db from "./db";
-import { Expense, Message, Event, CreateEventRequest } from "./types";
+import {
+  Expense,
+  Message,
+  Event,
+  CreateEventRequest,
+  CreateMessageRequest,
+  CreateExpenseRequest,
+} from "./types";
 
 const collection = db.collection("event");
 
@@ -8,25 +15,46 @@ function getEvent(id: string) {
   return collection.findOne({ _id: new ObjectId(id) });
 }
 
-function createEvent(event: CreateEventRequest) {
-  return collection.insertOne({
+async function createEvent(event: CreateEventRequest) {
+  const save: Event = {
     ...event,
     created_by: "66090d5f46d2f469069082eb", // TODO: get from authentication context
-    created_at: Date(),
-    updated_at: Date(),
+    created_at: new Date().toISOString(),
+    updated_at: new Date().toISOString(),
+    messages: [],
+    participants: [],
+    expenses: [],
+  };
+  const { insertedId } = await collection.insertOne(save);
+  return getEvent(insertedId.toString());
+}
+
+function addMessage(id: string, message: CreateMessageRequest) {
+  const save: Message = {
+    created_by: "66090d5f46d2f469069082eb", // TODO: get from authentication context
+    ...message,
+    updated_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  };
+  return updateList(id, {
+    messages: save,
   });
 }
 
-function addMessage(id: string, message: Message) {
-  updateList(id, { messages: { $each: [message], $sort: -1 } });
-}
-
-function addExpense(id: string, expense: Expense) {
-  updateList(id, { expenses: expense });
+function addExpense(id: string, expense: CreateExpenseRequest) {
+  const save: Expense = {
+    ...expense,
+    created_by: "66090d5f46d2f469069082eb", // TODO: get from authentication context
+    updated_at: new Date().toISOString(),
+    created_at: new Date().toISOString(),
+  };
+  return updateList(id, {
+    expenses: save,
+  });
 }
 
 function addParticipant(id: string, participant: string) {
-  updateList(id, { participants: participant });
+  return updateList(id, { participants: participant });
 }
 
 function updateList(id: string, push: PushOperator<Document>) {
@@ -35,7 +63,7 @@ function updateList(id: string, push: PushOperator<Document>) {
     {
       $push: push,
       $set: {
-        updated_at: Date(),
+        updated_at: new Date().toISOString(),
       },
     }
   );

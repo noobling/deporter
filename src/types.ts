@@ -5,7 +5,9 @@ export interface Event {
   messages: Message[];
   participants: string[];
   expenses: Expense[];
-  start_time: Date;
+  start_time: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface CreateEventRequest {
@@ -15,9 +17,15 @@ export interface CreateEventRequest {
 }
 
 export interface Message {
-  sent_by: string;
+  created_by: string;
   content: string;
-  timestamp: Date;
+  media: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateMessageRequest {
+  content: string;
   media: string[];
 }
 
@@ -33,6 +41,15 @@ export interface User {
 
 export interface Expense {
   created_by: string;
+  name: string;
+  amount: number;
+  media: string[];
+  applicable_to: string[];
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreateExpenseRequest {
   name: string;
   amount: number;
   media: string[];
