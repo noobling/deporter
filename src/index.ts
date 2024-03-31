@@ -1,7 +1,8 @@
 // src/index.ts
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
-import user from "./db/user";
+import { createUser } from "./user";
+import { createEvent } from "./api";
 
 /*
  * Load up and parse configuration details from
@@ -18,16 +19,24 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
-/* Define a route for the root path ("/")
- using the HTTP GET method */
+// Public healthcheck endpoint
 app.get("/", async (req: Request, res: Response) => {
   res.send("Deport them back 🚢");
 });
 
-app.get("/user", async (req: Request, res: Response) => {
-  const result = await user.create({ name: "John Doe" });
+// User API
+app.post("/user", async (req: Request, res: Response) => {
+  const result = await createUser({ name: "John Doe", photo: undefined });
   res.send(result);
 });
+
+// Event API
+app.get("/event/:id", getEvent)
+app.post("/event", createEvent);
+app.post("/event/:id/expense" addEventExpense)
+app.post("/event/:id:/message")
+app.post("/event/:id:/participant")
+
 
 /* Start the Express app and listen
  for incoming requests on the specified port */

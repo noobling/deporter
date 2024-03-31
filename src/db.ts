@@ -1,5 +1,5 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
-import environment from "../environment";
+import environment from "./environment";
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(environment.mongodb_uri, {
@@ -9,6 +9,8 @@ const client = new MongoClient(environment.mongodb_uri, {
     deprecationErrors: true,
   },
 });
+
+const db = client.db("deporter");
 
 async function run() {
   try {
@@ -26,4 +28,4 @@ async function run() {
 }
 run().catch(console.dir);
 
-export default client.db("deporter");
+export default db;
