@@ -1,11 +1,21 @@
 import { Request, Response } from "express";
 import event from "./event";
 import { User } from "./types";
+import user from "./user";
 
 // User API
 export async function getUser(req: Request, res: Response) {
-  const user: User = {} as User;
-  return res.send(user);
+  const id = req.params.id;
+  console.log("getting user", id);
+  const result = await user.getUser(id);
+  console.log("fond user", result);
+  return res.send(result);
+}
+export async function createUser(req: Request, res: Response) {
+  const body = req.body;
+  console.log("payload", body);
+  const result = await user.createUser(body);
+  return res.send(result);
 }
 
 // Event API

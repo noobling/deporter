@@ -8,7 +8,62 @@ export default {
   basePath: "/",
   schemes: ["http"],
   paths: {
-    "/events/{id}": {
+    "/user/{id}": {
+      get: {
+        summary: "Get user by ID",
+        description: "Returns user by id",
+        produces: ["application/json"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            description: "ID of the event to retrieve",
+            required: true,
+            type: "string",
+            example: "6608cb6a9ba84d871e155dbd",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Successful operation",
+            schema: {
+              $ref: "#/definitions/User",
+            },
+          },
+          "404": {
+            description: "User not found",
+          },
+        },
+      },
+    },
+    "/user": {
+      post: {
+        summary: "Create a new user",
+        description: "Creates a new user",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        parameters: [
+          {
+            in: "body",
+            name: "user",
+            description: "User object to be created",
+            required: true,
+            schema: {
+              $ref: "#/definitions/CreateUserRequest",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "User created successfully",
+            schema: {
+              $ref: "#/definitions/CreateUserResponse",
+            },
+          },
+        },
+      },
+    },
+    "/event/{id}": {
       get: {
         summary: "Get event by ID",
         description: "Returns an event by its ID",
@@ -35,7 +90,7 @@ export default {
         },
       },
     },
-    "/events": {
+    "/event": {
       post: {
         summary: "Create a new event",
         description: "Creates a new event",
@@ -145,6 +200,50 @@ export default {
           items: {
             type: "string",
           },
+        },
+      },
+    },
+    CreateUserRequest: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+        },
+        photo: {
+          type: "string",
+        },
+      },
+      required: ["name"],
+      example: {
+        name: "David",
+        photo: "https://example.com/photo.jpg",
+      },
+    },
+    CreateUserResponse: {
+      type: "object",
+      properties: {
+        insertedId: {
+          type: "string",
+          description: "id of user to query on",
+        },
+      },
+    },
+    User: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+        },
+        photo: {
+          type: "string",
+        },
+        created_at: {
+          type: "string",
+          format: "date-time",
+        },
+        updated_at: {
+          type: "string",
+          format: "date-time",
         },
       },
     },

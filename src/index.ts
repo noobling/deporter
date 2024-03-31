@@ -1,8 +1,15 @@
 // src/index.ts
 import dotenv from "dotenv";
 import express, { Express, Request, Response } from "express";
-import { addEventExpense, createEvent, getEvent, getUser } from "./api";
+import {
+  addEventExpense,
+  createEvent,
+  createUser,
+  getEvent,
+  getUser,
+} from "./api";
 import swagger from "./swagger";
+import bodyParser from "body-parser";
 
 /*
  * Load up and parse configuration details from
@@ -19,13 +26,17 @@ dotenv.config();
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
+// Middleware to parse JSON bodies
+app.use(bodyParser.json());
+
 // Public healthcheck endpoint
 app.get("/", async (req: Request, res: Response) => {
   res.send("Deport them back 🚢");
 });
 
 // User API
-app.get("/user", getUser);
+app.get("/user/:id", getUser);
+app.post("/user", createUser);
 
 // Event API
 app.get("/event/:id", getEvent);
