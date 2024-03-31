@@ -8,6 +8,12 @@ export interface Event {
   start_time: Date;
 }
 
+export interface CreateEventRequest {
+  name: string;
+  photo: string;
+  start_time: string;
+}
+
 export interface Message {
   sent_by: string;
   content: string;

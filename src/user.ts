@@ -5,7 +5,11 @@ import { User } from "./types";
 const collection = db.collection("user");
 
 function createUser(user: User) {
-  return collection.insertOne(user);
+  return collection.insertOne({
+    ...user,
+    created_at: Date(),
+    updated_at: Date(),
+  });
 }
 
 function getUser(id: string) {

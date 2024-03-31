@@ -1,6 +1,6 @@
 import { ObjectId, PushOperator } from "mongodb";
 import db from "./db";
-import { Expense, Message } from "./types";
+import { Expense, Message, Event, CreateEventRequest } from "./types";
 
 const collection = db.collection("event");
 
@@ -8,8 +8,13 @@ function getEvent(id: string) {
   return collection.findOne({ _id: new ObjectId(id) });
 }
 
-function createEvent(event: Event) {
-  create(event);
+function createEvent(event: CreateEventRequest) {
+  return collection.insertOne({
+    ...event,
+    created_by: "66090d5f46d2f469069082eb", // TODO: get from authentication context
+    created_at: Date(),
+    updated_at: Date(),
+  });
 }
 
 function addMessage(id: string, message: Message) {
@@ -34,14 +39,6 @@ function updateList(id: string, push: PushOperator<Document>) {
       },
     }
   );
-}
-
-function create(event: Event) {
-  return collection.insertOne({
-    ...event,
-    created_at: Date(),
-    updated_at: Date(),
-  });
 }
 
 export default {

@@ -10,9 +10,5 @@ const options: swaggerJsdoc.Options = {
 const specs = swaggerJsdoc(options);
 
 export default (app: any) => {
-  app.use(
-    "/swagger",
-    swaggerUi.serve,
-    swaggerUi.setup(specs, { explorer: true })
-  );
+  app.use("/", swaggerUi.serve, swaggerUi.setup(specs, { explorer: true }));
 };

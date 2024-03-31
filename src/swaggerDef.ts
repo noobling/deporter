@@ -103,7 +103,7 @@ export default {
             description: "Event object to be created",
             required: true,
             schema: {
-              $ref: "#/definitions/Event",
+              $ref: "#/definitions/CreateEventRequest",
             },
           },
         ],
@@ -119,6 +119,21 @@ export default {
     },
   },
   definitions: {
+    CreateEventRequest: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+        },
+        photo: {
+          type: "string",
+        },
+        start_time: {
+          type: "string",
+          format: "date-time",
+        },
+      },
+    },
     Event: {
       type: "object",
       properties: {
@@ -153,6 +168,14 @@ export default {
           type: "string",
           format: "date-time",
         },
+        created_at: {
+          type: "string",
+          format: "date-time",
+        },
+        updated_at: {
+          type: "string",
+          format: "date-time",
+        },
       },
     },
     Message: {
@@ -169,6 +192,33 @@ export default {
           format: "date-time",
         },
         media: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+      },
+    },
+    CreateExpenseRequest: {
+      type: "object",
+      properties: {
+        created_by: {
+          type: "string",
+        },
+        name: {
+          type: "string",
+        },
+        amount: {
+          type: "number",
+          format: "double",
+        },
+        media: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
+        applicable_to: {
           type: "array",
           items: {
             type: "string",
@@ -200,6 +250,14 @@ export default {
           items: {
             type: "string",
           },
+        },
+        created_at: {
+          type: "string",
+          format: "date-time",
+        },
+        updated_at: {
+          type: "string",
+          format: "date-time",
         },
       },
     },

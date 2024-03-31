@@ -29,11 +29,6 @@ const port = process.env.PORT || 3000;
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
 
-// Public healthcheck endpoint
-app.get("/", async (req: Request, res: Response) => {
-  res.send("Deport them back 🚢");
-});
-
 // User API
 app.get("/user/:id", getUser);
 app.post("/user", createUser);
