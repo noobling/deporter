@@ -1,3 +1,4 @@
+// Event
 export interface Event {
   created_by: string;
   name: string;
@@ -9,13 +10,19 @@ export interface Event {
   created_at: string;
   updated_at: string;
 }
-
+export interface EventResponse extends Event {
+  _id: string;
+}
 export interface CreateEventRequest {
   name: string;
   photo: string;
   start_time: string;
 }
+export interface AddParticipantRequest {
+  participants: string[];
+}
 
+// Message
 export interface Message {
   created_by: string;
   content: string;
@@ -23,22 +30,30 @@ export interface Message {
   created_at: string;
   updated_at: string;
 }
-
 export interface CreateMessageRequest {
   content: string;
   media: string[];
 }
 
+// Media
 export interface Media {
-  uploaded_by: string;
+  created_by: string;
   type: string;
 }
+export interface MediaResponse extends Media {
+  _id: string;
+}
 
+// User
 export interface User {
   name: string;
   photo?: string;
 }
+export interface UserResponse extends User {
+  _id: string;
+}
 
+// Expense
 export interface Expense {
   created_by: string;
   name: string;
@@ -48,7 +63,6 @@ export interface Expense {
   created_at: string;
   updated_at: string;
 }
-
 export interface CreateExpenseRequest {
   name: string;
   amount: number;

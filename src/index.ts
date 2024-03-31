@@ -4,12 +4,13 @@ import express, { Express, Request, Response } from "express";
 import {
   addEventExpense,
   addEventMessage,
+  addEventParticipants,
   createEvent,
   createUser,
   getEvent,
   getUser,
 } from "./api";
-import swagger from "./swagger";
+import swagger from "./utils/swagger";
 import bodyParser from "body-parser";
 
 /*
@@ -39,7 +40,7 @@ app.get("/event/:id", getEvent);
 app.post("/event", createEvent);
 app.post("/event/:id/expense", addEventExpense);
 app.post("/event/:id/message", addEventMessage);
-app.post("/event/:id/participant");
+app.post("/event/:id/participants", addEventParticipants);
 
 swagger(app);
 /* Start the Express app and listen

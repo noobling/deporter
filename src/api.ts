@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import event from "./event";
-import user from "./user";
+import event from "./db/event";
+import user from "./db/user";
 
 // User API
 export async function getUser(req: Request, res: Response) {
@@ -42,6 +42,14 @@ export async function addEventMessage(req: Request, res: Response) {
   const payload = req.body;
   const id = req.params.id;
   await event.addMessage(id, payload);
+  const updated = await event.getEvent(id);
+  return res.send(updated);
+}
+
+export async function addEventParticipants(req: Request, res: Response) {
+  const payload = req.body;
+  const id = req.params.id;
+  await event.addParticipants(id, payload);
   const updated = await event.getEvent(id);
   return res.send(updated);
 }

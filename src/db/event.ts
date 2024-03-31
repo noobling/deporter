@@ -7,7 +7,8 @@ import {
   CreateEventRequest,
   CreateMessageRequest,
   CreateExpenseRequest,
-} from "./types";
+  AddParticipantRequest,
+} from "../types";
 
 const collection = db.collection("event");
 
@@ -53,8 +54,8 @@ function addExpense(id: string, expense: CreateExpenseRequest) {
   });
 }
 
-function addParticipant(id: string, participant: string) {
-  return updateList(id, { participants: participant });
+function addParticipants(id: string, participants: AddParticipantRequest) {
+  return updateList(id, { participants: { $each: participants.participants } });
 }
 
 function updateList(id: string, push: PushOperator<Document>) {
@@ -74,5 +75,5 @@ export default {
   createEvent,
   addMessage,
   addExpense,
-  addParticipant,
+  addParticipants,
 };
