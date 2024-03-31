@@ -6,7 +6,7 @@ export default {
     description: "API for managing events",
   },
   basePath: "/",
-  schemes: ["http"],
+  schemes: ["http", "https"],
   paths: {
     "/user/{id}": {
       get: {
