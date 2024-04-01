@@ -19,7 +19,12 @@ export const handler = (
       return res.sendStatus(401);
     }
 
-    const result = await cb(payload, context);
-    res.send(result);
+    try {
+      const result = await cb(payload, context);
+      res.send(result);
+    } catch (err) {
+      console.error("Unexpected error", err);
+      res.status(500).send("Something went wrong");
+    }
   };
 };
