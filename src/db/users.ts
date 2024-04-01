@@ -14,11 +14,16 @@ async function createUser(user: User) {
   return getUser(result.insertedId.toString());
 }
 
+function getUserBySub(sub: string) {
+  return collection.findOne({ sub });
+}
+
 function getUser(id: string) {
   return collection.findOne({ _id: new ObjectId(id) });
 }
 
 export default {
-  createUser,
   getUser,
+  createUser,
+  getUserBySub,
 };

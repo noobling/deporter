@@ -1,17 +1,17 @@
 // src/index.ts
+import bodyParser from "body-parser";
 import dotenv from "dotenv";
-import express, { Express, Request, Response } from "express";
+import express, { Express } from "express";
 import {
   addEventExpense,
   addEventMessage,
   addEventParticipants,
   createEvent,
-  createUser,
   getEvent,
-  getUser,
-} from "./api";
+} from "./services/eventService";
+import { createUser, getUser } from "./services/userService";
+import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
-import bodyParser from "body-parser";
 
 /*
  * Load up and parse configuration details from
@@ -32,15 +32,15 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // User API
-app.get("/user/:id", getUser);
+app.get("/user/:id", handler(getUser));
 app.post("/user", createUser);
 
 // Event API
-app.get("/event/:id", getEvent);
-app.post("/event", createEvent);
-app.post("/event/:id/expense", addEventExpense);
-app.post("/event/:id/message", addEventMessage);
-app.post("/event/:id/participants", addEventParticipants);
+app.get("/event/:id", handler(getEvent));
+app.post("/event", handler(createEvent));
+app.post("/event/:id/expense", handler(addEventExpense));
+app.post("/event/:id/message", handler(addEventMessage));
+app.post("/event/:id/participants", handler(addEventParticipants));
 
 swagger(app);
 /* Start the Express app and listen

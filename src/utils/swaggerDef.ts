@@ -7,12 +7,30 @@ export default {
   },
   basePath: "/",
   schemes: ["http", "https"],
+  securityDefinitions: {
+    bearerAuth: {
+      type: "apiKey",
+      name: "Authorization",
+      scheme: "bearer",
+      in: "header",
+    },
+  },
+  security: [
+    {
+      bearerAuth: [],
+    },
+  ],
   paths: {
     "/user/{id}": {
       get: {
         summary: "Get user by ID",
         description: "Returns user by id",
         produces: ["application/json"],
+        security: [
+          {
+            bearerAuth: [],
+          },
+        ],
         parameters: [
           {
             name: "id",
@@ -38,8 +56,8 @@ export default {
     },
     "/user": {
       post: {
-        summary: "Create a new user",
-        description: "Creates a new user",
+        summary: "Register a new user based on auth token",
+        description: "Registers a new user",
         consumes: ["application/json"],
         produces: ["application/json"],
         parameters: [
@@ -397,7 +415,7 @@ export default {
         },
       ],
     },
-    User: {
+    CreateUserRequest: {
       type: "object",
       properties: {
         name: {
@@ -409,6 +427,7 @@ export default {
           example: "https://example.com/photo.jpg",
         },
       },
+      required: ["name"],
     },
     UserResponse: {
       allOf: [

@@ -46,11 +46,17 @@ export interface MediaResponse extends Media {
 
 // User
 export interface User {
+  sub: string;
   name: string;
   photo?: string;
 }
 export interface UserResponse extends User {
   _id: string;
+}
+export interface CreateUserRequest {
+  sub: string;
+  name: string;
+  photo?: string;
 }
 
 // Expense
@@ -68,4 +74,9 @@ export interface CreateExpenseRequest {
   amount: number;
   media: string[];
   applicable_to: string[];
+}
+
+export interface AuthContext {
+  id: string;
+  authedUser: UserResponse;
 }
