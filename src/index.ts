@@ -12,6 +12,7 @@ import {
 import { createUser, getUser } from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
+import { createMedia, getMedia } from "./services/mediaService";
 
 /*
  * Load up and parse configuration details from
@@ -41,6 +42,10 @@ app.post("/event", handler(createEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
 app.post("/event/:id/message", handler(addEventMessage));
 app.post("/event/:id/participants", handler(addEventParticipants));
+
+// Media API
+app.post("/media", handler(createMedia));
+app.get("/media/:id", handler(getMedia));
 
 swagger(app);
 /* Start the Express app and listen

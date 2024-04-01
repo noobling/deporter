@@ -16,9 +16,7 @@ export const handler = (
       const authedUser = await getLoggedInUserOrThrow(req);
       context.authedUser = authedUser;
     } catch (err) {
-      if (err instanceof Unauthenticated) {
-        return res.sendStatus(401);
-      }
+      return res.sendStatus(401);
     }
 
     const result = await cb(payload, context);

@@ -6,6 +6,7 @@ import {
   Message,
 } from "../types";
 import events from "../db/events";
+import { getTimestamps } from "../utils/date";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -48,11 +49,4 @@ export async function addEventMessage(
 export async function addEventParticipants(payload: any, context: AuthContext) {
   await events.addParticipants(context.id, payload);
   return events.getEvent(context.id);
-}
-
-function getTimestamps() {
-  return {
-    updated_at: new Date().toISOString(),
-    created_at: new Date().toISOString(),
-  };
 }

@@ -36,12 +36,21 @@ export interface CreateMessageRequest {
 }
 
 // Media
+export interface CreateMediaRequest {
+  type: string;
+  name: string;
+}
 export interface Media {
   created_by: string;
   type: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
 }
 export interface MediaResponse extends Media {
   _id: string;
+  downloadUrl?: string;
+  uploadUrl?: string;
 }
 
 // User

@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import db from "./db";
-import { User } from "../types";
+import { User, UserResponse } from "../types";
 
 const collection = db.collection("user");
 
@@ -18,8 +18,11 @@ function getUserBySub(sub: string) {
   return collection.findOne({ sub });
 }
 
-function getUser(id: string) {
-  return collection.findOne({ _id: new ObjectId(id) });
+async function getUser(id: string): Promise<UserResponse> {
+  const user = (await collection.findOne({
+    _id: new ObjectId(id),
+  })) as unknown as UserResponse;
+  return user;
 }
 
 export default {

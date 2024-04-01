@@ -241,7 +241,61 @@ export default {
         },
       },
     },
+    "/media": {
+      post: {
+        summary: "Upload media",
+        description: "upload media",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        parameters: [
+          {
+            in: "body",
+            name: "media",
+            description: "media metadata",
+            required: true,
+            schema: {
+              $ref: "#/definitions/CreateMediaRequest",
+            },
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Media with download url",
+            schema: {
+              $ref: "#/definitions/MediaResponse",
+            },
+          },
+        },
+      },
+    },
+    "/media/{id}": {
+      get: {
+        summary: "Get media",
+        description: "Get media",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        parameters: [
+          {
+            name: "id",
+            in: "path",
+            description: "ID of media to download",
+            required: true,
+            type: "string",
+            example: "66091716d83206a549f25de3",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Media with download url",
+            schema: {
+              $ref: "#/definitions/MediaResponse",
+            },
+          },
+        },
+      },
+    },
   },
+
   definitions: {
     Event: {
       type: "object",
@@ -396,6 +450,18 @@ export default {
           type: "string",
           example: "image/jpeg",
         },
+        created_at: {
+          type: "string",
+          example: "2024-04-01T10:00:00Z",
+        },
+        updated_at: {
+          type: "string",
+          example: "2024-04-01T10:30:00Z",
+        },
+        name: {
+          type: "string",
+          example: "my image name",
+        },
       },
     },
     MediaResponse: {
@@ -410,10 +476,31 @@ export default {
               type: "string",
               example: "media123",
             },
+            downloadUrl: {
+              type: "string",
+              example: "https://bucket.s3.ap-southeast-2.amazonaws.com",
+            },
+            uploadUrl: {
+              type: "string",
+              example: "https://bucket.s3.ap-southeast-2.amazonaws.com",
+            },
           },
           required: ["_id"],
         },
       ],
+    },
+    CreateMediaRequest: {
+      type: "object",
+      properties: {
+        type: {
+          type: "string",
+          example: "image/jpeg",
+        },
+        name: {
+          type: "string",
+          example: "my image name",
+        },
+      },
     },
     CreateUserRequest: {
       type: "object",
@@ -425,6 +512,24 @@ export default {
         photo: {
           type: "string",
           example: "https://example.com/photo.jpg",
+        },
+      },
+      required: ["name"],
+    },
+    User: {
+      type: "object",
+      properties: {
+        name: {
+          type: "string",
+          example: "John Doe",
+        },
+        photo: {
+          type: "string",
+          example: "https://example.com/photo.jpg",
+        },
+        sub: {
+          type: "string",
+          example: "660ac6a1b981955356f9208f",
         },
       },
       required: ["name"],
