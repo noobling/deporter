@@ -16,15 +16,28 @@ export const handler = (
       const authedUser = await getLoggedInUserOrThrow(req);
       context.authedUser = authedUser;
     } catch (err) {
-      return res.sendStatus(401);
+      if (err instanceof Error) {
+        return res.status(401).send(err.message);
+      }
+      return res.status(401);
     }
 
     try {
       const result = await cb(payload, context);
       res.send(result);
     } catch (err) {
+      if (err instanceof BadRequest) {
+        return res.status(400).send(err.message);
+      }
+
       console.error("Unexpected error", err);
-      res.status(500).send("Something went wrong");
+      return res.status(500).send("Something went wrong");
     }
   };
 };
+
+export class BadRequest extends Error {
+  constructor(public message: string) {
+    super(message);
+  }
+}

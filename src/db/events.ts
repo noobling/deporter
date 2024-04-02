@@ -1,18 +1,18 @@
-import { ObjectId, PushOperator } from "mongodb";
+import { PushOperator } from "mongodb";
 import {
   AddParticipantRequest,
-  CreateExpenseRequest,
   Event,
   Expense,
   Message,
   Payment,
 } from "../types";
+import { getMongoID } from "../utils/mongo";
 import db from "./db";
 
 const collection = db.collection("event");
 
 function getEvent(id: string) {
-  return collection.findOne({ _id: new ObjectId(id) });
+  return collection.findOne({ _id: getMongoID(id) });
 }
 
 async function createEvent(event: Event) {
@@ -49,7 +49,7 @@ function addParticipants(id: string, participants: AddParticipantRequest) {
 
 function updateList(id: string, push: PushOperator<Document>) {
   return collection.updateOne(
-    { _id: new ObjectId(id) },
+    { _id: getMongoID(id) },
     {
       $push: push,
       $set: {
