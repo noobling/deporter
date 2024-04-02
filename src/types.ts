@@ -6,6 +6,7 @@ export interface Event {
   messages: Message[];
   participants: string[];
   expenses: Expense[];
+  payments: Payment[];
   start_time: string;
   created_at: string;
   updated_at: string;
@@ -33,6 +34,22 @@ export interface Message {
 export interface CreateMessageRequest {
   content: string;
   media: string[];
+}
+
+// Payment
+export interface Payment {
+  created_by: string;
+  amount: number;
+  created_at: string;
+  updated_at: string;
+  paid_to: string;
+}
+export interface PaymentResponse extends Payment {
+  _id: string;
+}
+export interface CreatePaymentRequest {
+  amount: number;
+  paid_to: string;
 }
 
 // Media

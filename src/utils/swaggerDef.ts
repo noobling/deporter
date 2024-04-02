@@ -171,6 +171,41 @@ export default {
         },
       },
     },
+    "/event/{id}/payment": {
+      post: {
+        summary: "Add payment to event",
+        description: "Add payment to event",
+        consumes: ["application/json"],
+        produces: ["application/json"],
+        parameters: [
+          {
+            in: "body",
+            name: "payment",
+            description: "Payment object to be created",
+            required: true,
+            schema: {
+              $ref: "#/definitions/CreatePaymentRequest",
+            },
+          },
+          {
+            name: "id",
+            in: "path",
+            description: "ID of the event to add payment",
+            required: true,
+            type: "string",
+            example: "66091716d83206a549f25de3",
+          },
+        ],
+        responses: {
+          "200": {
+            description: "Payment created successfully",
+            schema: {
+              $ref: "#/definitions/PaymentResponse",
+            },
+          },
+        },
+      },
+    },
     "/event/{id}/message": {
       post: {
         summary: "Add message to event",
@@ -619,6 +654,47 @@ export default {
         },
       },
       required: ["name", "amount"],
+    },
+    CreatePaymentRequest: {
+      type: "object",
+      properties: {
+        amount: {
+          type: "number",
+          format: "double",
+          example: 25.5,
+        },
+        paid_to: {
+          type: "string",
+          example: "user123",
+        },
+      },
+      required: ["paid_to", "amount"],
+    },
+    Payment: {
+      type: "object",
+      properties: {
+        created_by: {
+          type: "string",
+          example: "user123",
+        },
+        amount: {
+          type: "number",
+          format: "double",
+          example: 25.5,
+        },
+        paid_to: {
+          type: "string",
+          example: "user456",
+        },
+        created_at: {
+          type: "string",
+          example: "2024-04-01T10:00:00Z",
+        },
+        updated_at: {
+          type: "string",
+          example: "2024-04-01T10:30:00Z",
+        },
+      },
     },
   },
 };

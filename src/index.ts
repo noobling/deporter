@@ -6,6 +6,7 @@ import {
   addEventExpense,
   addEventMessage,
   addEventParticipants,
+  addEventPayment,
   createEvent,
   getEvent,
 } from "./services/eventService";
@@ -40,6 +41,7 @@ app.post("/user", createUser);
 app.get("/event/:id", handler(getEvent));
 app.post("/event", handler(createEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
+app.post("/event/:id/payment", handler(addEventPayment));
 app.post("/event/:id/message", handler(addEventMessage));
 app.post("/event/:id/participants", handler(addEventParticipants));
 

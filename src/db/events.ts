@@ -5,6 +5,7 @@ import {
   Event,
   Expense,
   Message,
+  Payment,
 } from "../types";
 import db from "./db";
 
@@ -34,6 +35,14 @@ async function addExpense(id: string, expense: Expense) {
   return getEvent(id);
 }
 
+async function addPayment(id: string, payment: Payment) {
+  await updateList(id, {
+    payments: payment,
+  });
+
+  return getEvent(id);
+}
+
 function addParticipants(id: string, participants: AddParticipantRequest) {
   return updateList(id, { participants: { $each: participants.participants } });
 }
@@ -56,4 +65,5 @@ export default {
   addMessage,
   addExpense,
   addParticipants,
+  addPayment,
 };

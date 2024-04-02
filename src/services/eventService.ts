@@ -2,6 +2,7 @@ import {
   AuthContext,
   CreateEventRequest,
   CreateMessageRequest,
+  CreatePaymentRequest,
   Expense,
   Message,
 } from "../types";
@@ -21,6 +22,7 @@ export async function createEvent(
     messages: [],
     participants: [],
     expenses: [],
+    payments: [],
     ...getTimestamps(),
   });
 }
@@ -32,6 +34,17 @@ export async function addEventExpense(payload: any, context: AuthContext) {
     ...getTimestamps(),
   };
   return events.addExpense(context.id!!, expense);
+}
+
+export async function addEventPayment(
+  payload: CreatePaymentRequest,
+  context: AuthContext
+) {
+  return events.addPayment(context.id!!, {
+    ...payload,
+    created_by: context.authedUser._id,
+    ...getTimestamps(),
+  });
 }
 
 export async function addEventMessage(
