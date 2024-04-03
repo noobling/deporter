@@ -23,6 +23,10 @@ export interface AddParticipantRequest {
   participants: string[];
 }
 
+export interface EventsResponse {
+  events: EventResponse[];
+}
+
 // Message
 export interface Message {
   created_by: string;
@@ -40,6 +44,7 @@ export interface CreateMessageRequest {
 export interface Payment {
   created_by: string;
   amount: number;
+  media: string[];
   created_at: string;
   updated_at: string;
   paid_to: string;
@@ -50,6 +55,7 @@ export interface PaymentResponse extends Payment {
 export interface CreatePaymentRequest {
   amount: number;
   paid_to: string;
+  media: string[];
 }
 
 // Media

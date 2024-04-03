@@ -1,7 +1,8 @@
-import { PushOperator } from "mongodb";
+import { ObjectId, PushOperator } from "mongodb";
 import {
   AddParticipantRequest,
   Event,
+  EventResponse,
   Expense,
   Message,
   Payment,
@@ -10,6 +11,12 @@ import { getMongoID } from "../utils/mongo";
 import db from "./db";
 
 const collection = db.collection("event");
+
+async function listEvents() {
+  // TODO: change this when we make private events
+  const cursor = await collection.find({});
+  return cursor.toArray() as unknown as EventResponse[];
+}
 
 function getEvent(id: string) {
   return collection.findOne({ _id: getMongoID(id) });
@@ -60,6 +67,7 @@ function updateList(id: string, push: PushOperator<Document>) {
 }
 
 export default {
+  listEvents,
   getEvent,
   createEvent,
   addMessage,

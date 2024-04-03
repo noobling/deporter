@@ -1,6 +1,6 @@
-import { Unauthenticated, getLoggedInUserOrThrow } from "../auth";
-import { AuthContext } from "../types";
 import { Request, Response } from "express";
+import { getLoggedInUserOrThrow } from "../auth";
+import { AuthContext } from "../types";
 
 export const handler = (
   cb: (payload: any, context: AuthContext) => Promise<any>

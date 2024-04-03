@@ -9,6 +9,7 @@ import {
   addEventPayment,
   createEvent,
   getEvent,
+  getEventsForCurrentUser,
 } from "./services/eventService";
 import { createUser, getUser } from "./services/userService";
 import { handler } from "./utils/handler";
@@ -38,6 +39,7 @@ app.get("/user/:id", handler(getUser));
 app.post("/user", createUser);
 
 // Event API
+app.get("/events", handler(getEventsForCurrentUser));
 app.get("/event/:id", handler(getEvent));
 app.post("/event", handler(createEvent));
 app.post("/event/:id/expense", handler(addEventExpense));

@@ -3,6 +3,7 @@ import {
   CreateEventRequest,
   CreateMessageRequest,
   CreatePaymentRequest,
+  EventsResponse,
   Expense,
   Message,
 } from "../types";
@@ -12,6 +13,12 @@ import { getTimestamps } from "../utils/date";
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
 }
+
+export async function getEventsForCurrentUser(): Promise<EventsResponse> {
+  const data = await events.listEvents();
+  return { events: data };
+}
+
 export async function createEvent(
   payload: CreateEventRequest,
   context: AuthContext

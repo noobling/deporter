@@ -81,6 +81,21 @@ export default {
         },
       },
     },
+    "/events": {
+      get: {
+        summary: "Get events",
+        description: "Returns list of events",
+        produces: ["application/json"],
+        responses: {
+          "200": {
+            description: "Successful operation",
+            schema: {
+              $ref: "#/definitions/EventsResponse",
+            },
+          },
+        },
+      },
+    },
     "/event/{id}": {
       get: {
         summary: "Get event by ID",
@@ -399,6 +414,17 @@ export default {
         },
       ],
     },
+    EventsResponse: {
+      type: "object",
+      properties: {
+        events: {
+          type: "array",
+          items: {
+            $ref: "#/definitions/EventResponse",
+          },
+        },
+      },
+    },
     CreateEventRequest: {
       type: "object",
       properties: {
@@ -667,8 +693,14 @@ export default {
           type: "string",
           example: "user123",
         },
+        media: {
+          type: "array",
+          items: {
+            type: "string",
+          },
+        },
       },
-      required: ["paid_to", "amount"],
+      required: ["paid_to", "amount", "media"],
     },
     Payment: {
       type: "object",
