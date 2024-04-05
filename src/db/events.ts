@@ -18,6 +18,14 @@ async function listEvents() {
   return cursor.toArray() as unknown as EventResponse[];
 }
 
+async function getEventsToJoin(currentUserId: string) {
+  const cursor = await collection.find({
+    participants: { $nin: [currentUserId] },
+  });
+  const result = (await cursor.toArray()) as unknown as EventResponse[];
+  return result;
+}
+
 function getEvent(id: string) {
   return collection.findOne({ _id: getMongoID(id) });
 }
@@ -74,4 +82,5 @@ export default {
   addExpense,
   addParticipants,
   addPayment,
+  getEventsToJoin,
 };

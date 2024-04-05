@@ -70,3 +70,14 @@ export async function addEventParticipants(payload: any, context: AuthContext) {
   await events.addParticipants(context.id, payload);
   return events.getEvent(context.id);
 }
+
+export async function joinEvent(_: any, context: AuthContext) {
+  await events.addParticipants(context.id, {
+    participants: [context.authedUser._id],
+  });
+  return events.getEvent(context.id);
+}
+
+export async function getEventsToJoin(_: any, context: AuthContext) {
+  return events.getEventsToJoin(context.authedUser._id);
+}

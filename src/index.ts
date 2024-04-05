@@ -10,6 +10,8 @@ import {
   createEvent,
   getEvent,
   getEventsForCurrentUser,
+  getEventsToJoin,
+  joinEvent,
 } from "./services/eventService";
 import { createUser, getUser } from "./services/userService";
 import { handler } from "./utils/handler";
@@ -46,6 +48,8 @@ app.post("/event/:id/expense", handler(addEventExpense));
 app.post("/event/:id/payment", handler(addEventPayment));
 app.post("/event/:id/message", handler(addEventMessage));
 app.post("/event/:id/participants", handler(addEventParticipants));
+app.post("/event/:id/join", handler(joinEvent));
+app.get("/events/join", handler(getEventsToJoin));
 
 // Media API
 app.post("/media", handler(createMedia));
