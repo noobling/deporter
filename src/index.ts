@@ -39,7 +39,7 @@ app.use(bodyParser.json());
 // User API
 app.get("/user/:id", handler(getUser));
 app.post("/user", createUser);
-app.get("/user/me", handler(currentUser));
+app.get("/user/me", currentUser);
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));

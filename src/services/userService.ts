@@ -23,6 +23,13 @@ export async function createUser(req: Request, res: Response) {
   }
 }
 
-export async function currentUser(_: any, context: AuthContext) {
-  return context.authedUser;
+export async function currentUser(req: Request, res: Response) {
+  try {
+    const userId = await getUserIdFromToken(req);
+    const user = await users.getUserBySub(userId);
+
+    return res.send({ user });
+  } catch (err) {
+    return res.status(401).send((err as any).message);
+  }
 }

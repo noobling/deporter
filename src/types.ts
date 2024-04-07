@@ -91,6 +91,10 @@ export interface CreateUserRequest {
   photo?: string;
 }
 
+export interface CurrentUserResponse {
+  user: UserResponse | null;
+}
+
 // Expense
 export interface Expense {
   created_by: string;
