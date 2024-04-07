@@ -24,6 +24,7 @@ export const handler = (
     }
 
     try {
+      console.log("calling", cb.name, "with", payload, "context", context);
       const result = await cb(payload, context);
       res.send(result);
     } catch (err) {

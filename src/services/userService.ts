@@ -28,8 +28,8 @@ export async function currentUser(req: Request, res: Response) {
     const userId = await getUserIdFromToken(req);
     const user = await users.getUserBySub(userId);
 
-    return res.send({ user });
+    return res.send({ user, loggedIn: true });
   } catch (err) {
-    return res.status(401).send((err as any).message);
+    return res.send({ user: null, loggedIn: false });
   }
 }

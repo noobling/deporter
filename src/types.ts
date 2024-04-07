@@ -93,6 +93,7 @@ export interface CreateUserRequest {
 
 export interface CurrentUserResponse {
   user: UserResponse | null;
+  loggedIn: boolean;
 }
 
 // Expense
