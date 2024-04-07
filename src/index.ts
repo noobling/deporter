@@ -13,7 +13,12 @@ import {
   getEventsToJoin,
   joinEvent,
 } from "./services/eventService";
-import { createUser, currentUser, getUser } from "./services/userService";
+import {
+  createUser,
+  currentUser,
+  getUser,
+  updateMyPhoto,
+} from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
 import { createMedia, getMedia } from "./services/mediaService";
@@ -38,8 +43,10 @@ app.use(bodyParser.json());
 
 // User API
 app.get("/user/me", currentUser);
+app.post("/user/me/photo", handler(updateMyPhoto));
 app.get("/user/:id", handler(getUser));
 app.post("/user", createUser);
+
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
 app.get("/event/:id", handler(getEvent));

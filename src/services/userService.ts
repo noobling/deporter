@@ -1,10 +1,17 @@
 import { getUserIdFromToken } from "../auth";
 import users from "../db/users";
-import { AuthContext } from "../types";
+import { AuthContext, UpdateUserPhotoRequest } from "../types";
 import { Request, Response } from "express";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
+}
+
+export function updateMyPhoto(
+  payload: UpdateUserPhotoRequest,
+  context: AuthContext
+) {
+  return users.updatePhoto(context.authedUser._id, payload.photo);
 }
 
 export async function createUser(req: Request, res: Response) {

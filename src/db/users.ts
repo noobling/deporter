@@ -2,14 +2,14 @@ import { ObjectId } from "mongodb";
 import db from "./db";
 import { User, UserResponse } from "../types";
 import { getMongoID } from "../utils/mongo";
+import { getTimestamps } from "../utils/date";
 
 const collection = db.collection("user");
 
 async function createUser(user: User) {
   const result = await collection.insertOne({
     ...user,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
+    ...getTimestamps(),
   });
 
   return getUser(result.insertedId.toString());
@@ -26,8 +26,23 @@ async function getUser(id: string): Promise<UserResponse> {
   return user;
 }
 
+async function updatePhoto(id: string, photo: string) {
+  await collection.updateOne(
+    { _id: getMongoID(id) },
+    {
+      $set: {
+        photo,
+        updated_at: new Date().toISOString(),
+      },
+    }
+  );
+
+  return getUser(id);
+}
+
 export default {
   getUser,
   createUser,
   getUserBySub,
+  updatePhoto,
 };

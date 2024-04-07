@@ -96,6 +96,10 @@ export interface CurrentUserResponse {
   loggedIn: boolean;
 }
 
+export interface UpdateUserPhotoRequest {
+  photo: string;
+}
+
 // Expense
 export interface Expense {
   created_by: string;
