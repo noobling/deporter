@@ -17,6 +17,7 @@ export const handler = (
       context.authedUser = authedUser;
     } catch (err) {
       if (err instanceof Error) {
+        console.error("Returning 401 caused by", err.message);
         return res.status(401).send(err.message);
       }
       return res.status(401);

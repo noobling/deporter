@@ -37,10 +37,9 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // User API
+app.get("/user/me", currentUser);
 app.get("/user/:id", handler(getUser));
 app.post("/user", createUser);
-app.get("/user/me", currentUser);
-
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
 app.get("/event/:id", handler(getEvent));
