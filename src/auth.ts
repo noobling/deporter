@@ -28,8 +28,15 @@ export async function getUserIdFromToken(req: Request) {
   }
 
   // TODO we may want to validate the audience as well
-  const result = await appleSignIn.verifyIdToken(token);
-  return result.sub;
+  try {
+    const result = await appleSignIn.verifyIdToken(token);
+    return result.sub;
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log("Error verifying token:", err.message);
+    }
+    throw new Unauthenticated("Invalid token");
+  }
 }
 
 export class Unauthenticated extends Error {}

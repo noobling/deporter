@@ -13,7 +13,7 @@ import {
   getEventsToJoin,
   joinEvent,
 } from "./services/eventService";
-import { createUser, getUser } from "./services/userService";
+import { createUser, currentUser, getUser } from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
 import { createMedia, getMedia } from "./services/mediaService";
@@ -39,6 +39,7 @@ app.use(bodyParser.json());
 // User API
 app.get("/user/:id", handler(getUser));
 app.post("/user", createUser);
+app.get("/user/current", handler(currentUser));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));

@@ -22,3 +22,7 @@ export async function createUser(req: Request, res: Response) {
     return res.status(401).send((err as any).message);
   }
 }
+
+export async function currentUser(_: any, context: AuthContext) {
+  return context.authedUser;
+}
