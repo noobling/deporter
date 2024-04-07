@@ -14,8 +14,11 @@ export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
 }
 
-export async function getEventsForCurrentUser(): Promise<EventsResponse> {
-  const data = await events.listEvents();
+export async function getEventsForCurrentUser(
+  payload: any,
+  context: AuthContext
+): Promise<EventsResponse> {
+  const data = await events.listEvents(context.authedUser._id);
   return { events: data };
 }
 
