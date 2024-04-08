@@ -30,10 +30,19 @@ export async function createUser(req: Request, res: Response) {
   }
 }
 
+/**
+ * Retrieves the current user if they don't exist it is their first time logging in so create one to allow other apis to work
+ * e.g. media api
+ */
 export async function currentUser(req: Request, res: Response) {
   try {
     const userId = await getUserIdFromToken(req);
     const user = await users.getUserBySub(userId);
+
+    if (!user) {
+      console.log("Creating new user first time logging in");
+      await users.createUser({ sub: userId, name: "" });
+    }
 
     return res.send({ user, loggedIn: true });
   } catch (err) {
