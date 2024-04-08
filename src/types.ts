@@ -81,13 +81,14 @@ export interface User {
   sub: string;
   name: string;
   photo?: string;
+  created_at: string;
+  updated_at: string;
 }
 export interface UserResponse extends User {
   _id: string;
 }
-export interface CreateUserRequest {
-  sub: string;
-  name: string;
+export interface UpdateUserRequest {
+  name?: string;
   photo?: string;
 }
 

@@ -14,10 +14,10 @@ import {
   joinEvent,
 } from "./services/eventService";
 import {
-  createUser,
   currentUser,
   getUser,
   updateMyPhoto,
+  updateUser,
 } from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
@@ -45,7 +45,7 @@ app.use(bodyParser.json());
 app.get("/user/me", currentUser);
 app.post("/user/me/photo", handler(updateMyPhoto));
 app.get("/user/:id", handler(getUser));
-app.post("/user", createUser);
+app.post("/user/update", handler(updateUser));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));

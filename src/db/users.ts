@@ -1,18 +1,35 @@
 import { ObjectId } from "mongodb";
 import db from "./db";
-import { User, UserResponse } from "../types";
+import { UpdateUserRequest, User, UserResponse } from "../types";
 import { getMongoID } from "../utils/mongo";
 import { getTimestamps } from "../utils/date";
 
 const collection = db.collection("user");
 
-async function createUser(user: User) {
+async function createUser(sub: string) {
   const result = await collection.insertOne({
-    ...user,
+    name: "unknown",
+    sub,
     ...getTimestamps(),
   });
 
   return getUser(result.insertedId.toString());
+}
+
+async function updateUser(id: string, user: UpdateUserRequest) {
+  await collection.updateOne(
+    {
+      _id: getMongoID(id),
+    },
+    {
+      $set: {
+        ...user,
+        updated_at: new Date().toISOString(),
+      },
+    }
+  );
+
+  return getUser(id);
 }
 
 function getUserBySub(sub: string) {
@@ -45,4 +62,5 @@ export default {
   createUser,
   getUserBySub,
   updatePhoto,
+  updateUser,
 };

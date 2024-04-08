@@ -8,7 +8,7 @@ export async function getLoggedInUserOrThrow(
   req: Request
 ): Promise<UserResponse> {
   // TODO: Cache this since it is expensive and run on every query
-  const userId = await getUserIdFromToken(req);
+  const userId = await getSubFromToken(req);
   const found = await user.getUserBySub(userId);
   if (!found) {
     throw new Unauthenticated("User not found");
@@ -16,7 +16,7 @@ export async function getLoggedInUserOrThrow(
   return found as unknown as UserResponse;
 }
 
-export async function getUserIdFromToken(req: Request) {
+export async function getSubFromToken(req: Request) {
   // ONLY FOR TESTING
   if (environment.bypass_auth_user_id) {
     return environment.bypass_auth_user_id;

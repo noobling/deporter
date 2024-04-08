@@ -1,6 +1,10 @@
-import { getUserIdFromToken } from "../auth";
+import { getSubFromToken } from "../auth";
 import users from "../db/users";
-import { AuthContext, UpdateUserPhotoRequest } from "../types";
+import {
+  AuthContext,
+  UpdateUserPhotoRequest,
+  UpdateUserRequest,
+} from "../types";
 import { Request, Response } from "express";
 
 export function getUser(_: any, context: AuthContext) {
@@ -14,20 +18,14 @@ export function updateMyPhoto(
   return users.updatePhoto(context.authedUser._id, payload.photo);
 }
 
-export async function createUser(req: Request, res: Response) {
-  const payload = req.body;
-  try {
-    const userId = await getUserIdFromToken(req);
-    const exists = await users.getUserBySub(userId);
-    if (exists) {
-      return res.send(exists);
-    }
-
-    const created = await users.createUser({ ...payload, sub: userId });
-    return res.send(created);
-  } catch (err) {
-    return res.status(401).send((err as any).message);
-  }
+/**
+ * Update an existing user
+ */
+export async function updateUser(
+  payload: UpdateUserRequest,
+  context: AuthContext
+) {
+  return users.updateUser(context.authedUser._id, payload);
 }
 
 /**
@@ -36,12 +34,12 @@ export async function createUser(req: Request, res: Response) {
  */
 export async function currentUser(req: Request, res: Response) {
   try {
-    const userId = await getUserIdFromToken(req);
-    const user = await users.getUserBySub(userId);
+    const sub = await getSubFromToken(req);
+    const user = await users.getUserBySub(sub);
 
     if (!user) {
       console.log("Creating new user first time logging in");
-      await users.createUser({ sub: userId, name: "" });
+      await users.createUser(sub);
     }
 
     return res.send({ user, loggedIn: true });
