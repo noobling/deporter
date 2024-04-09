@@ -30,7 +30,7 @@ export async function createEvent(
     ...payload,
     created_by: context.authedUser._id,
     messages: [],
-    participants: [],
+    participants: [context.authedUser._id],
     expenses: [],
     payments: [],
     ...getTimestamps(),
