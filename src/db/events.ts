@@ -9,6 +9,7 @@ import {
 } from "../types";
 import { getMongoID } from "../utils/mongo";
 import db from "./db";
+import { sendPushNotification, sendWebsocketNotification, WebsocketEventType } from "../services/notificationService";
 
 const collection = db.collection("event");
 
@@ -43,7 +44,40 @@ async function addMessage(id: string, message: Message) {
   await updateList(id, {
     messages: message,
   });
-  return getEvent(id);
+
+  const data = await getEvent(id);
+
+  // Add notifications to q
+  if (data) {
+    const participants = [...data.participants, data.created_by];
+    const userIds = participants
+    // const userIds = participants.filter((p) => p !== message.created_by);
+    // send notifications to them all
+
+    const url = `/(event)/chat?id=${data._id}`
+    for (const userId of userIds) {
+      sendWebsocketNotification(userId, {
+        type: WebsocketEventType.ROUTING_NOTIFICATION,
+        payload: {
+          goTo: url,
+          title: "New message",
+          description: `${message.created_by} added a new message`,
+        },
+      });
+      sendPushNotification(userId, {
+        type: WebsocketEventType.ROUTING_NOTIFICATION,
+        payload: {
+          goTo: url,
+          title: "New message",
+          description: `${message.created_by} added a new message`,
+        },
+      });
+    }
+
+  }
+
+
+  return data
 }
 
 async function addExpense(id: string, expense: Expense) {
