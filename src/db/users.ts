@@ -1,15 +1,15 @@
-import { ObjectId } from "mongodb";
-import db from "./db";
-import { UpdateUserRequest, User, UserResponse } from "../types";
-import { getMongoID } from "../utils/mongo";
+import { UpdateUserRequest, UserResponse } from "../types";
 import { getTimestamps } from "../utils/date";
+import { getMongoID } from "../utils/mongo";
+import db from "./db";
 
 const collection = db.collection("user");
 
-async function createUser(sub: string) {
+async function createUser(sub: string, email: string) {
   const result = await collection.insertOne({
     name: "unknown",
     sub,
+    email,
     ...getTimestamps(),
   });
 

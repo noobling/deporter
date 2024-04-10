@@ -1,11 +1,11 @@
-import { getSubFromToken } from "../auth";
+import { Request, Response } from "express";
+import { getUserFromToken } from "../auth";
 import users from "../db/users";
 import {
   AuthContext,
   UpdateUserPhotoRequest,
   UpdateUserRequest,
 } from "../types";
-import { Request, Response } from "express";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
@@ -33,13 +33,15 @@ export async function updateUser(
  * e.g. media api
  */
 export async function currentUser(req: Request, res: Response) {
+  console.log("Getting logged in user");
+
   try {
-    const sub = await getSubFromToken(req);
+    const { sub, email } = await getUserFromToken(req);
     const user = await users.getUserBySub(sub);
 
     if (!user) {
       console.log("Creating new user first time logging in");
-      await users.createUser(sub);
+      await users.createUser(sub, email ?? "");
     }
 
     return res.send({ user, loggedIn: true });
