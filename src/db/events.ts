@@ -53,11 +53,13 @@ async function addMessage(id: string, message: Message) {
     const userIds = participants
     // const userIds = participants.filter((p) => p !== message.created_by);
     // send notifications to them all
+
+    const url = `/(event)/chat?id=${data._id}`
     for (const userId of userIds) {
       sendWebsocketNotification(userId, {
         type: WebsocketEventType.ROUTING_NOTIFICATION,
         payload: {
-          goTo: `/event/${id}`,
+          goTo: url,
           title: "New message",
           description: `${message.created_by} added a new message`,
         },
@@ -65,7 +67,7 @@ async function addMessage(id: string, message: Message) {
       sendPushNotification(userId, {
         type: WebsocketEventType.ROUTING_NOTIFICATION,
         payload: {
-          goTo: `/event/${id}`,
+          goTo: url,
           title: "New message",
           description: `${message.created_by} added a new message`,
         },
