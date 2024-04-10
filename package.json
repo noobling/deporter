@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/c99rahul/ts-node-express#readme",
   "dependencies": {
-    "amqplib": "^0.10.3",
     "apple-signin-auth": "^1.7.6",
     "aws-sdk": "^2.1589.0",
     "body-parser": "^1.20.2",
