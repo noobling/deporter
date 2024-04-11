@@ -60,7 +60,7 @@ async function addMessage(id: string, message: Message) {
     messages: message,
   });
 
-  const data = await getEvent(id, { projection: { messages: 0 } });
+  const data = await getEvent(id);
 
   // Add notifications to q
   if (data) {
