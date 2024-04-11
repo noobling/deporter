@@ -90,7 +90,7 @@ async function addMessage(id: string, message: Message) {
     }
   }
 
-  return { ...data, messages: [message] };
+  return data;
 }
 
 async function addExpense(id: string, expense: Expense) {
