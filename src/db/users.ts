@@ -5,6 +5,14 @@ import db from "./db";
 
 const collection = db.collection("user");
 
+/**
+ * Get all users for current user
+ */
+async function getUsers() {
+  // TODO: One day we want to make things secure and restrict it to users in shared events
+  return collection.find({}).toArray();
+}
+
 async function createUser(sub: string, email: string) {
   const result = await collection.insertOne({
     name: "unknown",
@@ -59,6 +67,7 @@ async function updatePhoto(id: string, photo: string) {
 
 export default {
   getUser,
+  getUsers,
   createUser,
   getUserBySub,
   updatePhoto,

@@ -9,6 +9,7 @@ import {
   addEventPayment,
   createEvent,
   getEvent,
+  getEventMetaData,
   getEventsForCurrentUser,
   getEventsToJoin,
   joinEvent,
@@ -16,6 +17,7 @@ import {
 import {
   currentUser,
   getUser,
+  getUsers,
   updateMyPhoto,
   updateUser,
 } from "./services/userService";
@@ -45,11 +47,13 @@ app.use(bodyParser.json());
 app.get("/user/me", currentUser);
 app.post("/user/me/photo", handler(updateMyPhoto));
 app.get("/user/:id", handler(getUser));
+app.get("/users", handler(getUsers));
 app.post("/user/update", handler(updateUser));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
 app.get("/event/:id", handler(getEvent));
+app.get("/event/:id/metadata", handler(getEventMetaData));
 app.post("/event", handler(createEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
 app.post("/event/:id/payment", handler(addEventPayment));

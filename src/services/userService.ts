@@ -11,6 +11,10 @@ export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
 }
 
+export function getUsers(_: any, context: AuthContext) {
+  return users.getUsers();
+}
+
 export function updateMyPhoto(
   payload: UpdateUserPhotoRequest,
   context: AuthContext

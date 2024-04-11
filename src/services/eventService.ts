@@ -14,6 +14,10 @@ export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
 }
 
+export async function getEventMetaData(payload: any, context: AuthContext) {
+  return events.getEventMetaData(context.id!!);
+}
+
 export async function getEventsForCurrentUser(
   payload: any,
   context: AuthContext

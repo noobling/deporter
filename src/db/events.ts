@@ -1,4 +1,4 @@
-import { ObjectId, PushOperator } from "mongodb";
+import { FindOptions, ObjectId, PushOperator } from "mongodb";
 import {
   AddParticipantRequest,
   Event,
@@ -9,7 +9,11 @@ import {
 } from "../types";
 import { getMongoID } from "../utils/mongo";
 import db from "./db";
-import { sendPushNotification, sendWebsocketNotification, WebsocketEventType } from "../services/notificationService";
+import {
+  sendPushNotification,
+  sendWebsocketNotification,
+  WebsocketEventType,
+} from "../services/notificationService";
 
 const collection = db.collection("event");
 
@@ -31,8 +35,19 @@ async function getEventsToJoin(currentUserId: string) {
   return result;
 }
 
-function getEvent(id: string) {
-  return collection.findOne({ _id: getMongoID(id) });
+function getEvent(id: string, options: FindOptions<Document> = {}) {
+  return collection.findOne({ _id: getMongoID(id) }, options);
+}
+
+function getEventMetaData(id: string) {
+  return collection.findOne(
+    { _id: getMongoID(id) },
+    {
+      projection: {
+        messages: 0,
+      },
+    }
+  );
 }
 
 async function createEvent(event: Event) {
@@ -45,16 +60,16 @@ async function addMessage(id: string, message: Message) {
     messages: message,
   });
 
-  const data = await getEvent(id);
+  const data = await getEvent(id, { projection: { messages: 0 } });
 
   // Add notifications to q
   if (data) {
     const participants = [...data.participants, data.created_by];
-    const userIds = participants
+    const userIds = participants;
     // const userIds = participants.filter((p) => p !== message.created_by);
     // send notifications to them all
 
-    const url = `/(event)/chat?id=${data._id}`
+    const url = `/(event)/chat?id=${data._id}`;
     for (const userId of userIds) {
       sendWebsocketNotification(userId, {
         type: WebsocketEventType.ROUTING_NOTIFICATION,
@@ -73,11 +88,9 @@ async function addMessage(id: string, message: Message) {
         },
       });
     }
-
   }
 
-
-  return data
+  return { ...data, messages: [message] };
 }
 
 async function addExpense(id: string, expense: Expense) {
@@ -115,6 +128,7 @@ function updateList(id: string, push: PushOperator<Document>) {
 export default {
   listEvents,
   getEvent,
+  getEventMetaData,
   createEvent,
   addMessage,
   addExpense,
