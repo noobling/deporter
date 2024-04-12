@@ -64,9 +64,10 @@ async function sendToQueue(queue: string, message: string) {
 export enum WebsocketEventType {
     ROUTING_NOTIFICATION = 'ROUTING_NOTIFICATION',
     ROUTING_PUSH_NOTIFICATION = 'ROUTING_PUSH_NOTIFICATION',
+    MESSAGE_NOTIFICATION = 'MESSAGE_NOTIFICATION', // websocket notification
 }
 
-type Action =
+export type NotificationAction =
     | {
         type: WebsocketEventType.ROUTING_NOTIFICATION
         payload: {
@@ -82,6 +83,11 @@ type Action =
             title: string // title of the notification
             description: string // description of the notification
         }
+    } | {
+        type: WebsocketEventType.MESSAGE_NOTIFICATION
+        payload: {
+            eventId: string
+        }
     }
 
 function getUserQueue(userId: string) {
@@ -91,13 +97,13 @@ function getUserQueue(userId: string) {
 /** The user must be in the app for these ones */
 export async function sendWebsocketNotification(
     userId: string,
-    action: Action
+    action: NotificationAction
 ) {
     sendToQueue(getUserQueue(userId), JSON.stringify(action))
 }
 
 /** These are sent if the user has notifications on and registered their token*/
-export async function sendPushNotification(userId: string, action: Action) {
+export async function sendPushNotification(userId: string, action: NotificationAction) {
     const payload = {
         userId: userId,
         data: action,
