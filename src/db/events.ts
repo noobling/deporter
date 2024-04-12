@@ -65,12 +65,13 @@ async function addMessage(id: string, message: Message) {
   // Add notifications to q
   if (data) {
     const participants = [...data.participants, data.created_by];
-    const userIds = participants.filter((p) => p !== message.created_by);
+    const userIds = participants
+    // const userIds = participants.filter((p) => p !== message.created_by);
     // send notifications and websocket notifications to them all
 
     const url = `/(event)/chat?id=${data._id}`;
     for (const userId of userIds) {
-      sendWebsocketNotification(userId, {
+      sendPushNotification(userId, {
         type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
         payload: {
           goTo: url,
@@ -78,7 +79,7 @@ async function addMessage(id: string, message: Message) {
           description: `${message.created_by} added a new message`,
         },
       });
-      sendPushNotification(userId, {
+      sendWebsocketNotification(userId, {
         type: WebsocketEventType.MESSAGE_NOTIFICATION,
         payload: {
           eventId: data._id.toString(),
