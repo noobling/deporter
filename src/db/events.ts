@@ -83,7 +83,7 @@ async function addMessage(id: string, message: Message) {
   // Add notifications to q
   if (data) {
     const participants = [...data.participants, data.created_by];
-    const userIds = participants
+    const userIds = participants;
     // const userIds = participants.filter((p) => p !== message.created_by);
     // send notifications and websocket notifications to them all
 

@@ -62,6 +62,7 @@ export interface CreatePaymentRequest {
 export interface CreateMediaRequest {
   type: string;
   name: string;
+  extension: string;
 }
 export interface Media {
   created_by: string;

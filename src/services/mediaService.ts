@@ -13,7 +13,12 @@ export async function createMedia(
     ...getTimestamps(),
   });
 
-  const url = await getSignedUrl(result!!._id.toString());
+  const extension = payload.extension
+    ? `.${payload.extension}`
+    : payload.name?.split(".")?.pop() ?? "png";
+
+  const uniqueFileName = `${result!!._id.toString()}.${extension}`;
+  const url = await getSignedUrl(uniqueFileName);
   return {
     ...result,
     uploadUrl: url,
