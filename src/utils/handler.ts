@@ -7,9 +7,11 @@ export const handler = (
 ) => {
   return async (req: Request, res: Response) => {
     const id = req.params.id;
+    const queryParams = req.query;
     const payload = req.body;
     const context: AuthContext = {
       id,
+      queryParams,
     } as AuthContext;
 
     try {
@@ -24,8 +26,10 @@ export const handler = (
     }
 
     try {
-      console.log("calling", cb.name, "with", payload, "context", context);
+      console.log(`${cb.name}()`, "payload", payload, "context", context);
       const result = await cb(payload, context);
+      console.log(`${cb.name}()`, "result", result);
+
       res.send(result);
     } catch (err) {
       if (err instanceof BadRequest) {

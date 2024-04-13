@@ -7,18 +7,19 @@ export async function createMedia(
   payload: CreateMediaRequest,
   context: AuthContext
 ): Promise<MediaResponse> {
+  const extension = payload.extension
+    ? `${payload.extension}`
+    : payload.name?.split(".")?.pop() ?? "png";
+
   const result = await media.create({
     created_by: context.authedUser._id,
     ...payload,
+    extension,
     ...getTimestamps(),
   });
 
-  const extension = payload.extension
-    ? `.${payload.extension}`
-    : payload.name?.split(".")?.pop() ?? "png";
+  const url = await getSignedUrl(result!!._id.toString());
 
-  const uniqueFileName = `${result!!._id.toString()}.${extension}`;
-  const url = await getSignedUrl(uniqueFileName);
   return {
     ...result,
     uploadUrl: url,

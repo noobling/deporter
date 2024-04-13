@@ -68,6 +68,7 @@ export interface Media {
   created_by: string;
   type: string;
   name: string;
+  extension: string;
   created_at: string;
   updated_at: string;
 }
@@ -121,5 +122,6 @@ export interface CreateExpenseRequest {
 
 export interface AuthContext {
   id: string;
+  queryParams: any;
   authedUser: UserResponse;
 }
