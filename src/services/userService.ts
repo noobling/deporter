@@ -3,6 +3,7 @@ import { getUserFromToken } from "../auth";
 import users from "../db/users";
 import {
   AuthContext,
+  CheckTokenStatusResponse,
   UpdateUserPhotoRequest,
   UpdateUserRequest,
 } from "../types";
@@ -32,24 +33,36 @@ export async function updateUser(
   return users.updateUser(context.authedUser._id, payload);
 }
 
-/**
- * Retrieves the current user if they don't exist it is their first time logging in so create one to allow other apis to work
- * e.g. media api
- */
-export async function currentUserOrCreate(req: Request, res: Response) {
-  console.log("Getting logged in user");
+export async function currentUser(_: any, context: AuthContext) {
+  return users.getUser(context.authedUser._id);
+}
 
+export async function checkTokenStatus(req: Request, res: Response) {
+  let response: CheckTokenStatusResponse = {} as CheckTokenStatusResponse;
   try {
     const userFromToken = await getUserFromToken(req);
-    const user = await users.getUserBySub(userFromToken.sub);
+    const found = await users.getUserBySub(userFromToken.sub);
 
-    if (!user) {
-      console.log("Creating new user first time logging in");
-      await users.createUser(userFromToken);
+    if (!found) {
+      response = { status: "registration_required" };
+    } else {
+      response = { status: "ok" };
     }
-
-    return res.send({ user, loggedIn: true });
-  } catch (err) {
-    return res.send({ user: null, loggedIn: false });
+  } catch {
+    response = { status: "expired_or_invalid" };
   }
+  return res.send(response);
+}
+
+export async function registerUserFromToken(req: Request, res: Response) {
+  const userFromToken = await getUserFromToken(req);
+  let user = await users.getUserBySub(userFromToken.sub);
+
+  // Make it idempotent incase the user already exists
+  if (!user) {
+    console.log("Creating new user first time logging in");
+    user = await users.createUser(userFromToken);
+  }
+
+  return res.send(user);
 }

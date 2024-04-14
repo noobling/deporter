@@ -42,7 +42,7 @@ async function updateUser(id: string, user: UpdateUserRequest) {
 }
 
 function getUserBySub(sub: string) {
-  return collection.findOne({ sub });
+  return collection.findOne({ sub }) as unknown as UserResponse | undefined;
 }
 
 async function getUser(id: string): Promise<UserResponse> {

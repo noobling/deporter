@@ -103,6 +103,10 @@ export interface UpdateUserPhotoRequest {
   photo: string;
 }
 
+export interface CheckTokenStatusResponse {
+  status: "expired_or_invalid" | "registration_required" | "ok";
+}
+
 // Expense
 export interface Expense {
   created_by: string;
