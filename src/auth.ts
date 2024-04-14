@@ -34,11 +34,10 @@ export async function getUserFromToken(req: Request): Promise<UserToken> {
     throw new Unauthenticated("Missing authorization token");
   }
 
-  const googleAuth = new OAuth2Client({});
-
   // TODO we may want to validate the audience as well
   try {
     if (token.startsWith("ya29")) {
+      const googleAuth = new OAuth2Client({});
       const result = await googleAuth.getTokenInfo(token);
       return {
         sub: result.sub!!,

@@ -14,29 +14,44 @@ export const handler = (
       queryParams,
     } as AuthContext;
 
+    function log(...message: any[]) {
+      console.log("========================");
+      const prettifyContext = {
+        id: context.id,
+        authedUser: {
+          name: context.authedUser?.name,
+          sub: context.authedUser?.sub,
+        },
+      };
+      console.log(`${cb.name}()`, "context", prettifyContext);
+      console.log(...message);
+    }
+    log("payload", payload);
+
     try {
       const authedUser = await getLoggedInUserOrThrow(req);
       context.authedUser = authedUser;
     } catch (err) {
       if (err instanceof Error) {
-        console.error("Returning 401 caused by", err.message);
+        log("Authentication error", err.message);
         return res.status(401).send(err.message);
       }
       return res.status(401);
     }
 
     try {
-      console.log(`${cb.name}()`, "payload", payload, "context", context);
       const result = await cb(payload, context);
-      console.log(`${cb.name}()`, "result", result);
+      log("result", result);
 
       res.send(result);
     } catch (err) {
       if (err instanceof BadRequest) {
+        log("bad request", err.message);
         return res.status(400).send(err.message);
       }
 
       console.error("Unexpected error", err);
+      log("unexpected error", err);
       return res.status(500).send("Something went wrong");
     }
   };
