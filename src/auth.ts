@@ -6,15 +6,30 @@ import environment from "./utils/environment";
 import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import axios from "axios";
 
+// TODO: we should use a better cache with expiry and size limits
+const userTokenCache: { [key: string]: UserResponse } = {};
+
 export async function getLoggedInUserOrThrow(
   req: Request
 ): Promise<UserResponse> {
-  // TODO: Cache this since it is expensive and run on every query
+  // Check if cached
+  const token = req.headers["authorization"] ?? "";
+  if (userTokenCache[token]) {
+    return userTokenCache[token];
+  }
+
+  // Otherwise fetch from db
   const { sub } = await getUserFromToken(req);
   const found = await user.getUserBySub(sub);
+
   if (!found) {
     throw new Unauthenticated("User not found");
   }
+
+  // Cache result
+  userTokenCache[token] = found;
+
+  // Return it
   return found as unknown as UserResponse;
 }
 
@@ -34,6 +49,7 @@ export async function getUserFromToken(req: Request): Promise<UserToken> {
     throw new Unauthenticated("Missing authorization token");
   }
 
+  userTokenCache;
   // TODO we may want to validate the audience as well
   try {
     if (token.startsWith("ya29")) {
