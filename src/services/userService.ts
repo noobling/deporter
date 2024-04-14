@@ -36,16 +36,16 @@ export async function updateUser(
  * Retrieves the current user if they don't exist it is their first time logging in so create one to allow other apis to work
  * e.g. media api
  */
-export async function currentUser(req: Request, res: Response) {
+export async function currentUserOrCreate(req: Request, res: Response) {
   console.log("Getting logged in user");
 
   try {
-    const { sub, email } = await getUserFromToken(req);
-    const user = await users.getUserBySub(sub);
+    const userFromToken = await getUserFromToken(req);
+    const user = await users.getUserBySub(userFromToken.sub);
 
     if (!user) {
       console.log("Creating new user first time logging in");
-      await users.createUser(sub, email ?? "");
+      await users.createUser(userFromToken);
     }
 
     return res.send({ user, loggedIn: true });

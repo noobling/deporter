@@ -1,9 +1,10 @@
 import appleSignIn from "apple-signin-auth";
 import { Request } from "express";
 import user from "./db/users";
-import { UserResponse } from "./types";
+import { GoogleToken, UserResponse, UserToken } from "./types";
 import environment from "./utils/environment";
-import { OAuth2Client } from "google-auth-library";
+import { GoogleAuth, OAuth2Client } from "google-auth-library";
+import axios from "axios";
 
 export async function getLoggedInUserOrThrow(
   req: Request
@@ -17,12 +18,15 @@ export async function getLoggedInUserOrThrow(
   return found as unknown as UserResponse;
 }
 
-export async function getUserFromToken(
-  req: Request
-): Promise<{ email: string | null | undefined; sub: string }> {
+export async function getUserFromToken(req: Request): Promise<UserToken> {
   // ONLY FOR TESTING
   if (environment.bypass_auth_user_id) {
-    return { sub: environment.bypass_auth_user_id, email: null };
+    return {
+      sub: environment.bypass_auth_user_id,
+      email: null,
+      photo: null,
+      name: null,
+    };
   }
 
   const token = req.headers["authorization"] as string;
@@ -30,22 +34,46 @@ export async function getUserFromToken(
     throw new Unauthenticated("Missing authorization token");
   }
 
+  const googleAuth = new OAuth2Client({});
+
   // TODO we may want to validate the audience as well
   try {
     if (token.startsWith("ya29")) {
-      const googleAuth = new OAuth2Client();
       const result = await googleAuth.getTokenInfo(token);
-      return { sub: result.sub!!, email: result.email };
+      return {
+        sub: result.sub!!,
+        email: result.email ?? null,
+        photo: null,
+        name: null,
+      };
     } else {
       const result = await appleSignIn.verifyIdToken(token);
-      return { sub: result.sub, email: result.email };
+      return { sub: result.sub, email: result.email, photo: null, name: null };
     }
   } catch (err) {
-    if (err instanceof Error) {
-      console.log("Error verifying token:", err.message);
+    try {
+      const result = await getGoogleTokenInfo(token);
+      return result;
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log("Error verifying token:", err.message);
+      }
+      throw new Unauthenticated("Invalid token");
     }
-    throw new Unauthenticated("Invalid token");
   }
 }
 
 export class Unauthenticated extends Error {}
+
+// TODO: maybe we care about expire tokens one day
+async function getGoogleTokenInfo(idToken: string): Promise<UserToken> {
+  const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?idToken=${idToken}`;
+
+  const { data } = await axios.get(url);
+  return {
+    sub: data.sub!!,
+    email: data.email,
+    photo: data.picture,
+    name: data.name,
+  };
+}

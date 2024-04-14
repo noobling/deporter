@@ -1,4 +1,4 @@
-import { UpdateUserRequest, UserResponse } from "../types";
+import { UpdateUserRequest, UserResponse, UserToken } from "../types";
 import { getTimestamps } from "../utils/date";
 import { getMongoID } from "../utils/mongo";
 import db from "./db";
@@ -13,11 +13,12 @@ async function getUsers() {
   return collection.find({}).toArray();
 }
 
-async function createUser(sub: string, email: string) {
+async function createUser(user: UserToken) {
   const result = await collection.insertOne({
-    name: "unknown",
-    sub,
-    email,
+    name: user.name ?? "unknown",
+    sub: user.sub,
+    email: user.email,
+    photo: user.photo,
     ...getTimestamps(),
   });
 

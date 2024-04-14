@@ -125,3 +125,27 @@ export interface AuthContext {
   queryParams: any;
   authedUser: UserResponse;
 }
+
+export interface GoogleToken {
+  iss: string;
+  azp: string;
+  aud: string;
+  sub: string;
+  email: string;
+  email_verified: string;
+  name: string;
+  picture: string;
+  given_name: string;
+  iat: string;
+  exp: string;
+  alg: string;
+  kid: string;
+  typ: string;
+}
+
+export interface UserToken {
+  sub: string;
+  email: string | null;
+  photo: string | null;
+  name: string | null;
+}

@@ -15,7 +15,7 @@ import {
   joinEvent,
 } from "./services/eventService";
 import {
-  currentUser,
+  currentUserOrCreate,
   getUser,
   getUsers,
   updateMyPhoto,
@@ -44,7 +44,7 @@ const port = process.env.PORT || 3000;
 app.use(bodyParser.json());
 
 // User API
-app.get("/user/me", currentUser);
+app.get("/user/me", currentUserOrCreate);
 app.post("/user/me/photo", handler(updateMyPhoto));
 app.get("/user/:id", handler(getUser));
 app.get("/users", handler(getUsers));
