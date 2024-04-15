@@ -29,10 +29,14 @@ async function listEvents(currentUserId: string) {
   return cursor.toArray() as unknown as EventResponse[];
 }
 
+/**
+ * Events where use is not a participant and not private event
+ */
 async function getEventsToJoin(currentUserId: string) {
   const cursor = await collection.find(
     {
       participants: { $nin: [currentUserId] },
+      status: { $ne: "private" },
     },
     {
       sort: {
