@@ -85,6 +85,10 @@ async function addMessage(id: string, message: Message) {
     const participants = data.participants.filter(
       (p) => p !== message.created_by
     );
+
+    const photoCount = message.media.length;
+    const description =
+      photoCount > 0 ? `Sent ${photoCount} photo(s)` : message.content;
     const url = `/(event)/chat?id=${data._id}`;
     for (const userId of participants) {
       sendPushNotification(userId, {
@@ -92,7 +96,7 @@ async function addMessage(id: string, message: Message) {
         payload: {
           goTo: url,
           title: `${user.name} (${data.name})`,
-          description: message.content,
+          description,
         },
       });
       sendWebsocketNotification(userId, {
