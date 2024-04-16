@@ -14,12 +14,11 @@ import {
   sendWebsocketNotification,
   WebsocketEventType,
 } from "../services/notificationService";
-import { getUser } from "../services/userService";
 import users from "./users";
 
 const collection = db.collection("event");
 
-async function listEvents(currentUserId: ObjectId) {
+async function listEvents(currentUserId: string) {
   const cursor = await collection.find({
     $or: [
       { participants: { $in: [currentUserId] } },
@@ -32,7 +31,7 @@ async function listEvents(currentUserId: ObjectId) {
 /**
  * Events where use is not a participant and not private event
  */
-async function getEventsToJoin(currentUserId: ObjectId) {
+async function getEventsToJoin(currentUserId: string) {
   const cursor = await collection.find(
     {
       participants: { $nin: [currentUserId] },
