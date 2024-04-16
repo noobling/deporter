@@ -43,7 +43,7 @@ export async function checkTokenStatus(req: Request, res: Response) {
   try {
     const token = req.headers["authorization"] as string;
     if (!token) {
-      return res.send({ status: "missing_token" });
+      return res.send({ status: "expired_or_invalid" });
     }
 
     const cached = await cacheGet(token);
