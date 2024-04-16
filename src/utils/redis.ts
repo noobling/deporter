@@ -1,9 +1,20 @@
 import Redis from "ioredis";
 import environment from "./environment";
 
-const redis = new Redis(environment.redis_url);
-
-console.log("Redis initialised with status", redis.status);
+let redis = {
+  get() {
+    return null;
+  },
+  set() {
+    return null;
+  },
+} as any;
+try {
+  redis = new Redis(environment.redis_url);
+  console.log("Redis initialised with status", redis.status);
+} catch (err) {
+  console.error("Failed to connect to Redis", err);
+}
 
 export const cacheGet = async (key: string) => {
   const result = await redis.get(key);

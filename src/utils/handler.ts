@@ -18,10 +18,7 @@ export const handler = (
       console.log("========================");
       const prettifyContext = {
         id: context.id,
-        authedUser: {
-          name: context.authedUser?.name,
-          sub: context.authedUser?.sub,
-        },
+        authedUser: context.authedUser,
       };
       console.log(`${cb.name}()`, "context", prettifyContext);
       console.log(...message);
