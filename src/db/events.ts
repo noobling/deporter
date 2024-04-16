@@ -22,8 +22,8 @@ const collection = db.collection("event");
 async function listEvents(currentUserId: string) {
   const cursor = await collection.find({
     $or: [
-      { participants: { $in: [currentUserId] } },
-      { created_by: currentUserId },
+      { participants: { $in: [getMongoID(currentUserId)] } },
+      { created_by: getMongoID(currentUserId) },
     ],
   });
   return cursor.toArray() as unknown as EventResponse[];
