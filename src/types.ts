@@ -104,7 +104,11 @@ export interface UpdateUserPhotoRequest {
 }
 
 export interface CheckTokenStatusResponse {
-  status: "expired_or_invalid" | "registration_required" | "ok";
+  status:
+    | "expired_or_invalid"
+    | "registration_required"
+    | "missing_token"
+    | "ok";
 }
 
 export interface RegisterUserRequest {

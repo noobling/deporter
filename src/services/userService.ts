@@ -7,6 +7,7 @@ import {
   UpdateUserPhotoRequest,
   UpdateUserRequest,
 } from "../types";
+import { cacheGet } from "../utils/redis";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
@@ -40,6 +41,16 @@ export async function currentUser(_: any, context: AuthContext) {
 export async function checkTokenStatus(req: Request, res: Response) {
   let response: CheckTokenStatusResponse = {} as CheckTokenStatusResponse;
   try {
+    const token = req.headers["authorization"] as string;
+    if (!token) {
+      return res.send({ status: "missing_token" });
+    }
+
+    const cached = await cacheGet(token);
+    if (cached) {
+      return res.send({ status: "ok" });
+    }
+
     const userFromToken = await getUserFromToken(req);
     const found = await users.getUserBySub(userFromToken.sub);
 
