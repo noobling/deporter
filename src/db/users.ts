@@ -49,6 +49,17 @@ async function getUser(id: string): Promise<UserResponse> {
   const user = (await collection.findOne({
     _id: getMongoID(id),
   })) as unknown as UserResponse;
+
+  if ('status' in user && user.status === "deleted") {
+    return {
+      sub: '',
+      _id: user._id,
+      name: 'deleted user',
+      photo: '',
+      created_at: user.created_at,
+      updated_at: user.updated_at,
+    }
+  }
   return user;
 }
 
@@ -75,6 +86,7 @@ async function deleteUser(id: string) {
     {
       $set: {
         sub: user.sub + "-deleted",
+        status: "deleted",
       },
     }
   );
