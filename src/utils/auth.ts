@@ -67,7 +67,8 @@ export async function getUserFromToken(req: Request): Promise<UserToken> {
     }
   } catch (err) {
     try {
-      const result = await getGoogleTokenInfo(token);
+      // const result = await getGoogleTokenInfo(token);
+      const result = await getGoogleAccessTokenInfo(token);
       return result;
     } catch (err) {
       if (err instanceof Error) {
@@ -84,6 +85,17 @@ export class Unauthenticated extends Error {}
 async function getGoogleTokenInfo(idToken: string): Promise<UserToken> {
   const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?idToken=${idToken}`;
 
+  const { data } = await axios.get(url);
+  return {
+    sub: data.sub!!,
+    email: data.email,
+    photo: data.picture,
+    name: data.name,
+  };
+}
+
+async function getGoogleAccessTokenInfo(accessToken: string): Promise<UserToken> {
+  const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`;
   const { data } = await axios.get(url);
   return {
     sub: data.sub!!,
