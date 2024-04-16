@@ -16,7 +16,7 @@ export async function getLoggedInUserOrThrow(
   const cachedUser = await cacheGet(token);
   if (cachedUser) {
     console.log("Found user cached with token");
-    return { ...cachedUser, _id: getMongoID(cachedUser) } as UserResponse;
+    return { ...cachedUser, _id: getMongoID(cachedUser._id) } as UserResponse;
   }
 
   // Otherwise fetch from db
