@@ -17,6 +17,7 @@ import {
 import {
   checkTokenStatus,
   currentUser,
+  deleteUser,
   getUser,
   getUsers,
   registerUserFromToken,
@@ -50,6 +51,7 @@ app.get("/user/me", handler(currentUser));
 app.get("/user/token/check", checkTokenStatus);
 app.post("/user/register", registerUserFromToken);
 app.post("/user/me/photo", handler(updateMyPhoto));
+app.post("/user/delete", handler(deleteUser));
 app.get("/user/:id", handler(getUser));
 app.get("/users", handler(getUsers));
 app.post("/user/update", handler(updateUser));

@@ -72,3 +72,7 @@ export async function registerUserFromToken(req: Request, res: Response) {
 
   return res.send(user);
 }
+
+export async function deleteUser(_: any, context: AuthContext) {
+  return users.deleteUser(context.authedUser._id);
+}

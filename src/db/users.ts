@@ -66,6 +66,20 @@ async function updatePhoto(id: string, photo: string) {
   return getUser(id);
 }
 
+async function deleteUser(id: string) {
+  const user = await getUser(id);
+  return collection.updateOne(
+    {
+      _id: getMongoID(id),
+    },
+    {
+      $set: {
+        sub: user.sub + "-deleted",
+      },
+    }
+  );
+}
+
 export default {
   getUser,
   getUsers,
@@ -73,4 +87,5 @@ export default {
   getUserBySub,
   updatePhoto,
   updateUser,
+  deleteUser,
 };
