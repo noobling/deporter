@@ -1,4 +1,4 @@
-import { FindOptions, PushOperator } from "mongodb";
+import { FindOptions, ObjectId, PushOperator } from "mongodb";
 import {
   AddParticipantRequest,
   Event,
@@ -19,11 +19,11 @@ import users from "./users";
 
 const collection = db.collection("event");
 
-async function listEvents(currentUserId: string) {
+async function listEvents(currentUserId: ObjectId) {
   const cursor = await collection.find({
     $or: [
-      { participants: { $in: [getMongoID(currentUserId)] } },
-      { created_by: getMongoID(currentUserId) },
+      { participants: { $in: [currentUserId] } },
+      { created_by: currentUserId },
     ],
   });
   return cursor.toArray() as unknown as EventResponse[];
@@ -32,7 +32,7 @@ async function listEvents(currentUserId: string) {
 /**
  * Events where use is not a participant and not private event
  */
-async function getEventsToJoin(currentUserId: string) {
+async function getEventsToJoin(currentUserId: ObjectId) {
   const cursor = await collection.find(
     {
       participants: { $nin: [currentUserId] },

@@ -6,6 +6,7 @@ import user from "../db/users";
 import { UserResponse, UserToken } from "../types";
 import environment from "./environment";
 import { cacheGet, cacheSet } from "./redis";
+import { getMongoID } from "./mongo";
 
 export async function getLoggedInUserOrThrow(
   req: Request
@@ -15,7 +16,7 @@ export async function getLoggedInUserOrThrow(
   const cachedUser = await cacheGet(token);
   if (cachedUser) {
     console.log("Found user cached with token");
-    return cachedUser as UserResponse;
+    return { ...cachedUser, _id: getMongoID(cachedUser) } as UserResponse;
   }
 
   // Otherwise fetch from db
