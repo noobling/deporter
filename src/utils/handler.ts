@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getLoggedInUserOrThrow } from "../auth";
+import { getLoggedInUserOrThrow } from "./auth";
 import { AuthContext } from "../types";
 
 export const handler = (

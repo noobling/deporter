@@ -1,21 +1,21 @@
 import appleSignIn from "apple-signin-auth";
-import { Request } from "express";
-import user from "./db/users";
-import { GoogleToken, UserResponse, UserToken } from "./types";
-import environment from "./utils/environment";
-import { GoogleAuth, OAuth2Client } from "google-auth-library";
 import axios from "axios";
-
-// TODO: we should use a better cache with expiry and size limits
-const userTokenCache: { [key: string]: UserResponse } = {};
+import { Request } from "express";
+import { OAuth2Client } from "google-auth-library";
+import user from "../db/users";
+import { UserResponse, UserToken } from "../types";
+import environment from "./environment";
+import { cacheGet, cacheSet } from "./redis";
 
 export async function getLoggedInUserOrThrow(
   req: Request
 ): Promise<UserResponse> {
   // Check if cached
   const token = req.headers["authorization"] ?? "";
-  if (userTokenCache[token]) {
-    return userTokenCache[token];
+  const cachedUser = await cacheGet(token);
+  if (cachedUser) {
+    console.log("Found user cached with token");
+    return cachedUser as UserResponse;
   }
 
   // Otherwise fetch from db
@@ -27,7 +27,7 @@ export async function getLoggedInUserOrThrow(
   }
 
   // Cache result
-  userTokenCache[token] = found;
+  await cacheSet(token, found);
 
   // Return it
   return found as unknown as UserResponse;
@@ -49,7 +49,6 @@ export async function getUserFromToken(req: Request): Promise<UserToken> {
     throw new Unauthenticated("Missing authorization token");
   }
 
-  userTokenCache;
   // TODO we may want to validate the audience as well
   try {
     if (token.startsWith("ya29")) {

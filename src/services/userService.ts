@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getUserFromToken } from "../auth";
+import { getUserFromToken } from "../utils/auth";
 import users from "../db/users";
 import {
   AuthContext,
