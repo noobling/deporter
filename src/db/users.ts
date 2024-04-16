@@ -50,6 +50,7 @@ async function getUser(id: string): Promise<UserResponse> {
     _id: getMongoID(id),
   })) as unknown as UserResponse;
 
+  // TODO #37 - Revert
   if ('status' in user && user.status === "deleted") {
     return {
       sub: '',
@@ -86,7 +87,7 @@ async function deleteUser(id: string) {
     {
       $set: {
         sub: user.sub + "-deleted",
-        status: "deleted",
+        status: "deleted", // TODO #37 - Revert
       },
     }
   );
