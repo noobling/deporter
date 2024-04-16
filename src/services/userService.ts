@@ -55,13 +55,19 @@ export async function checkTokenStatus(req: Request, res: Response) {
 }
 
 export async function registerUserFromToken(req: Request, res: Response) {
+  const payload = req.body;
   const userFromToken = await getUserFromToken(req);
   let user = await users.getUserBySub(userFromToken.sub);
 
   // Make it idempotent incase the user already exists
   if (!user) {
     console.log("Creating new user first time logging in");
-    user = await users.createUser(userFromToken);
+
+    user = await users.createUser({
+      ...userFromToken,
+      email: payload.email ?? userFromToken.email,
+      name: payload.name ?? userFromToken.name,
+    });
   }
 
   return res.send(user);

@@ -107,6 +107,11 @@ export interface CheckTokenStatusResponse {
   status: "expired_or_invalid" | "registration_required" | "ok";
 }
 
+export interface RegisterUserRequest {
+  name: string | null;
+  email: string | null;
+}
+
 // Expense
 export interface Expense {
   created_by: string;
