@@ -69,7 +69,12 @@ function getEventMetaData(id: string) {
 }
 
 async function createEvent(event: Event) {
-  const { insertedId } = await collection.insertOne(event);
+  const code = await getJoinCode();
+  const { insertedId } = await collection.insertOne({
+    ...event,
+    join_code: code,
+  });
+
   return getEvent(insertedId.toString());
 }
 
@@ -146,6 +151,22 @@ function updateList(id: string, push: PushOperator<Document>) {
   );
 }
 
+function joinByCode(code: string, userId: any) {
+  return collection.updateOne(
+    {
+      join_code: code,
+    },
+    {
+      $push: {
+        participants: userId,
+      },
+      $set: {
+        updated_at: new Date().toISOString(),
+      },
+    }
+  );
+}
+
 export default {
   listEvents,
   getEvent,
@@ -156,4 +177,24 @@ export default {
   addParticipants,
   addPayment,
   getEventsToJoin,
+  joinByCode,
 };
+
+async function getJoinCode() {
+  for (let i = 0; i < 10; i++) {
+    const code = createRandomString(6);
+    const exists = await collection.findOne({ join_code: code });
+    if (!exists) return code;
+  }
+
+  console.error("Failed to generate unique join code returning XXXX");
+  return "XXXX";
+}
+function createRandomString(length: number) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}

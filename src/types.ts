@@ -10,6 +10,8 @@ export interface Event {
   start_time: string;
   created_at: string;
   updated_at: string;
+  status?: "public" | "private";
+  join_code?: string; // unique code users can use to join event
 }
 export interface EventResponse extends Event {
   _id: string;
@@ -18,6 +20,7 @@ export interface CreateEventRequest {
   name: string;
   photo: string;
   start_time: string;
+  status: "public" | "private";
 }
 export interface AddParticipantRequest {
   participants: string[];
