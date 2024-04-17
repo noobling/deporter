@@ -37,7 +37,7 @@ export async function createEvent(
     participants: [context.authedUser._id],
     expenses: [],
     payments: [],
-    status: "private", // Assume people want private events
+    status: "public", // TODO make private once we release join feature
     ...getTimestamps(),
   });
 }
