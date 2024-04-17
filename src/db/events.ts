@@ -168,7 +168,7 @@ function joinByCode(code: string, userId: any) {
 }
 
 function getByCode(code: string) {
-  return collection.findOne({ join_code: code });
+  return collection.findOne({ join_code: code }) as unknown as EventResponse;
 }
 
 export default {
