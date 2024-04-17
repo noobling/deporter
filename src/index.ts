@@ -68,7 +68,7 @@ app.post("/event/:id/message", handler(addEventMessage));
 app.post("/event/:id/participants", handler(addEventParticipants));
 app.post("/event/:id/join", handler(joinEvent));
 app.get("/events/join", handler(getEventsToJoin));
-app.post("/event/join/code", handler(joinEventByCode));
+app.get("/event/join/code", handler(joinEventByCode));
 
 // Media API
 app.post("/media", handler(createMedia));
