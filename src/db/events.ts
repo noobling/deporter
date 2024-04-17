@@ -167,6 +167,10 @@ function joinByCode(code: string, userId: any) {
   );
 }
 
+function getByCode(code: string) {
+  return collection.findOne({ join_code: code });
+}
+
 export default {
   listEvents,
   getEvent,
@@ -177,6 +181,7 @@ export default {
   addParticipants,
   addPayment,
   getEventsToJoin,
+  getByCode,
   joinByCode,
 };
 

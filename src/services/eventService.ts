@@ -88,8 +88,13 @@ export async function joinEvent(_: any, context: AuthContext) {
 
 export async function joinEventByCode(payload: any, context: AuthContext) {
   const code = context.queryParams.code;
-  await events.joinByCode(code, context.authedUser._id);
-  return events.getEvent(context.id);
+  const event = await events.getByCode(code);
+  if (!event) {
+    return null;
+  } else {
+    await events.joinByCode(code, context.authedUser._id);
+    return events.getByCode(code);
+  }
 }
 
 export async function getEventsToJoin(_: any, context: AuthContext) {
