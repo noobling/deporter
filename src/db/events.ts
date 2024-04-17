@@ -182,7 +182,7 @@ export default {
 
 async function getJoinCode() {
   for (let i = 0; i < 10; i++) {
-    const code = createRandomString(6);
+    const code = createRandomString(4);
     const exists = await collection.findOne({ join_code: code });
     if (!exists) return code;
   }
