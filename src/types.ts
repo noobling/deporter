@@ -20,7 +20,6 @@ export interface CreateEventRequest {
   name: string;
   photo: string;
   start_time: string;
-  status: "public" | "private";
 }
 export interface AddParticipantRequest {
   participants: string[];

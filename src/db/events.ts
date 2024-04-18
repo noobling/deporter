@@ -167,6 +167,10 @@ function joinByCode(code: string, userId: any) {
   );
 }
 
+function getByCode(code: string) {
+  return collection.findOne({ join_code: code }) as unknown as EventResponse;
+}
+
 export default {
   listEvents,
   getEvent,
@@ -177,12 +181,13 @@ export default {
   addParticipants,
   addPayment,
   getEventsToJoin,
+  getByCode,
   joinByCode,
 };
 
 async function getJoinCode() {
   for (let i = 0; i < 10; i++) {
-    const code = createRandomString(6);
+    const code = createRandomString(4);
     const exists = await collection.findOne({ join_code: code });
     if (!exists) return code;
   }

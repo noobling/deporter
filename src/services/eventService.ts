@@ -37,6 +37,7 @@ export async function createEvent(
     participants: [context.authedUser._id],
     expenses: [],
     payments: [],
+    status: "public", // TODO make private once we release join feature
     ...getTimestamps(),
   });
 }
@@ -86,8 +87,16 @@ export async function joinEvent(_: any, context: AuthContext) {
 }
 
 export async function joinEventByCode(payload: any, context: AuthContext) {
-  await events.joinByCode(payload.code, context.authedUser._id);
-  return events.getEvent(context.id);
+  const code = context.queryParams.code;
+  const event = await events.getByCode(code);
+  if (!event) {
+    return null;
+  } else if (event.participants.includes(context.authedUser._id)) {
+    return event;
+  } else {
+    await events.joinByCode(code, context.authedUser._id);
+    return events.getByCode(code);
+  }
 }
 
 export async function getEventsToJoin(_: any, context: AuthContext) {
