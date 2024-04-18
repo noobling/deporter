@@ -78,7 +78,7 @@ async function createEvent(event: Event) {
   return getEvent(insertedId.toString());
 }
 
-async function addMessage(id: string, message: Message) {
+export async function addMessage(id: string, message: Message) {
   await updateList(id, {
     messages: message,
   });

@@ -8,6 +8,7 @@ import {
   UpdateUserRequest,
 } from "../types";
 import { cacheGet } from "../utils/redis";
+import { addMessage } from "../db/events";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
@@ -81,7 +82,20 @@ export async function registerUserFromToken(req: Request, res: Response) {
     });
   }
 
-  return res.send(user);
+  // TODO Fix hardcoded shit
+  const response = await res.send(user);
+  await addMessage(
+    "661ceba8b2463e6fca862ffb",
+    {
+      content: `New user registered: ${user.name}`,
+      created_at: new Date().toISOString(),
+      created_by: "6621390b865b07107b36b7cc",
+      media: [],
+      updated_at: new Date().toISOString(),
+    }
+  )
+
+  return response
 }
 
 export async function deleteUser(_: any, context: AuthContext) {
