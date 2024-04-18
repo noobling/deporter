@@ -82,12 +82,20 @@ export async function registerUserFromToken(req: Request, res: Response) {
     });
   }
 
+  const ipAddress = req.ip
+  const userAgent = req.headers['user-agent']
+  const sub = user.sub
+  const name = user.name
+
   // TODO Fix hardcoded shit
   const response = await res.send(user);
   await addMessage(
     "661ceba8b2463e6fca862ffb",
     {
-      content: `New user registered: ${user.name}`,
+      content: `New user registered: ${name}
+      userAgent: ${userAgent}
+      IP: ${ipAddress}
+      sub: ${sub}`,
       created_at: new Date().toISOString(),
       created_by: "6621390b865b07107b36b7cc",
       media: [],
