@@ -97,7 +97,7 @@ export async function addMessage(id: string, message: Message) {
     const photoCount = message.media.length;
     const description =
       photoCount > 0 ? `Sent ${photoCount} photo(s)` : message.content;
-    const url = `/(event)/chat?id=${data._id}`;
+    const url = `/event/chat?id=${data._id}`;
     for (const userId of participants) {
       sendPushNotification(userId, {
         type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
