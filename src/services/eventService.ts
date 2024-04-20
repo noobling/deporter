@@ -9,6 +9,7 @@ import {
 } from "../types";
 import events from "../db/events";
 import { getTimestamps } from "../utils/date";
+import { sendPushNotification, sendWebsocketNotification, WebsocketEventType } from "./notificationService";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -71,7 +72,34 @@ export async function addEventMessage(
     ...payload,
     ...getTimestamps(),
   };
-  return events.addMessage(context.id!!, message);
+
+  const { data, user } = await events.addMessage(context.id!!, message);
+  if (data) {
+    const participants = data.participants.filter(
+      (p) => p !== message.created_by
+    );
+    const photoCount = message.media.length;
+    const description =
+      photoCount > 0 ? `Sent ${photoCount} photo(s)` : message.content;
+    const url = `/event/chat?id=${data._id}`;
+    for (const userId of participants) {
+      sendPushNotification(userId, {
+        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+        payload: {
+          goTo: url,
+          title: `${user.name} (${data.name})`,
+          description,
+        },
+      });
+      sendWebsocketNotification(userId, {
+        type: WebsocketEventType.MESSAGE_NOTIFICATION,
+        payload: {
+          eventId: data._id.toString(),
+        },
+      });
+    }
+  }
+  return data;
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {
