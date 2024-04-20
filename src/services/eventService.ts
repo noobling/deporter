@@ -113,7 +113,7 @@ export async function joinEvent(_: any, context: AuthContext) {
     participants: [context.authedUser._id],
   });
 
-  adminSendMessage({
+  await adminSendMessage({
     message: `${context.authedUser.name} has joined the event!!`,
     eventId: context.id,
   })
@@ -130,8 +130,8 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
     return event;
   } else {
     await events.joinByCode(code, context.authedUser._id);
-    adminSendMessage({
-      message: `${context.authedUser.name} has joined the event!!`,
+    await adminSendMessage({
+      message: `${context.authedUser.name} has joined your private event!!`,
       eventId: event._id,
     })
     return events.getByCode(code);
