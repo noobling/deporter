@@ -12,15 +12,15 @@ const adminUser = {
 
 
 export async function adminSendMessage({
-    message
+    message, eventId
 }: {
-    message: string
+    message: string, eventId: string
 }) {
     await addEventMessage(
         {
             content: message, media: []
         }, {
-        id: "6621390b865b07107b36b7cc",
+        id: eventId,
         authedUser: adminUser,
         queryParams: '',
     }

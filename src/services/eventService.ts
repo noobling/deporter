@@ -115,6 +115,7 @@ export async function joinEvent(_: any, context: AuthContext) {
 
   adminSendMessage({
     message: `${context.authedUser.name} has joined the event!!`,
+    eventId: context.id,
   })
 
   return events.getEvent(context.id);
@@ -131,6 +132,7 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
     await events.joinByCode(code, context.authedUser._id);
     adminSendMessage({
       message: `${context.authedUser.name} has joined the event!!`,
+      eventId: event._id,
     })
     return events.getByCode(code);
   }

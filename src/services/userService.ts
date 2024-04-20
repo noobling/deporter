@@ -96,7 +96,8 @@ export async function registerUserFromToken(req: Request, res: Response) {
   sub: ${sub}`
 
   await adminSendMessage({
-    message
+    message,
+    eventId: "661ceba8b2463e6fca862ffb"
   })
 
   return response
