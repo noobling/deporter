@@ -8,6 +8,7 @@ import {
   UpdateUserRequest,
 } from "../types";
 import { cacheGet } from "../utils/redis";
+import { adminSendMessage } from "../utils/admin";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
@@ -81,7 +82,25 @@ export async function registerUserFromToken(req: Request, res: Response) {
     });
   }
 
-  return res.send(user);
+  const ipAddress = req.ip
+  const userAgent = req.headers['user-agent']
+  const sub = user.sub
+  const name = user.name
+
+  // TODO Fix hardcoded shit
+  const response = await res.send(user);
+
+  const message = `New user registered: ${name}
+userAgent: ${userAgent}
+IP: ${ipAddress}
+sub: ${sub}`
+
+  await adminSendMessage({
+    message,
+    eventId: "661ceba8b2463e6fca862ffb"
+  })
+
+  return response
 }
 
 export async function deleteUser(_: any, context: AuthContext) {

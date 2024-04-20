@@ -9,6 +9,8 @@ import {
 } from "../types";
 import events from "../db/events";
 import { getTimestamps } from "../utils/date";
+import { sendPushNotification, sendWebsocketNotification, WebsocketEventType } from "./notificationService";
+import { adminSendMessage } from "../utils/admin";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -71,7 +73,34 @@ export async function addEventMessage(
     ...payload,
     ...getTimestamps(),
   };
-  return events.addMessage(context.id!!, message);
+
+  const { data, user } = await events.addMessage(context.id!!, message);
+  if (data) {
+    const participants = data.participants.filter(
+      (p) => p !== message.created_by
+    );
+    const photoCount = message.media.length;
+    const description =
+      photoCount > 0 ? `Sent ${photoCount} photo(s)` : message.content;
+    const url = `/event/chat?id=${data._id}`;
+    for (const userId of participants) {
+      sendPushNotification(userId, {
+        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+        payload: {
+          goTo: url,
+          title: `${user.name} (${data.name})`,
+          description,
+        },
+      });
+      sendWebsocketNotification(userId, {
+        type: WebsocketEventType.MESSAGE_NOTIFICATION,
+        payload: {
+          eventId: data._id.toString(),
+        },
+      });
+    }
+  }
+  return data;
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {
@@ -83,6 +112,12 @@ export async function joinEvent(_: any, context: AuthContext) {
   await events.addParticipants(context.id, {
     participants: [context.authedUser._id],
   });
+
+  await adminSendMessage({
+    message: `${context.authedUser.name} has joined the event!!`,
+    eventId: context.id,
+  })
+
   return events.getEvent(context.id);
 }
 
@@ -95,6 +130,10 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
     return event;
   } else {
     await events.joinByCode(code, context.authedUser._id);
+    await adminSendMessage({
+      message: `${context.authedUser.name} has joined your private event!!`,
+      eventId: event._id,
+    })
     return events.getByCode(code);
   }
 }

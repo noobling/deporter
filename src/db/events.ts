@@ -9,11 +9,6 @@ import {
 } from "../types";
 import { getMongoID } from "../utils/mongo";
 import db from "./db";
-import {
-  sendPushNotification,
-  sendWebsocketNotification,
-  WebsocketEventType,
-} from "../services/notificationService";
 import users from "./users";
 
 const collection = db.collection("event");
@@ -85,7 +80,7 @@ async function createEvent(event: Event) {
   return getEvent(insertedId.toString());
 }
 
-async function addMessage(id: string, message: Message) {
+export async function addMessage(id: string, message: Message) {
   await updateList(id, {
     messages: message,
   });
@@ -95,35 +90,7 @@ async function addMessage(id: string, message: Message) {
     users.getUser(message.created_by),
   ]);
 
-  // Add notifications to q
-  if (data) {
-    const participants = data.participants.filter(
-      (p) => p !== message.created_by
-    );
-
-    const photoCount = message.media.length;
-    const description =
-      photoCount > 0 ? `Sent ${photoCount} photo(s)` : message.content;
-    const url = `/(event)/chat?id=${data._id}`;
-    for (const userId of participants) {
-      sendPushNotification(userId, {
-        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
-        payload: {
-          goTo: url,
-          title: `${user.name} (${data.name})`,
-          description,
-        },
-      });
-      sendWebsocketNotification(userId, {
-        type: WebsocketEventType.MESSAGE_NOTIFICATION,
-        payload: {
-          eventId: data._id.toString(),
-        },
-      });
-    }
-  }
-
-  return data;
+  return { data, user };
 }
 
 async function addExpense(id: string, expense: Expense) {
