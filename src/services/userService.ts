@@ -8,7 +8,7 @@ import {
   UpdateUserRequest,
 } from "../types";
 import { cacheGet } from "../utils/redis";
-import { addMessage } from "../db/events";
+import { adminSendMessage } from "../utils/admin";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
@@ -89,19 +89,15 @@ export async function registerUserFromToken(req: Request, res: Response) {
 
   // TODO Fix hardcoded shit
   const response = await res.send(user);
-  await addMessage(
-    "661ceba8b2463e6fca862ffb",
-    {
-      content: `New user registered: ${name}
-      userAgent: ${userAgent}
-      IP: ${ipAddress}
-      sub: ${sub}`,
-      created_at: new Date().toISOString(),
-      created_by: "6621390b865b07107b36b7cc",
-      media: [],
-      updated_at: new Date().toISOString(),
-    }
-  )
+
+  const message = `New user registered: ${name}
+  userAgent: ${userAgent}
+  IP: ${ipAddress}
+  sub: ${sub}`
+
+  await adminSendMessage({
+    message
+  })
 
   return response
 }

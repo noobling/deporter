@@ -10,6 +10,7 @@ import {
 import events from "../db/events";
 import { getTimestamps } from "../utils/date";
 import { sendPushNotification, sendWebsocketNotification, WebsocketEventType } from "./notificationService";
+import { adminSendMessage } from "../utils/admin";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -111,6 +112,11 @@ export async function joinEvent(_: any, context: AuthContext) {
   await events.addParticipants(context.id, {
     participants: [context.authedUser._id],
   });
+
+  adminSendMessage({
+    message: `${context.authedUser.name} has joined the event!!`,
+  })
+
   return events.getEvent(context.id);
 }
 
@@ -123,6 +129,9 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
     return event;
   } else {
     await events.joinByCode(code, context.authedUser._id);
+    adminSendMessage({
+      message: `${context.authedUser.name} has joined the event!!`,
+    })
     return events.getByCode(code);
   }
 }
