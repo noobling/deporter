@@ -91,9 +91,9 @@ export async function registerUserFromToken(req: Request, res: Response) {
   const response = await res.send(user);
 
   const message = `New user registered: ${name}
-  userAgent: ${userAgent}
-  IP: ${ipAddress}
-  sub: ${sub}`
+userAgent: ${userAgent}
+IP: ${ipAddress}
+sub: ${sub}`
 
   await adminSendMessage({
     message,
