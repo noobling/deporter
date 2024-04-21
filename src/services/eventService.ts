@@ -9,7 +9,11 @@ import {
 } from "../types";
 import events from "../db/events";
 import { getTimestamps } from "../utils/date";
-import { sendPushNotification, sendWebsocketNotification, WebsocketEventType } from "./notificationService";
+import {
+  sendPushNotification,
+  sendWebsocketNotification,
+  WebsocketEventType,
+} from "./notificationService";
 import { adminSendMessage } from "../utils/admin";
 
 export async function getEvent(payload: any, context: AuthContext) {
@@ -25,6 +29,7 @@ export async function getEventsForCurrentUser(
   context: AuthContext
 ): Promise<EventsResponse> {
   const data = await events.listEvents(context.authedUser._id);
+
   return { events: data };
 }
 
@@ -39,7 +44,7 @@ export async function createEvent(
     participants: [context.authedUser._id],
     expenses: [],
     payments: [],
-    status: "public", // TODO make private once we release join feature
+    status: "private",
     ...getTimestamps(),
   });
 }
@@ -116,7 +121,7 @@ export async function joinEvent(_: any, context: AuthContext) {
   await adminSendMessage({
     message: `${context.authedUser.name} has joined the event!!`,
     eventId: context.id,
-  })
+  });
 
   return events.getEvent(context.id);
 }
@@ -133,7 +138,7 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
     await adminSendMessage({
       message: `${context.authedUser.name} has joined your private event!!`,
       eventId: event._id,
-    })
+    });
     return events.getByCode(code);
   }
 }
