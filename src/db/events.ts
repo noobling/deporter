@@ -6,6 +6,7 @@ import {
   Expense,
   Message,
   Payment,
+  UpdateEventRequest,
 } from "../types";
 import { getMongoID } from "../utils/mongo";
 import db from "./db";
@@ -80,6 +81,22 @@ async function createEvent(event: Event) {
   return getEvent(insertedId.toString());
 }
 
+async function updateEvent(id: string, event: UpdateEventRequest) {
+  await collection.updateOne(
+    {
+      _id: getMongoID(id),
+    },
+    {
+      $set: {
+        ...event,
+        updated_at: new Date().toISOString(),
+      },
+    }
+  );
+
+  return getEvent(id);
+}
+
 export async function addMessage(id: string, message: Message) {
   await updateList(id, {
     messages: message,
@@ -150,6 +167,7 @@ export default {
   getEvent,
   getEventMetaData,
   createEvent,
+  updateEvent,
   addMessage,
   addExpense,
   addParticipants,

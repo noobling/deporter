@@ -14,6 +14,7 @@ import {
   getEventsToJoin,
   joinEvent,
   joinEventByCode,
+  updateEvent,
 } from "./services/eventService";
 import {
   checkTokenStatus,
@@ -62,6 +63,7 @@ app.get("/events", handler(getEventsForCurrentUser));
 app.get("/event/:id", handler(getEvent));
 app.get("/event/:id/metadata", handler(getEventMetaData));
 app.post("/event", handler(createEvent));
+app.post("/event/:id/update", handler(updateEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
 app.post("/event/:id/payment", handler(addEventPayment));
 app.post("/event/:id/message", handler(addEventMessage));

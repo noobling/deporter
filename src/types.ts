@@ -21,6 +21,13 @@ export interface CreateEventRequest {
   photo: string;
   start_time: string;
 }
+
+export interface UpdateEventRequest {
+  name: string;
+  photo: string;
+  start_time: string;
+}
+
 export interface AddParticipantRequest {
   participants: string[];
 }

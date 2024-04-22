@@ -3,12 +3,14 @@ import {
   CreateEventRequest,
   CreateMessageRequest,
   CreatePaymentRequest,
+  EventResponse,
   EventsResponse,
   Expense,
   Message,
+  UpdateEventRequest,
 } from "../types";
 import events from "../db/events";
-import { getTimestamps } from "../utils/date";
+import { getDaysToGo, getTimestamps } from "../utils/date";
 import {
   sendPushNotification,
   sendWebsocketNotification,
@@ -47,6 +49,13 @@ export async function createEvent(
     status: "private",
     ...getTimestamps(),
   });
+}
+
+export async function updateEvent(
+  payload: UpdateEventRequest,
+  context: AuthContext
+) {
+  return events.updateEvent(context.id, payload);
 }
 
 export async function addEventExpense(payload: any, context: AuthContext) {
@@ -145,4 +154,33 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
 
 export async function getEventsToJoin(_: any, context: AuthContext) {
   return events.getEventsToJoin(context.authedUser._id);
+}
+
+export async function sendEventReminder() {
+  const eventsToRemind = await getEventsToRemind();
+  for (const event of eventsToRemind) {
+    const daysToGo = getDaysToGo(event.start_time);
+
+    await adminSendMessage({
+      message: `Time to stop, drop and snap 📸, ${daysToGo} days left 🎉`,
+      eventId: event._id,
+    });
+  }
+}
+
+export async function getEventsToRemind(): Promise<EventResponse[]> {
+  // Hard coded for now since we have a lot of test events and no real users
+  const TEMP_HARD_CODED_EVENTS_TO_REMIND: string[] = [];
+  const promises = Promise.all(
+    TEMP_HARD_CODED_EVENTS_TO_REMIND.flatMap(async (id) => {
+      const result = await events.getEvent(id);
+      if (!result) return [];
+      if (getDaysToGo(result?.start_time) > 0) {
+        return [result];
+      } else {
+        [];
+      }
+    })
+  );
+  return promises as unknown as Promise<EventResponse[]>;
 }
