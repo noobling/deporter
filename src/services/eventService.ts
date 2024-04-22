@@ -8,6 +8,7 @@ import {
   Expense,
   Message,
   UpdateEventRequest,
+  UserResponse,
 } from "../types";
 import events from "../db/events";
 import { getDaysToGo, getTimestamps } from "../utils/date";
@@ -90,38 +91,9 @@ export async function addEventMessage(
 
   const { data, user } = await events.addMessage(context.id!!, message);
   if (data) {
-    const participants = data.participants.filter(
-      (p) => p !== message.created_by
-    );
-    for (const userId of participants) {
-      sendPushNotification(userId, {
-        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
-        payload: {
-          goTo: url,
-          title: `${user.name} (${data.name})`,
-          description: getMessageDescription(message),
-        },
-      });
-      sendWebsocketNotification(userId, {
-        type: WebsocketEventType.MESSAGE_NOTIFICATION,
-        payload: {
-          eventId: data._id.toString(),
-        },
-      });
-    }
+    sendUserNotificationsAsync(data, message, user);
   }
   return data;
-}
-
-function getMessageDescription(message: Message) {
-  const photoCount = message.media.length;
-  if (photoCount > 0) {
-    return `Sent ${photoCount} photo(s)`;
-  } else if (message.content.startsWith("U2FsdGVkX1")) {
-    return "Sent a secret message";
-  } else {
-    return message.content;
-  }
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {
@@ -190,4 +162,43 @@ export async function getEventsToRemind(): Promise<EventResponse[]> {
     })
   );
   return promises as unknown as Promise<EventResponse[]>;
+}
+
+function sendUserNotificationsAsync(
+  data: EventResponse,
+  message: Message,
+  user: UserResponse
+) {
+  const participants = data.participants.filter(
+    (p) => p !== message.created_by
+  );
+  const url = `/event/chat?id=${data._id}`;
+
+  for (const userId of participants) {
+    sendPushNotification(userId, {
+      type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+      payload: {
+        goTo: url,
+        title: `${user.name} (${data.name})`,
+        description: getMessageDescription(message),
+      },
+    });
+    sendWebsocketNotification(userId, {
+      type: WebsocketEventType.MESSAGE_NOTIFICATION,
+      payload: {
+        eventId: data._id.toString(),
+      },
+    });
+  }
+}
+
+function getMessageDescription(message: Message) {
+  const photoCount = message.media.length;
+  if (photoCount > 0) {
+    return `Sent ${photoCount} photo(s)`;
+  } else if (message.content.startsWith("U2FsdGVkX1")) {
+    return "Sent a secret message";
+  } else {
+    return message.content;
+  }
 }
