@@ -56,7 +56,14 @@ export async function updateEvent(
   payload: UpdateEventRequest,
   context: AuthContext
 ) {
-  return events.updateEvent(context.id, payload);
+  const result = await events.updateEvent(context.id, payload);
+  adminSendMessage({
+    message: `Event ${result!!.name} has been updated by ${
+      context.authedUser.name
+    }!`,
+    eventId: result!!._id,
+  });
+  return result;
 }
 
 export async function addEventExpense(payload: any, context: AuthContext) {
