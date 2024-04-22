@@ -93,17 +93,13 @@ export async function addEventMessage(
     const participants = data.participants.filter(
       (p) => p !== message.created_by
     );
-    const photoCount = message.media.length;
-    const description =
-      photoCount > 0 ? `Sent ${photoCount} photo(s)` : message.content;
-    const url = `/event/chat?id=${data._id}`;
     for (const userId of participants) {
       sendPushNotification(userId, {
         type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
         payload: {
           goTo: url,
           title: `${user.name} (${data.name})`,
-          description,
+          description: getMessageDescription(message),
         },
       });
       sendWebsocketNotification(userId, {
@@ -115,6 +111,17 @@ export async function addEventMessage(
     }
   }
   return data;
+}
+
+function getMessageDescription(message: Message) {
+  const photoCount = message.media.length;
+  if (photoCount > 0) {
+    return `Sent ${photoCount} photo(s)`;
+  } else if (message.content.startsWith("U2FsdGVkX1")) {
+    return "Sent a secret message";
+  } else {
+    return message.content;
+  }
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {
