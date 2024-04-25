@@ -18,7 +18,7 @@ import {
   WebsocketEventType,
 } from "./notificationService";
 import { adminSendMessage } from "../utils/admin";
-import { getMongoId } from "../utils/mongo";
+import { getMongoId, isEqual } from "../utils/mongo";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -99,7 +99,7 @@ export async function addEventMessage(
 
   const { data, user } = await events.addMessage(context.id!!, message);
   if (data) {
-    sendUserNotificationsAsync(data, message, user);
+    sendNotifsForMessageInEventAsync(data, message, user);
   }
   return data;
 }
@@ -172,29 +172,29 @@ export async function getEventsToRemind(): Promise<EventResponse[]> {
   return promises as unknown as Promise<EventResponse[]>;
 }
 
-function sendUserNotificationsAsync(
-  data: EventResponse,
+function sendNotifsForMessageInEventAsync(
+  event: EventResponse,
   message: Message,
-  user: UserResponse
+  fromUser: UserResponse
 ) {
-  const participants = data.participants.filter((p) =>
-    getMongoId(p).equals(getMongoId(message.created_by))
+  const toSendUserIds = event.participants.filter(
+    (p) => !isEqual(p, fromUser._id)
   );
-  const url = `/event/chat?id=${data._id}`;
+  const goTo = `/event/chat?id=${event._id}`;
 
-  for (const userId of participants) {
+  for (const userId of toSendUserIds) {
     sendPushNotification(userId, {
       type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
       payload: {
-        goTo: url,
-        title: `${user.name} (${data.name})`,
+        goTo,
+        title: `${fromUser.name} (${event.name})`,
         description: getMessageDescription(message),
       },
     });
     sendWebsocketNotification(userId, {
       type: WebsocketEventType.MESSAGE_NOTIFICATION,
       payload: {
-        eventId: data._id.toString(),
+        eventId: event._id.toString(),
       },
     });
   }

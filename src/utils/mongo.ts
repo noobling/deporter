@@ -26,3 +26,13 @@ export function getMongoId(id: any): ObjectId {
     return id;
   }
 }
+
+/**
+ * Compares if two mongo ids are equal regardless of if they are string or not.
+ */
+export function isEqual(id: any, otherId: any) {
+  const mongoId = getMongoId(id);
+  const otherMongoId = getMongoId(otherId);
+
+  return mongoId.equals(otherMongoId);
+}
