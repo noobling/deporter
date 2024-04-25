@@ -16,6 +16,7 @@ import {
   joinEventByCode,
   updateEvent,
 } from "./services/eventService";
+import { createMedia, getMedia } from "./services/mediaService";
 import {
   checkTokenStatus,
   currentUser,
@@ -28,7 +29,6 @@ import {
 } from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
-import { createMedia, getMedia } from "./services/mediaService";
 
 /*
  * Load up and parse configuration details from

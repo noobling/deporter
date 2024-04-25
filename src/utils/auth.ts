@@ -6,7 +6,7 @@ import user from "../db/users";
 import { UserResponse, UserToken } from "../types";
 import environment from "./environment";
 import { cacheGet, cacheSet } from "./redis";
-import { getMongoID } from "./mongo";
+import { getMongoIdOrFail } from "./mongo";
 
 export async function getLoggedInUserOrThrow(
   req: Request
@@ -16,7 +16,10 @@ export async function getLoggedInUserOrThrow(
   const cachedUser = await cacheGet(token);
   if (cachedUser) {
     console.log("Found user cached with token");
-    return { ...cachedUser, _id: getMongoID(cachedUser._id) } as UserResponse;
+    return {
+      ...cachedUser,
+      _id: getMongoIdOrFail(cachedUser._id),
+    } as UserResponse;
   }
 
   // Otherwise fetch from db
@@ -94,7 +97,9 @@ async function getGoogleTokenInfo(idToken: string): Promise<UserToken> {
   };
 }
 
-async function getGoogleAccessTokenInfo(accessToken: string): Promise<UserToken> {
+async function getGoogleAccessTokenInfo(
+  accessToken: string
+): Promise<UserToken> {
   const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${accessToken}`;
   const { data } = await axios.get(url);
   return {

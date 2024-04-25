@@ -8,7 +8,7 @@ import {
   Payment,
   UpdateEventRequest,
 } from "../types";
-import { getMongoID } from "../utils/mongo";
+import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
 import users from "./users";
 
@@ -55,14 +55,14 @@ function getEvent(
   options: FindOptions<Document> = {}
 ): Promise<EventResponse | null> {
   return collection.findOne(
-    { _id: getMongoID(id) },
+    { _id: getMongoIdOrFail(id) },
     options
   ) as unknown as Promise<EventResponse>;
 }
 
 function getEventMetaData(id: string) {
   return collection.findOne(
-    { _id: getMongoID(id) },
+    { _id: getMongoIdOrFail(id) },
     {
       projection: {
         messages: 0,
@@ -84,7 +84,7 @@ async function createEvent(event: Event) {
 async function updateEvent(id: string, event: UpdateEventRequest) {
   await collection.updateOne(
     {
-      _id: getMongoID(id),
+      _id: getMongoIdOrFail(id),
     },
     {
       $set: {
@@ -132,7 +132,7 @@ function addParticipants(id: string, participants: AddParticipantRequest) {
 
 function updateList(id: string, push: PushOperator<Document>) {
   return collection.updateOne(
-    { _id: getMongoID(id) },
+    { _id: getMongoIdOrFail(id) },
     {
       $push: push,
       $set: {

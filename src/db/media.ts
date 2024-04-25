@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { Media } from "../types";
 import db from "./db";
-import { getMongoID } from "../utils/mongo";
+import { getMongoIdOrFail } from "../utils/mongo";
 
 const collection = db.collection("media");
 
@@ -11,7 +11,7 @@ async function create(media: Media) {
 }
 
 async function get(id: string) {
-  return collection.findOne({ _id: getMongoID(id) });
+  return collection.findOne({ _id: getMongoIdOrFail(id) });
 }
 
 export default {

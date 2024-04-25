@@ -1,6 +1,6 @@
 import { UpdateUserRequest, UserResponse, UserToken } from "../types";
 import { getTimestamps } from "../utils/date";
-import { getMongoID } from "../utils/mongo";
+import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
 
 const collection = db.collection("user");
@@ -28,7 +28,7 @@ async function createUser(user: UserToken) {
 async function updateUser(id: string, user: UpdateUserRequest) {
   await collection.updateOne(
     {
-      _id: getMongoID(id),
+      _id: getMongoIdOrFail(id),
     },
     {
       $set: {
@@ -47,26 +47,26 @@ function getUserBySub(sub: string) {
 
 async function getUser(id: string): Promise<UserResponse> {
   const user = (await collection.findOne({
-    _id: getMongoID(id),
+    _id: getMongoIdOrFail(id),
   })) as unknown as UserResponse;
 
   // TODO #37 - Revert
-  if ('status' in user && user.status === "deleted") {
+  if ("status" in user && user.status === "deleted") {
     return {
-      sub: '',
+      sub: "",
       _id: user._id,
-      name: 'deleted user',
-      photo: '',
+      name: "deleted user",
+      photo: "",
       created_at: user.created_at,
       updated_at: user.updated_at,
-    }
+    };
   }
   return user;
 }
 
 async function updatePhoto(id: string, photo: string) {
   await collection.updateOne(
-    { _id: getMongoID(id) },
+    { _id: getMongoIdOrFail(id) },
     {
       $set: {
         photo,
@@ -82,7 +82,7 @@ async function deleteUser(id: string) {
   const user = await getUser(id);
   return collection.updateOne(
     {
-      _id: getMongoID(id),
+      _id: getMongoIdOrFail(id),
     },
     {
       $set: {

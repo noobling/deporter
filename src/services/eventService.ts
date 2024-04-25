@@ -18,6 +18,7 @@ import {
   WebsocketEventType,
 } from "./notificationService";
 import { adminSendMessage } from "../utils/admin";
+import { getMongoId } from "../utils/mongo";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -176,8 +177,8 @@ function sendUserNotificationsAsync(
   message: Message,
   user: UserResponse
 ) {
-  const participants = data.participants.filter(
-    (p) => p !== message.created_by
+  const participants = data.participants.filter((p) =>
+    getMongoId(p).equals(getMongoId(message.created_by))
   );
   const url = `/event/chat?id=${data._id}`;
 
