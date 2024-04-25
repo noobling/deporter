@@ -50,17 +50,6 @@ async function getUser(id: string): Promise<UserResponse> {
     _id: getMongoIdOrFail(id),
   })) as unknown as UserResponse;
 
-  // TODO #37 - Revert
-  if ("status" in user && user.status === "deleted") {
-    return {
-      sub: "",
-      _id: user._id,
-      name: "deleted user",
-      photo: "",
-      created_at: user.created_at,
-      updated_at: user.updated_at,
-    };
-  }
   return user;
 }
 

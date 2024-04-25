@@ -7,6 +7,7 @@ const adminUser = {
   sub: "",
   updated_at: "",
   photo: "",
+  email: "",
 };
 
 export async function adminSendMessage({
