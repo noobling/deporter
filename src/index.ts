@@ -29,6 +29,7 @@ import {
 } from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
+import { getFeed } from "./services/feedService";
 
 /*
  * Load up and parse configuration details from
@@ -75,6 +76,9 @@ app.get("/event/join/code", handler(joinEventByCode));
 // Media API
 app.post("/media", handler(createMedia));
 app.get("/media/:id", handler(getMedia));
+
+// Feed API
+app.get("/feed", handler(getFeed));
 
 swagger(app);
 /* Start the Express app and listen

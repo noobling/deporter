@@ -1,12 +1,11 @@
 import appleSignIn from "apple-signin-auth";
 import axios from "axios";
 import { Request } from "express";
-import { OAuth2Client } from "google-auth-library";
 import user from "../db/users";
 import { UserResponse, UserToken } from "../types";
 import environment from "./environment";
-import { cacheGet, cacheSet } from "./redis";
 import { getMongoIdOrFail } from "./mongo";
+import { cacheGet, cacheSet } from "./redis";
 
 export async function getLoggedInUserOrThrow(
   req: Request
@@ -55,22 +54,12 @@ export async function getUserFromToken(req: Request): Promise<UserToken> {
 
   // TODO we may want to validate the audience as well
   try {
-    if (token.startsWith("ya29")) {
-      const googleAuth = new OAuth2Client({});
-      const result = await googleAuth.getTokenInfo(token);
-      return {
-        sub: result.sub!!,
-        email: result.email ?? null,
-        photo: null,
-        name: null,
-      };
-    } else {
-      const result = await appleSignIn.verifyIdToken(token);
-      return { sub: result.sub, email: result.email, photo: null, name: null };
-    }
+    // Try apple first
+    const result = await appleSignIn.verifyIdToken(token);
+    return { sub: result.sub, email: result.email, photo: null, name: null };
   } catch (err) {
     try {
-      // const result = await getGoogleTokenInfo(token);
+      // Then try google next
       const result = await getGoogleAccessTokenInfo(token);
       return result;
     } catch (err) {
@@ -83,19 +72,6 @@ export async function getUserFromToken(req: Request): Promise<UserToken> {
 }
 
 export class Unauthenticated extends Error {}
-
-// TODO: maybe we care about expire tokens one day
-async function getGoogleTokenInfo(idToken: string): Promise<UserToken> {
-  const url = `https://www.googleapis.com/oauth2/v3/tokeninfo?idToken=${idToken}`;
-
-  const { data } = await axios.get(url);
-  return {
-    sub: data.sub!!,
-    email: data.email,
-    photo: data.picture,
-    name: data.name,
-  };
-}
 
 async function getGoogleAccessTokenInfo(
   accessToken: string

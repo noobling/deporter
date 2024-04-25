@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { getLoggedInUserOrThrow } from "./auth";
 import { AuthContext } from "../types";
+import { adminSendMessage } from "./admin";
 
 export const handler = (
   cb: (payload: any, context: AuthContext) => Promise<any>
@@ -47,7 +48,7 @@ export const handler = (
       }
 
       res.send(result);
-    } catch (err) {
+    } catch (err: any) {
       if (err instanceof BadRequest) {
         log("bad request", err.message);
         return res.status(400).send(err.message);
@@ -55,6 +56,12 @@ export const handler = (
 
       console.error("Unexpected error", err);
       log("unexpected error", err);
+
+      adminSendMessage({
+        message: `Error in ${cb.name}(): ${err?.message}`,
+        eventId: "661ceba8b2463e6fca862ffb", // Developer chat
+      });
+
       return res.status(500).send("Something went wrong");
     }
   };

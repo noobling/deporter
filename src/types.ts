@@ -92,6 +92,7 @@ export interface User {
   sub: string;
   name: string;
   photo?: string;
+  email: string;
   created_at: string;
   updated_at: string;
 }
@@ -170,4 +171,15 @@ export interface UserToken {
   email: string | null;
   photo: string | null;
   name: string | null;
+}
+
+// Feed API
+export interface FeedItem {
+  media: string;
+  eventId: string;
+  eventName: string;
+  eventPhoto: string;
+  message: string;
+  created_at: string;
+  created_by: string;
 }

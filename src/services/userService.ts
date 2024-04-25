@@ -82,25 +82,26 @@ export async function registerUserFromToken(req: Request, res: Response) {
     });
   }
 
-  const ipAddress = req.ip
-  const userAgent = req.headers['user-agent']
-  const sub = user.sub
-  const name = user.name
+  const ipAddress = req.ip;
+  const userAgent = req.headers["user-agent"];
+  const sub = user.sub;
+  const name = user.name;
 
   // TODO Fix hardcoded shit
   const response = await res.send(user);
 
   const message = `New user registered: ${name}
+Email: ${user.email}
 userAgent: ${userAgent}
 IP: ${ipAddress}
-sub: ${sub}`
+sub: ${sub}`;
 
   await adminSendMessage({
     message,
-    eventId: "661ceba8b2463e6fca862ffb"
-  })
+    eventId: "661ceba8b2463e6fca862ffb", // Developer chat
+  });
 
-  return response
+  return response;
 }
 
 export async function deleteUser(_: any, context: AuthContext) {
