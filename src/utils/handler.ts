@@ -4,7 +4,7 @@ import { AuthContext } from "../types";
 import { adminSendMessage } from "./admin";
 
 export const handler = (
-  cb: (payload: any, context: AuthContext) => Promise<any>
+  cb: (payload: any, context: AuthContext) => Promise<any | null | undefined>
 ) => {
   return async (req: Request, res: Response) => {
     const id = req.params.id;
@@ -40,7 +40,7 @@ export const handler = (
     try {
       const result = await cb(payload, context);
 
-      if (Boolean(result.messages)) {
+      if (Boolean(result?.messages)) {
         // Don't log messages its too big
         log("result", { ...result, messages: "..." });
       } else {

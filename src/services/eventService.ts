@@ -127,7 +127,9 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
   const event = await events.getByCode(code);
   if (!event) {
     return null;
-  } else if (event.participants.includes(context.authedUser._id)) {
+  } else if (
+    event.participants.some((p) => isEqual(p, context.authedUser._id))
+  ) {
     return event;
   } else {
     await events.joinByCode(code, context.authedUser._id);
