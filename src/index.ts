@@ -30,6 +30,7 @@ import {
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
 import { getFeed } from "./services/feedService";
+import { startCronJobs } from "./scheduler";
 
 /*
  * Load up and parse configuration details from
@@ -45,6 +46,9 @@ dotenv.config();
  */
 const app: Express = express();
 const port = process.env.PORT || 3000;
+
+// Start cron jobs
+startCronJobs();
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());

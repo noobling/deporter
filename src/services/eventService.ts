@@ -159,7 +159,9 @@ export async function sendEventReminder() {
 
 export async function getEventsToRemind(): Promise<EventResponse[]> {
   // Hard coded for now since we have a lot of test events and no real users
-  const TEMP_HARD_CODED_EVENTS_TO_REMIND: string[] = [];
+  const TEMP_HARD_CODED_EVENTS_TO_REMIND: string[] = [
+    "661f347eb00ae385b0528bc2",
+  ];
   const promises = Promise.all(
     TEMP_HARD_CODED_EVENTS_TO_REMIND.flatMap(async (id) => {
       const result = await events.getEvent(id);
