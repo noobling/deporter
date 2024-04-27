@@ -162,18 +162,18 @@ export async function getEventsToRemind(): Promise<EventResponse[]> {
   const TEMP_HARD_CODED_EVENTS_TO_REMIND: string[] = [
     "661f347eb00ae385b0528bc2",
   ];
-  const promises = Promise.all(
-    TEMP_HARD_CODED_EVENTS_TO_REMIND.flatMap(async (id) => {
-      const result = await events.getEvent(id);
-      if (!result) return [];
-      if (getDaysToGo(result?.start_time) > 0) {
-        return [result];
-      } else {
-        [];
-      }
-    })
-  );
-  return promises as unknown as Promise<EventResponse[]>;
+  const items = TEMP_HARD_CODED_EVENTS_TO_REMIND.map(async (id) => {
+    const result = await events.getEvent(id);
+    if (!result) return null;
+    if (getDaysToGo(result?.start_time) > 0) {
+      return result;
+    } else {
+      null;
+    }
+  });
+  const promises = await Promise.all(items);
+  const filtered = promises.filter((p) => Boolean(p)) as EventResponse[];
+  return filtered;
 }
 
 function sendNotifsForMessageInEventAsync(
