@@ -93,11 +93,11 @@ async function deleteUser(id: string) {
   );
 }
 
-async function addFriend(friendId: string, userId: any) {
-  const user = await getUser(friendId);
+async function addFriend(friendId: string, userId: string) {
+  const user = await getUser(userId);
 
   // Don't add the same friend twice
-  if (user.friends.includes(friendId)) {
+  if (user.friends.some((id) => isEqual(id, friendId))) {
     return user;
   }
 
@@ -107,7 +107,7 @@ async function addFriend(friendId: string, userId: any) {
     },
     {
       $push: {
-        friends: userId,
+        friends: getMongoIdOrFail(friendId) as any,
       },
       $set: {
         updated_at: new Date().toISOString(),
