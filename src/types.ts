@@ -132,6 +132,17 @@ export interface RegisterUserRequest {
   email: string | null;
 }
 
+export interface ListFriendsResponse {
+  /**
+   * Users that you added as friends
+   */
+  yourFriends: UserResponse[];
+  /**
+   * Users who have added you as a friend
+   */
+  addedYou: UserResponse[];
+}
+
 // Expense
 export interface Expense {
   created_by: string;

@@ -1,4 +1,10 @@
-import { UpdateUserRequest, User, UserResponse, UserToken } from "../types";
+import {
+  ListFriendsResponse,
+  UpdateUserRequest,
+  User,
+  UserResponse,
+  UserToken,
+} from "../types";
 import { getTimestamps } from "../utils/date";
 import { getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
@@ -16,10 +22,17 @@ async function getUsers() {
 async function listFriends(userId: string) {
   const users = await getUsers();
   const user = await getUser(userId);
-
-  return users.filter((u) =>
+  const yourFriends = users.filter((u) =>
     user.friends.some((friendId) => isEqual(u._id, friendId))
   );
+  const addedYou = users.filter((u) =>
+    u.friends.some((otherUserFriendId) => isEqual(userId, otherUserFriendId))
+  );
+
+  return {
+    yourFriends,
+    addedYou,
+  } as unknown as Promise<ListFriendsResponse>;
 }
 
 async function createUser(user: UserToken) {
