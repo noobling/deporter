@@ -10,7 +10,7 @@ const collection = db.collection("user");
  */
 async function getUsers() {
   // TODO: One day we want to make things secure and restrict it to users in shared events
-  return collection.find({}).toArray();
+  return collection.find({}).toArray() as unknown as UserResponse[];
 }
 
 async function listFriends(userId: string) {

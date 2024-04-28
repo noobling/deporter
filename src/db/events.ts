@@ -8,7 +8,7 @@ import {
   Payment,
   UpdateEventRequest,
 } from "../types";
-import { getMongoIdOrFail } from "../utils/mongo";
+import { getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
 import users from "./users";
 
@@ -162,6 +162,30 @@ function getByCode(code: string) {
   return collection.findOne({ join_code: code }) as unknown as EventResponse;
 }
 
+async function getEventsViewableByUser(userId: string) {
+  // TODO: Don't pull the entire table to improve performance at some point
+  const allEvents = (await (
+    await collection.find({})
+  ).toArray()) as unknown as EventResponse[];
+  const allUsers = await users.getUsers();
+
+  return allEvents.filter((event) => {
+    const participating =
+      event.participants.some((p) => isEqual(p, userId)) ||
+      isEqual(event.created_by, userId);
+    const friendsWithSomeParticipants = event.participants.some((p) => {
+      const participant = allUsers.find((u) => isEqual(u._id, p));
+      const isFriends = participant?.friends.includes(userId);
+      return isFriends;
+    });
+
+    return (
+      participating ||
+      (friendsWithSomeParticipants && event.status !== "restricted")
+    );
+  });
+}
+
 export default {
   listEvents,
   getEvent,
@@ -175,6 +199,7 @@ export default {
   getEventsToJoin,
   getByCode,
   joinByCode,
+  getEventsViewableByUser,
 };
 
 async function getJoinCode() {

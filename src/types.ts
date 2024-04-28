@@ -10,7 +10,12 @@ export interface Event {
   start_time: string;
   created_at: string;
   updated_at: string;
-  status?: "public" | "private";
+  /**
+   * - public events are deprecated
+   * - private events are default and can show up in feeds for friends
+   * - restricted events only show up for participants
+   */
+  status?: "public" | "private" | "restricted";
   join_code?: string; // unique code users can use to join event
 }
 export interface EventResponse extends Event {

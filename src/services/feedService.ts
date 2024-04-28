@@ -1,9 +1,11 @@
+import events from "../db/events";
 import { AuthContext, FeedItem } from "../types";
-import { getEventsForCurrentUser } from "./eventService";
 
 export async function getFeed(payload: any, context: AuthContext) {
-  const { events } = await getEventsForCurrentUser(payload, context);
-  const feed: FeedItem[] = events
+  const viewableEvents = await events.getEventsViewableByUser(
+    context.authedUser._id
+  );
+  const feed: FeedItem[] = viewableEvents
     .map((event) => {
       return event.messages
         .map((message) => {
