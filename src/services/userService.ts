@@ -107,3 +107,13 @@ sub: ${sub}`;
 export async function deleteUser(_: any, context: AuthContext) {
   return users.deleteUser(context.authedUser._id);
 }
+
+export async function addFriend(payload: any, context: AuthContext) {
+  const friendId = context.id;
+  const userId = context.authedUser._id;
+  return users.addFriend(friendId, userId);
+}
+
+export async function listFriends(payload: any, context: AuthContext) {
+  return users.listFriends(context.authedUser._id);
+}

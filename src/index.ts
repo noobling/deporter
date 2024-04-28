@@ -26,6 +26,8 @@ import {
   registerUserFromToken,
   updateMyPhoto,
   updateUser,
+  listFriends,
+  addFriend,
 } from "./services/userService";
 import { handler } from "./utils/handler";
 import swagger from "./utils/swagger";
@@ -56,6 +58,8 @@ app.use(bodyParser.json());
 // User API
 app.get("/user/me", handler(currentUser));
 app.get("/user/token/check", checkTokenStatus);
+app.get("/user/friends", handler(listFriends));
+app.post("/user/friend/add/:id", handler(addFriend));
 app.post("/user/register", registerUserFromToken);
 app.post("/user/me/photo", handler(updateMyPhoto));
 app.post("/user/delete", handler(deleteUser));

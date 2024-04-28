@@ -8,6 +8,7 @@ const adminUser = {
   updated_at: "",
   photo: "",
   email: "",
+  friends: [],
 };
 
 export async function adminSendMessage({

@@ -1,6 +1,6 @@
-import { UpdateUserRequest, UserResponse, UserToken } from "../types";
+import { UpdateUserRequest, User, UserResponse, UserToken } from "../types";
 import { getTimestamps } from "../utils/date";
-import { getMongoIdOrFail } from "../utils/mongo";
+import { getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
 
 const collection = db.collection("user");
@@ -13,14 +13,25 @@ async function getUsers() {
   return collection.find({}).toArray();
 }
 
+async function listFriends(userId: string) {
+  const users = await getUsers();
+  const user = await getUser(userId);
+
+  return users.filter((u) =>
+    user.friends.some((friendId) => isEqual(u._id, friendId))
+  );
+}
+
 async function createUser(user: UserToken) {
-  const result = await collection.insertOne({
+  const userToCreate: User = {
     name: user.name ?? "unknown",
     sub: user.sub,
-    email: user.email,
-    photo: user.photo,
+    email: user.email ?? "",
+    photo: user.photo ?? "",
+    friends: [],
     ...getTimestamps(),
-  });
+  };
+  const result = await collection.insertOne(userToCreate);
 
   return getUser(result.insertedId.toString());
 }
@@ -82,12 +93,39 @@ async function deleteUser(id: string) {
   );
 }
 
+async function addFriend(friendId: string, userId: any) {
+  const user = await getUser(friendId);
+
+  // Don't add the same friend twice
+  if (user.friends.includes(friendId)) {
+    return user;
+  }
+
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(userId),
+    },
+    {
+      $push: {
+        friends: userId,
+      },
+      $set: {
+        updated_at: new Date().toISOString(),
+      },
+    }
+  );
+
+  return getUser(userId);
+}
+
 export default {
   getUser,
   getUsers,
+  listFriends,
   createUser,
   getUserBySub,
   updatePhoto,
   updateUser,
   deleteUser,
+  addFriend,
 };

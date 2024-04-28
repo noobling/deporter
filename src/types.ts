@@ -93,6 +93,7 @@ export interface User {
   name: string;
   photo?: string;
   email: string;
+  friends: string[];
   created_at: string;
   updated_at: string;
 }
