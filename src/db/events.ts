@@ -175,8 +175,7 @@ async function getEventsViewableByUser(userId: string) {
       isEqual(event.created_by, userId);
     const friendsWithSomeParticipants = event.participants.some((p) => {
       const participant = allUsers.find((u) => isEqual(u._id, p));
-      const isFriends = participant?.friends.includes(userId);
-      return isFriends;
+      return participant?.friends.some((f) => isEqual(f, userId));
     });
 
     return (
