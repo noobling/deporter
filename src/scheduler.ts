@@ -3,9 +3,9 @@ import { sendEventReminder } from "./services/eventService";
 import { adminSendMessage } from "./utils/admin";
 
 export const startCronJobs = () => {
-  // Every 60 minutes run the task
-  cron.schedule("0 */60 * * * *", async () => {
-    console.log("Sending event reminder every 60 minutes");
+  // Every 24 hours
+  cron.schedule("0 0 * * *", async () => {
+    console.log("Sending event reminder every 24 hours");
     try {
       await sendEventReminder();
       console.log("Success sending event reminder");
