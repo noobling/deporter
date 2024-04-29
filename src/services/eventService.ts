@@ -13,6 +13,7 @@ import {
 import events from "../db/events";
 import { getDaysToGo, getTimestamps } from "../utils/date";
 import {
+  cacheNotificationToProcess,
   sendPushNotification,
   sendWebsocketNotification,
   WebsocketEventType,
@@ -189,7 +190,7 @@ async function sendNotifsForMessageInEventAsync(
   const promises = [];
   for (const userId of toSendUserIds) {
     promises.push(
-      sendPushNotification(userId, {
+      cacheNotificationToProcess(userId, {
         type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
         payload: {
           goTo,
@@ -199,7 +200,7 @@ async function sendNotifsForMessageInEventAsync(
       })
     );
     promises.push(
-      sendWebsocketNotification(userId, {
+      cacheNotificationToProcess(userId, {
         type: WebsocketEventType.MESSAGE_NOTIFICATION,
         payload: {
           eventId: event._id.toString(),
