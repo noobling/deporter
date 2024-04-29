@@ -176,7 +176,7 @@ export async function getEventsToRemind(): Promise<EventResponse[]> {
   return filtered;
 }
 
-function sendNotifsForMessageInEventAsync(
+async function sendNotifsForMessageInEventAsync(
   event: EventResponse,
   message: Message,
   fromUser: UserResponse

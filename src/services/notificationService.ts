@@ -1,3 +1,5 @@
+import { cacheDelete, cacheGetByPrefix, cacheSet } from "../utils/redis";
+
 const amqp = require("amqplib");
 const RABBITMQ_LINK = process.env.RABBITMQ_LINK;
 
@@ -91,6 +93,12 @@ export type NotificationAction =
       };
     };
 
+interface NotificationCached {
+  messageId: string;
+  userId: string;
+  action: NotificationAction;
+}
+
 function getUserQueue(userId: string) {
   return `queue_${userId}`;
 }
@@ -113,4 +121,36 @@ export async function sendPushNotification(
     data: action,
   };
   return sendToQueue("queue_push_notifications", JSON.stringify(payload));
+}
+
+// Scheduled task
+export async function processNotificationsFromCache() {
+  console.log("Processing notifications from cache");
+  const toSend: NotificationCached[] = await cacheGetByPrefix("notifications-");
+  console.log("Sending notifications:", toSend.length);
+  const promises = toSend.flatMap(async (notification) => {
+    await Promise.all([
+      sendWebsocketNotification(notification.userId, notification.action),
+      sendPushNotification(notification.userId, notification.action),
+    ]);
+
+    await cacheDelete("notifications-" + notification.messageId);
+  });
+
+  await Promise.all(promises);
+
+  console.log("Successfully sent notifications");
+}
+
+export async function cacheNotificationToProcess(
+  userId: string,
+  action: NotificationAction
+) {
+  const notification: NotificationCached = {
+    messageId: Math.random().toString(36).substring(7),
+    userId,
+    action,
+  };
+
+  await cacheSet("notifications-" + notification.messageId, notification);
 }

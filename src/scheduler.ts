@@ -1,6 +1,7 @@
 import cron from "node-cron";
 import { sendEventReminder } from "./services/eventService";
 import { adminSendMessage } from "./utils/admin";
+import { processNotificationsFromCache } from "./services/notificationService";
 
 export const startCronJobs = () => {
   // Every 24 hours
@@ -16,6 +17,11 @@ export const startCronJobs = () => {
         eventId: "661ceba8b2463e6fca862ffb", // Developer chat
       });
     }
+  });
+
+  // Every 5 seconds
+  cron.schedule("*/5 * * * * *", async () => {
+    await processNotificationsFromCache();
   });
 
   console.log("Schedule cron jobs");
