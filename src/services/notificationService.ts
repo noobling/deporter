@@ -11,6 +11,8 @@ if (!RABBITMQ_LINK) {
 let amqpConnection: any = null;
 let connectionPromise: any = null;
 
+initRabbitMQ().then((connection) => (amqpConnection = connection));
+
 async function initRabbitMQ() {
   if (!RABBITMQ_LINK) return;
 
