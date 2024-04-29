@@ -99,7 +99,7 @@ export async function addEventMessage(
 
   const { data, user } = await events.addMessage(context.id!!, message);
   if (data) {
-    sendNotifsForMessageInEventAsync(data, message, user);
+    await sendNotifsForMessageInEventAsync(data, message, user);
   }
   return data;
 }
@@ -185,23 +185,30 @@ function sendNotifsForMessageInEventAsync(
     (p) => !isEqual(p, fromUser._id)
   );
   const goTo = `/event/chat?id=${event._id}`;
-
+  console.log("Sending notifications to", toSendUserIds, "for", message);
+  const promises = [];
   for (const userId of toSendUserIds) {
-    sendPushNotification(userId, {
-      type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
-      payload: {
-        goTo,
-        title: `${fromUser.name} (${event.name})`,
-        description: getMessageDescription(message),
-      },
-    });
-    sendWebsocketNotification(userId, {
-      type: WebsocketEventType.MESSAGE_NOTIFICATION,
-      payload: {
-        eventId: event._id.toString(),
-      },
-    });
+    promises.push(
+      sendPushNotification(userId, {
+        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+        payload: {
+          goTo,
+          title: `${fromUser.name} (${event.name})`,
+          description: getMessageDescription(message),
+        },
+      })
+    );
+    promises.push(
+      sendWebsocketNotification(userId, {
+        type: WebsocketEventType.MESSAGE_NOTIFICATION,
+        payload: {
+          eventId: event._id.toString(),
+        },
+      })
+    );
   }
+
+  return Promise.all(promises);
 }
 
 function getMessageDescription(message: Message) {
