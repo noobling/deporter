@@ -4,7 +4,7 @@ import { Request } from "express";
 import user from "../db/users";
 import { UserResponse, UserToken } from "../types";
 import environment from "./environment";
-import { getMongoIdOrFail } from "./mongo";
+import { getMongoIdOrFail, isEqual } from "./mongo";
 import { cacheGet, cacheSet } from "./redis";
 
 export async function getLoggedInUserOrThrow(
@@ -84,4 +84,9 @@ async function getGoogleAccessTokenInfo(
     photo: data.picture,
     name: data.name,
   };
+}
+
+export function isAdmin(userId: string) {
+  const admins = environment.admins;
+  return admins.some((a) => isEqual(a, userId));
 }

@@ -31,7 +31,7 @@ export const handler = (
       context.authedUser = authedUser;
     } catch (err) {
       if (err instanceof Error) {
-        log("Authentication error", err.message);
+        log("Authentication failed caused by:", err.message);
         return res.status(401).send(err.message);
       }
       return res.status(401);

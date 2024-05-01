@@ -11,6 +11,7 @@ const environment = {
   bypass_auth_user_id: process.env.BYPASS_AUTH_USER_ID, // Only for testing should this exist
   mongo_db_name: process.env.MONGO_DB_NAME!!,
   redis_url: process.env.REDIS_URL!!,
+  admins: process.env.ADMINS!!?.split(",") ?? [],
 };
 
 Object.keys(environment).forEach((key) => {

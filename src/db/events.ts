@@ -11,6 +11,7 @@ import {
 import { getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
 import users from "./users";
+import { isAdmin } from "../utils/auth";
 
 const collection = db.collection("event");
 
@@ -169,6 +170,10 @@ async function getEventsViewableByUser(userId: string) {
   ).toArray()) as unknown as EventResponse[];
   const allUsers = await users.getUsers();
 
+  if (isAdmin(userId)) {
+    console.log("admin user returning all events");
+    return allEvents;
+  }
   return allEvents.filter((event) => {
     const participating =
       event.participants.some((p) => isEqual(p, userId)) ||
