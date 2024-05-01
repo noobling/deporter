@@ -6,7 +6,7 @@ import {
   UserToken,
 } from "../types";
 import { getTimestamps } from "../utils/date";
-import { getMongoIdOrFail, isEqual } from "../utils/mongo";
+import { getMongoId, getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
 
 const collection = db.collection("user");
@@ -71,7 +71,7 @@ function getUserBySub(sub: string) {
 
 async function getUser(id: string): Promise<UserResponse> {
   const user = (await collection.findOne({
-    _id: getMongoIdOrFail(id),
+    _id: getMongoId(id),
   })) as unknown as UserResponse;
 
   return user;

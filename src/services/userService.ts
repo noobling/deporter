@@ -9,6 +9,10 @@ import {
 } from "../types";
 import { cacheGet } from "../utils/redis";
 import { adminSendMessage } from "../utils/admin";
+import {
+  WebsocketEventType,
+  cacheNotificationToProcess,
+} from "./notificationService";
 
 export function getUser(_: any, context: AuthContext) {
   return users.getUser(context.id!!);
@@ -111,6 +115,15 @@ export async function deleteUser(_: any, context: AuthContext) {
 export async function addFriend(payload: any, context: AuthContext) {
   const friendId = context.id;
   const userId = context.authedUser._id;
+  const user = await users.getUser(userId);
+  await cacheNotificationToProcess(userId, {
+    type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+    payload: {
+      goTo: "/friends/friends",
+      title: `${user.name} added you as a friend`,
+      description: "They are now sharing their memories with you.",
+    },
+  });
   return users.addFriend(friendId, userId);
 }
 
