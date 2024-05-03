@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { getLoggedInUserOrThrow } from "./auth";
 import { AuthContext } from "../types";
 import { adminSendMessage } from "./admin";
-import { stringList } from "aws-sdk/clients/datapipeline";
 
 export const handler = (
   cb: (payload: any, context: AuthContext) => Promise<any | null | undefined>
@@ -86,7 +85,6 @@ export function publicHander(
   cb: (payload: any, res: Response) => Promise<any | null | undefined>
 ) {
   return async (req: Request, res: Response) => {
-
     const payload = req.query;
     function log(...message: any[]) {
       console.log("PUBLIC=================");
@@ -96,7 +94,7 @@ export function publicHander(
     log("payload", payload);
 
     try {
-      const result = await cb(payload, res);
+      return await cb(payload, res);
     } catch (err: any) {
       if (err instanceof BadRequest) {
         log("bad request", err.message);
