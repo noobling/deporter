@@ -89,6 +89,11 @@ app.get("/media/:id", handler(getMedia));
 app.get("/feed", handler(getFeed));
 
 swagger(app);
+
+app.get("*", (req, res) => {
+  res.redirect(301, "https://deporter.lets.lol" + req.url);
+});
+
 /* Start the Express app and listen
  for incoming requests on the specified port */
 app.listen(port, () => {
