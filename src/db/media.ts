@@ -14,7 +14,20 @@ async function get(id: string) {
   return collection.findOne({ _id: getMongoIdOrFail(id) });
 }
 
+async function addEventId(id: string, eventId: string) {
+  const result = await collection.updateOne(
+    { _id: getMongoIdOrFail(id) },
+    {
+      $set: {
+        eventId,
+      },
+    }
+  );
+  return result;
+}
+
 export default {
   create,
   get,
+  addEventId,
 };

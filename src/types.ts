@@ -85,6 +85,7 @@ export interface Media {
   extension: string;
   created_at: string;
   updated_at: string;
+  eventId?: string; // Event media is part of
 }
 export interface MediaResponse extends Media {
   _id: string;

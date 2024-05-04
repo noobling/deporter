@@ -20,6 +20,7 @@ import {
 } from "./notificationService";
 import { adminSendMessage } from "../utils/admin";
 import { getMongoId, isEqual } from "../utils/mongo";
+import media from "../db/media";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -105,7 +106,12 @@ export async function addEventMessage(
   };
 
   const { data, user } = await events.addMessage(context.id!!, message);
+
   if (data) {
+    await Promise.all(
+      message.media.map((id) => media.addEventId(id, data?._id))
+    );
+
     await sendNotifsForMessageInEventAsync(data, message, user);
   }
   return data;
