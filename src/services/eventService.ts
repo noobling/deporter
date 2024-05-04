@@ -74,7 +74,13 @@ export async function addEventExpense(payload: any, context: AuthContext) {
     created_by: context.authedUser._id,
     ...getTimestamps(),
   };
-  return events.addExpense(context.id!!, expense);
+
+  const result = await events.addExpense(context.id!!, expense);
+  adminSendMessage({
+    message: `${context.authedUser.name} added ${expense.name} expense of $${expense.amount} to ${result?.name}`,
+    eventId: result!!._id,
+  });
+  return result;
 }
 
 export async function addEventPayment(
