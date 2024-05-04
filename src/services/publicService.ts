@@ -44,8 +44,7 @@ export async function publicGetEventById(payload: {
   // create a link to the event based on link, for loop over the query parameters
   let deporterLink = `https://deporter.lets.lol/event/by-id?`;
   for (const key in link.queryParameters) {
-    console.log(key, link.queryParameters[key]);
-    deporterLink += `${key}=${encodeURI(link.queryParameters[key])}&`
+    deporterLink += `${key}=${encodeURIComponent(link.queryParameters[key])}&`
   }
   return res.redirect(301, deporterLink);
 }
