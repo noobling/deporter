@@ -29,10 +29,11 @@ import {
   listFriends,
   addFriend,
 } from "./services/userService";
-import { handler } from "./utils/handler";
+import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
 import { getFeed } from "./services/feedService";
 import { startCronJobs } from "./scheduler";
+import { publicGetEventById } from "./services/publicService";
 
 /*
  * Load up and parse configuration details from
@@ -69,6 +70,7 @@ app.post("/user/update", handler(updateUser));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
+app.get("/event/by-id", publicHander(publicGetEventById));
 app.get("/event/:id", handler(getEvent));
 app.get("/event/:id/metadata", handler(getEventMetaData));
 app.post("/event", handler(createEvent));
@@ -89,6 +91,11 @@ app.get("/media/:id", handler(getMedia));
 app.get("/feed", handler(getFeed));
 
 swagger(app);
+
+app.get("*", (req, res) => {
+  res.redirect(301, "https://deporter.lets.lol" + req.url);
+});
+
 /* Start the Express app and listen
  for incoming requests on the specified port */
 app.listen(port, () => {

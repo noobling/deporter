@@ -72,3 +72,36 @@ export class BadRequest extends Error {
     super(message);
   }
 }
+
+
+/**
+ * This function is purely for public facing endpoints
+ * The function will pass query parameters to the payloads
+ * This handler expects the callback to send a response
+ * @param cb 
+ * @returns 
+ */
+export function publicHander(
+  cb: (payload: any, res: Response) => Promise<any | null | undefined>
+) {
+  return async (req: Request, res: Response) => {
+    const payload = req.query;
+    function log(...message: any[]) {
+      console.log("PUBLIC=================");
+      console.log(`${cb.name}()`);
+      console.log(...message);
+    }
+    log("payload", payload);
+
+    try {
+      return await cb(payload, res);
+    } catch (err: any) {
+      if (err instanceof BadRequest) {
+        log("bad request", err.message);
+        return res
+          .status(400)
+          .send(err.message);
+      }
+    }
+  };
+}
