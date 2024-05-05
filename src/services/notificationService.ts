@@ -130,7 +130,7 @@ export async function processNotificationsFromCache() {
   console.log("Processing notifications from cache");
   const toSend: NotificationCached[] = await cacheGetByPrefix("notifications-");
   console.log("Sending notifications:", toSend.length);
-  const promises = toSend.flatMap(async (notification) => {
+  const promises = toSend.map(async (notification) => {
     if (
       notification.action.type === WebsocketEventType.ROUTING_PUSH_NOTIFICATION
     ) {
