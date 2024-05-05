@@ -131,10 +131,22 @@ export async function processNotificationsFromCache() {
   const toSend: NotificationCached[] = await cacheGetByPrefix("notifications-");
   console.log("Sending notifications:", toSend.length);
   const promises = toSend.flatMap(async (notification) => {
-    await Promise.all([
-      sendWebsocketNotification(notification.userId, notification.action),
-      sendPushNotification(notification.userId, notification.action),
-    ]);
+    if (
+      notification.action.type === WebsocketEventType.ROUTING_PUSH_NOTIFICATION
+    ) {
+      return [sendPushNotification(notification.userId, notification.action)];
+    } else if (
+      notification.action.type === WebsocketEventType.MESSAGE_NOTIFICATION
+    ) {
+      return [
+        sendWebsocketNotification(notification.userId, notification.action),
+      ];
+    } else {
+      console.error(
+        "unsupported type of notification",
+        notification.action.type
+      );
+    }
 
     await cacheDelete("notifications-" + notification.messageId);
   });
