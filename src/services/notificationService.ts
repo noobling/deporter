@@ -134,13 +134,11 @@ export async function processNotificationsFromCache() {
     if (
       notification.action.type === WebsocketEventType.ROUTING_PUSH_NOTIFICATION
     ) {
-      return [sendPushNotification(notification.userId, notification.action)];
+      await sendPushNotification(notification.userId, notification.action);
     } else if (
       notification.action.type === WebsocketEventType.MESSAGE_NOTIFICATION
     ) {
-      return [
-        sendWebsocketNotification(notification.userId, notification.action),
-      ];
+      await sendWebsocketNotification(notification.userId, notification.action);
     } else {
       console.error(
         "unsupported type of notification",
@@ -148,6 +146,7 @@ export async function processNotificationsFromCache() {
       );
     }
 
+    // Must run otherwise it will send infinite notifications
     await cacheDelete("notifications-" + notification.messageId);
   });
 
