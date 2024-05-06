@@ -43,9 +43,6 @@ export interface EventsResponse {
 
 // Message
 export interface Message {
-  meta_data?: {
-    reply_to: string; // message id ;For now it's an index
-  }
   created_by: string;
   content: string;
   media: string[];
