@@ -61,13 +61,14 @@ export async function updateEvent(
 ) {
   const result = await events.updateEvent(context.id, payload);
   adminSendMessage({
-    message: `Event ${result!!.name} has been updated by ${
-      context.authedUser.name
-    }!`,
+    message: `Event ${result!!.name} has been updated by ${context.authedUser.name
+      }!`,
     eventId: result!!._id,
   });
   return result;
 }
+
+
 
 export async function addEventExpense(payload: any, context: AuthContext) {
   const expense: Expense = {
@@ -75,6 +76,20 @@ export async function addEventExpense(payload: any, context: AuthContext) {
     created_by: context.authedUser._id,
     ...getTimestamps(),
   };
+
+
+  if (expense.amount < 0) {
+    if (expense.applicable_to.length > 1) {
+      throw new Error("Negative expense can only be applicable to one person");
+    }
+    const result = await events.addExpense(context.id!!, expense);
+    adminSendMessage({
+      message: `${context.authedUser.name} received a payment: ${expense.name} of $${-expense.amount} to ${result?.name}`,
+      eventId: result!!._id,
+    });
+    return result;
+  }
+
 
   const result = await events.addExpense(context.id!!, expense);
   adminSendMessage({
