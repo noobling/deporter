@@ -41,8 +41,15 @@ export interface EventsResponse {
   events: EventResponse[];
 }
 
-// Message
+export interface MessageReaction {
+  user: string;
+  reaction: string;
+}
 export interface Message {
+  interactions?: {
+    reactions?: MessageReaction[];
+    response_to?: string; // id of the message this is a response to, for now it is the index
+  }
   created_by: string;
   content: string;
   media: string[];
@@ -50,6 +57,7 @@ export interface Message {
   updated_at: string;
 }
 export interface CreateMessageRequest {
+  response_to?: string;
   content: string;
   media: string[];
 }
