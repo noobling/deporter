@@ -5,6 +5,7 @@ import express, { Express } from "express";
 import {
   addEventExpense,
   addEventMessage,
+  addEventMessageReaction,
   addEventParticipants,
   addEventPayment,
   createEvent,
@@ -78,6 +79,7 @@ app.post("/event/:id/update", handler(updateEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
 app.post("/event/:id/payment", handler(addEventPayment));
 app.post("/event/:id/message", handler(addEventMessage));
+app.post("/event/:id/message-react", handler(addEventMessageReaction));
 app.post("/event/:id/participants", handler(addEventParticipants));
 app.post("/event/:id/join", handler(joinEvent));
 app.get("/events/join", handler(getEventsToJoin));

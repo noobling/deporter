@@ -62,6 +62,12 @@ export interface CreateMessageRequest {
   media: string[];
 }
 
+export interface CreateMessageReactionRequest {
+  event_id: string;
+  message_index: number;
+  reaction: string;
+}
+
 // Payment
 export interface Payment {
   created_by: string;

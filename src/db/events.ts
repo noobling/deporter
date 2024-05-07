@@ -111,6 +111,35 @@ export async function addMessage(id: string, message: Message) {
   return { data, user };
 }
 
+export async function addMessageReaction(eventId: string, messageIndex: number, userId: string, reaction: string) {
+  const collection = db.collection("events"); // Assuming 'db' is your MongoDB database connection
+
+  // Update the message reaction using MongoDB's aggregation framework
+  await collection.updateOne(
+    {
+      _id: new ObjectId(eventId),
+      [`messages.${messageIndex}.interactions.reactions.user`]: { $ne: userId } // Check if the user has not already reacted
+    },
+    {
+      $addToSet: { // Use $addToSet to prevent duplicate reactions from the same user
+        [`messages.${messageIndex}.interactions.reactions`]: { user: userId, reaction: reaction }
+      },
+      $set: {
+        updated_at: new Date().toISOString(),
+      },
+    }
+  );
+
+  // Fetch updated event and user data
+  const [data, sender] = await Promise.all([
+    getEvent(eventId),
+    users.getUser(userId),
+
+  ]);
+
+  return { data, sender };
+}
+
 async function addExpense(id: string, expense: Expense) {
   await updateList(id, {
     expenses: expense,
@@ -197,6 +226,7 @@ export default {
   createEvent,
   updateEvent,
   addMessage,
+  addMessageReaction,
   addExpense,
   addParticipants,
   addPayment,

@@ -1,6 +1,7 @@
 import {
   AuthContext,
   CreateEventRequest,
+  CreateMessageReactionRequest,
   CreateMessageRequest,
   CreatePaymentRequest,
   EventResponse,
@@ -132,6 +133,27 @@ export async function addEventMessage(
   return data;
 }
 
+export async function addEventMessageReaction(
+  payload: CreateMessageReactionRequest,
+  context: AuthContext
+) {
+  const { data, sender } = await events.addMessageReaction(
+    context.id!!,
+    payload.message_index,
+    context.authedUser._id,
+    payload.reaction
+  );
+  if (data) {
+    const goTo = `/event/chat?id=${data._id}`
+    sendNotifsFromUserToUserAsync(data.messages[payload.message_index].created_by,
+      'reacted to your message',
+      goTo,
+      sender, data._id
+    );
+  }
+  return data;
+}
+
 export async function addEventParticipants(payload: any, context: AuthContext) {
   await events.addParticipants(context.id, payload);
   return events.getEvent(context.id);
@@ -236,6 +258,42 @@ async function sendNotifsForMessageInEventAsync(
     );
   }
 
+  return Promise.all(promises);
+}
+
+async function sendNotifsFromUserToUserAsync(
+  toUser: string,
+  message: string,
+  goTo: string,
+  fromUser: UserResponse,
+  eventId?: string
+) {
+  console.log("Sending notifications to", toUser);
+  const promises = [];
+  for (const userId of [
+    toUser,
+  ]) {
+    promises.push(
+      cacheNotificationToProcess(userId, {
+        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+        payload: {
+          goTo,
+          title: `${fromUser.name}`,
+          description: message,
+        },
+      })
+    );
+    if (eventId) {
+      promises.push(
+        cacheNotificationToProcess(userId, {
+          type: WebsocketEventType.MESSAGE_NOTIFICATION,
+          payload: {
+            eventId: eventId,
+          },
+        })
+      );
+    }
+  }
   return Promise.all(promises);
 }
 
