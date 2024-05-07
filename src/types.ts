@@ -57,7 +57,7 @@ export interface Message {
   updated_at: string;
 }
 export interface CreateMessageRequest {
-  response_to?: string;
+  interactions?: { response_to?: string; }
   content: string;
   media: string[];
 }
