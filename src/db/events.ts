@@ -7,6 +7,7 @@ import {
   Message,
   Payment,
   UpdateEventRequest,
+  UserResponse,
 } from "../types";
 import { getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
@@ -111,31 +112,38 @@ export async function addMessage(id: string, message: Message) {
   return { data, user };
 }
 
-export async function addMessageReaction(eventId: string, messageIndex: number, userId: string, reaction: string) {
-  const collection = db.collection("events"); // Assuming 'db' is your MongoDB database connection
+export async function addMessageReaction(eventId: string, messageIndex: number, userId: string, reaction: string): Promise<{
+  data: EventResponse | null,
+  sender: UserResponse
+}> {
+  const collection = db.collection("events");
 
-  // Update the message reaction using MongoDB's aggregation framework
-  await collection.updateOne(
+  console.log("Adding message reaction", eventId, messageIndex, userId, reaction, `messages.${messageIndex}.reactions.${userId.toString()}`);
+
+  // Update the reaction for the user or set it if it does not exist
+  const updateResult = await collection.updateOne(
     {
-      _id: new ObjectId(eventId),
-      [`messages.${messageIndex}.interactions.reactions.user`]: { $ne: userId } // Check if the user has not already reacted
+      _id: getMongoIdOrFail(eventId),
     },
     {
-      $addToSet: { // Use $addToSet to prevent duplicate reactions from the same user
-        [`messages.${messageIndex}.interactions.reactions`]: { user: userId, reaction: reaction }
-      },
       $set: {
-        updated_at: new Date().toISOString(),
-      },
+        [`messages.${messageIndex}.reactions`]: reaction  // Set the reaction for the user
+      }
     }
   );
+
+  console.log("Message reaction added successfully", updateResult);
 
   // Fetch updated event and user data
   const [data, sender] = await Promise.all([
     getEvent(eventId),
     users.getUser(userId),
-
   ]);
+
+  console.log("Message reaction added successfully", updateResult, data?.messages[
+    messageIndex
+  ], data?._id, eventId);
+
 
   return { data, sender };
 }
