@@ -144,7 +144,7 @@ export async function addEventMessageReaction(
     payload.reaction
   );
 
-  if (data) {
+  if (data && sender) {
     const goTo = `/event/chat?id=${data._id}`;
     sendNotifsFromUserToUserAsync(
       data.messages[payload.message_index].created_by,

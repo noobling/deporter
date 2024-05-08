@@ -114,7 +114,7 @@ export async function addMessage(id: string, message: Message) {
 
 export async function addMessageReaction(eventId: string, messageIndex: number, userId: string, reaction: string): Promise<{
   data: EventResponse | null,
-  sender: UserResponse
+  sender: UserResponse | null
 }> {
   // Update the reaction for the user or set it if it does not exist
   const updateResult = await collection.updateOne(
@@ -127,7 +127,11 @@ export async function addMessageReaction(eventId: string, messageIndex: number, 
       }
     }
   );
-  
+
+  if (updateResult.modifiedCount === 0) {
+    return { data: null, sender: null };
+  }
+
   const [data, sender] = await Promise.all([
     getEvent(eventId),
     users.getUser(userId),
