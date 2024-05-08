@@ -10,14 +10,15 @@ const client = new MongoClient(environment.mongodb_uri, {
   },
 });
 
-const db = client.db(environment.mongo_db_name);
+const DB_NAME = environment.mongo_db_name;
+const db = client.db(DB_NAME);
 
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
     // Send a ping to confirm a successful connection
-    await client.db(environment.mongo_db_name).command({ ping: 1 });
+    await client.db(DB_NAME).command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
     );

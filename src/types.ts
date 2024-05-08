@@ -43,12 +43,19 @@ export interface EventsResponse {
 
 // Message
 export interface Message {
+  id: string; // unique Object Id for message
   created_by: string;
   content: string;
   media: string[];
+  reactions: Reaction[];
   created_at: string;
   updated_at: string;
 }
+export interface Reaction {
+  reaction: string;
+  userIds: string[];
+}
+
 export interface CreateMessageRequest {
   content: string;
   media: string[];
