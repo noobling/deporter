@@ -41,9 +41,14 @@ export interface EventsResponse {
   events: EventResponse[];
 }
 
-// Message
+export interface MessageReaction {
+  [key: string]: string;
+}
 export interface Message {
-  id: string; // unique Object Id for message
+  interactions?: {
+    response_to?: string; // id of the message this is a response to, for now it is the index
+  }
+  reactions?: MessageReaction[];
   created_by: string;
   content: string;
   media: string[];
@@ -57,8 +62,14 @@ export interface Reaction {
 }
 
 export interface CreateMessageRequest {
+  interactions?: { response_to?: string; }
   content: string;
   media: string[];
+}
+
+export interface CreateMessageReactionRequest {
+  message_index: number;
+  reaction: string;
 }
 
 // Payment
@@ -129,10 +140,10 @@ export interface UpdateUserPhotoRequest {
 
 export interface CheckTokenStatusResponse {
   status:
-    | "expired_or_invalid"
-    | "registration_required"
-    | "missing_token"
-    | "ok";
+  | "expired_or_invalid"
+  | "registration_required"
+  | "missing_token"
+  | "ok";
 }
 
 export interface RegisterUserRequest {

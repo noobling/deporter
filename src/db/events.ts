@@ -7,6 +7,7 @@ import {
   Message,
   Payment,
   UpdateEventRequest,
+  UserResponse,
 } from "../types";
 import { getMongoIdOrFail, isEqual } from "../utils/mongo";
 import db from "./db";
@@ -111,6 +112,42 @@ export async function addMessage(id: string, message: Message) {
   return { data, user };
 }
 
+export async function addMessageReaction(eventId: string, messageIndex: number, userId: string, reaction: string): Promise<{
+  data: EventResponse | null,
+  sender: UserResponse
+}> {
+  const collection = db.collection("events");
+
+  console.log("Adding message reaction", eventId, messageIndex, userId, reaction, `messages.${messageIndex}.reactions.${userId.toString()}`);
+
+  // Update the reaction for the user or set it if it does not exist
+  const updateResult = await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(eventId),
+    },
+    {
+      $set: {
+        [`messages.${messageIndex}.reactions`]: reaction  // Set the reaction for the user
+      }
+    }
+  );
+
+  console.log("Message reaction added successfully", updateResult);
+
+  // Fetch updated event and user data
+  const [data, sender] = await Promise.all([
+    getEvent(eventId),
+    users.getUser(userId),
+  ]);
+
+  console.log("Message reaction added successfully", updateResult, data?.messages[
+    messageIndex
+  ], data?._id, eventId);
+
+
+  return { data, sender };
+}
+
 async function addExpense(id: string, expense: Expense) {
   await updateList(id, {
     expenses: expense,
@@ -197,6 +234,7 @@ export default {
   createEvent,
   updateEvent,
   addMessage,
+  addMessageReaction,
   addExpense,
   addParticipants,
   addPayment,
