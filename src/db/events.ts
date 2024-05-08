@@ -116,10 +116,6 @@ export async function addMessageReaction(eventId: string, messageIndex: number, 
   data: EventResponse | null,
   sender: UserResponse
 }> {
-  const collection = db.collection("events");
-
-  console.log("Adding message reaction", eventId, messageIndex, userId, reaction, `messages.${messageIndex}.reactions.${userId.toString()}`);
-
   // Update the reaction for the user or set it if it does not exist
   const updateResult = await collection.updateOne(
     {
@@ -127,24 +123,15 @@ export async function addMessageReaction(eventId: string, messageIndex: number, 
     },
     {
       $set: {
-        [`messages.${messageIndex}.reactions`]: reaction  // Set the reaction for the user
+        [`messages.${messageIndex}.reactions.${userId.toString()}`]: [reaction]  // Set the reaction for the user
       }
     }
   );
-
-  console.log("Message reaction added successfully", updateResult);
-
-  // Fetch updated event and user data
+  
   const [data, sender] = await Promise.all([
     getEvent(eventId),
     users.getUser(userId),
   ]);
-
-  console.log("Message reaction added successfully", updateResult, data?.messages[
-    messageIndex
-  ], data?._id, eventId);
-
-
   return { data, sender };
 }
 
