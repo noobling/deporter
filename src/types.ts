@@ -42,13 +42,13 @@ export interface EventsResponse {
 }
 
 export interface MessageReaction {
-  [key: string]: string;
+  [key: string]: string[];
 }
 export interface Message {
   interactions?: {
     response_to?: string; // id of the message this is a response to, for now it is the index
   };
-  reactions: MessageReaction[];
+  reactions: MessageReaction;
   created_by: string;
   content: string;
   media: string[];

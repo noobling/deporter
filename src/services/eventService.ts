@@ -15,13 +15,12 @@ import events from "../db/events";
 import { getDaysToGo, getTimestamps } from "../utils/date";
 import {
   cacheNotificationToProcess,
-  sendPushNotification,
-  sendWebsocketNotification,
   WebsocketEventType,
 } from "./notificationService";
 import { adminSendMessage } from "../utils/admin";
-import { getMongoId, isEqual } from "../utils/mongo";
+import { isEqual } from "../utils/mongo";
 import media from "../db/media";
+import { v4 as uuidv4 } from "uuid";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -62,14 +61,13 @@ export async function updateEvent(
 ) {
   const result = await events.updateEvent(context.id, payload);
   adminSendMessage({
-    message: `Event ${result!!.name} has been updated by ${context.authedUser.name
-      }!`,
+    message: `Event ${result!!.name} has been updated by ${
+      context.authedUser.name
+    }!`,
     eventId: result!!._id,
   });
   return result;
 }
-
-
 
 export async function addEventExpense(payload: any, context: AuthContext) {
   const expense: Expense = {
@@ -78,19 +76,19 @@ export async function addEventExpense(payload: any, context: AuthContext) {
     ...getTimestamps(),
   };
 
-
   if (expense.amount < 0) {
     if (expense.applicable_to.length > 1) {
       throw new Error("Negative expense can only be applicable to one person");
     }
     const result = await events.addExpense(context.id!!, expense);
     adminSendMessage({
-      message: `${context.authedUser.name} received a payment: ${expense.name} of $${-expense.amount} to ${result?.name}`,
+      message: `${context.authedUser.name} received a payment: ${
+        expense.name
+      } of $${-expense.amount} to ${result?.name}`,
       eventId: result!!._id,
     });
     return result;
   }
-
 
   const result = await events.addExpense(context.id!!, expense);
   adminSendMessage({
@@ -119,6 +117,8 @@ export async function addEventMessage(
     created_by: context.authedUser._id,
     ...payload,
     ...getTimestamps(),
+    reactions: {},
+    id: uuidv4(),
   };
 
   const { data, user } = await events.addMessage(context.id!!, message);
@@ -145,14 +145,16 @@ export async function addEventMessageReaction(
   );
 
   if (data) {
-    const goTo = `/event/chat?id=${data._id}`
-    sendNotifsFromUserToUserAsync(data.messages[payload.message_index].created_by,
-      'reacted to your message',
+    const goTo = `/event/chat?id=${data._id}`;
+    sendNotifsFromUserToUserAsync(
+      data.messages[payload.message_index].created_by,
+      "reacted to your message",
       goTo,
-      sender, data._id
+      sender,
+      data._id
     );
   }
-  
+
   return data;
 }
 
@@ -272,9 +274,7 @@ async function sendNotifsFromUserToUserAsync(
 ) {
   console.log("Sending notifications to", toUser);
   const promises = [];
-  for (const userId of [
-    toUser,
-  ]) {
+  for (const userId of [toUser]) {
     promises.push(
       cacheNotificationToProcess(userId, {
         type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
