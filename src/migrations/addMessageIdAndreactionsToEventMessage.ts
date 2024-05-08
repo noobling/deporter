@@ -9,7 +9,7 @@ async function addMessageIdAndReactionsToEventMessage() {
     {},
     {
       $set: {
-        "messages.$[].reactions": [],
+        "messages.$[].reactions": {},
         // set message uuid
         "messages.$[].id": uuidv4(),
       },

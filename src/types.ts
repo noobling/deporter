@@ -47,22 +47,17 @@ export interface MessageReaction {
 export interface Message {
   interactions?: {
     response_to?: string; // id of the message this is a response to, for now it is the index
-  }
-  reactions?: MessageReaction[];
+  };
+  reactions: MessageReaction[];
   created_by: string;
   content: string;
   media: string[];
-  reactions: Reaction[];
   created_at: string;
   updated_at: string;
 }
-export interface Reaction {
-  reaction: string;
-  userIds: string[];
-}
 
 export interface CreateMessageRequest {
-  interactions?: { response_to?: string; }
+  interactions?: { response_to?: string };
   content: string;
   media: string[];
 }
@@ -140,10 +135,10 @@ export interface UpdateUserPhotoRequest {
 
 export interface CheckTokenStatusResponse {
   status:
-  | "expired_or_invalid"
-  | "registration_required"
-  | "missing_token"
-  | "ok";
+    | "expired_or_invalid"
+    | "registration_required"
+    | "missing_token"
+    | "ok";
 }
 
 export interface RegisterUserRequest {
