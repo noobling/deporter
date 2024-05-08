@@ -54,6 +54,7 @@ export interface Message {
   media: string[];
   created_at: string;
   updated_at: string;
+  id: string;
 }
 
 export interface CreateMessageRequest {
