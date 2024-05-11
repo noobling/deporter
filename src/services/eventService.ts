@@ -2,6 +2,7 @@ import {
   AuthContext,
   CreateEventRequest,
   CreateMessageReactionRequest,
+  CreateMessageReadReceiptRequest,
   CreateMessageRequest,
   CreatePaymentRequest,
   EventResponse,
@@ -11,7 +12,7 @@ import {
   UpdateEventRequest,
   UserResponse,
 } from "../types";
-import events from "../db/events";
+import events, { addMessageReadReceipt } from "../db/events";
 import { getDaysToGo, getTimestamps } from "../utils/date";
 import {
   cacheNotificationToProcess,
@@ -156,6 +157,19 @@ export async function addEventMessageReaction(
   }
 
   return data;
+}
+
+
+export async function addEventMessageReadReceipt(
+  payload: CreateMessageReadReceiptRequest,
+  context: AuthContext
+) {
+  return await addMessageReadReceipt(
+    context.id!!,
+    context.authedUser._id,
+    payload.message_id
+  );
+
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {

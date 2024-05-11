@@ -127,17 +127,33 @@ export async function addMessageReaction(eventId: string, messageIndex: number, 
       }
     }
   );
-
   if (updateResult.modifiedCount === 0) {
     return { data: null, sender: null };
   }
-
   const [data, sender] = await Promise.all([
     getEvent(eventId),
     users.getUser(userId),
   ]);
   return { data, sender };
 }
+
+export async function addMessageReadReceipt(eventId: string, userId: string, messageId: string) {
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(eventId),
+    },
+    {
+      $set: {
+        [`read_receipts.${userId}`]: {
+          message_id: messageId,
+          read_at: new Date().toISOString()
+        }
+      }
+    }
+  );
+  return true
+}
+
 
 async function addExpense(id: string, expense: Expense) {
   await updateList(id, {

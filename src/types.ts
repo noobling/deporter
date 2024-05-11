@@ -17,6 +17,16 @@ export interface Event {
    */
   status?: "public" | "private" | "restricted";
   join_code?: string; // unique code users can use to join event
+
+  /** Read Receipts
+   * - key is the user id
+   */
+  read_receipts?: {
+    [key: string]: {
+      message_id: string;
+      read_at: string;
+    };
+  };
 }
 export interface EventResponse extends Event {
   _id: string;
@@ -66,6 +76,10 @@ export interface CreateMessageRequest {
 export interface CreateMessageReactionRequest {
   message_index: number;
   reaction: string;
+}
+
+export interface CreateMessageReadReceiptRequest {
+  message_id: string;
 }
 
 // Payment
