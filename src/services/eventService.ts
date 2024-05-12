@@ -5,6 +5,7 @@ import {
   CreateMessageReadReceiptRequest,
   CreateMessageRequest,
   CreatePaymentRequest,
+  DeleteExpenseRequest,
   EventResponse,
   EventsResponse,
   Expense,
@@ -93,11 +94,22 @@ export async function addEventExpense(payload: any, context: AuthContext) {
   }
 
   const result = await events.addExpense(context.id!!, expense);
-  adminSendMessage({
+  await adminSendMessage({
     message: `${context.authedUser.name} added ${expense.name} expense of $${expense.amount} to ${result?.name}`,
     eventId: result!!._id,
   });
   return result;
+}
+
+export async function deleteExpense(
+  payload: DeleteExpenseRequest,
+  context: AuthContext
+) {
+  await events.deleteExpense(context.id!!, payload.name);
+  await adminSendMessage({
+    message: `${context.authedUser.name} deleted ${payload.name} expense`,
+    eventId: context.id,
+  });
 }
 
 export async function addEventPayment(

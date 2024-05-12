@@ -194,6 +194,10 @@ export interface CreateExpenseRequest {
   applicable_to: string[];
 }
 
+export interface DeleteExpenseRequest {
+  name: string;
+}
+
 export interface AuthContext {
   id: string;
   queryParams: any;

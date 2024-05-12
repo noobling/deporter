@@ -10,6 +10,7 @@ import {
   addEventParticipants,
   addEventPayment,
   createEvent,
+  deleteExpense,
   getEvent,
   getEventMetaData,
   getEventsForCurrentUser,
@@ -78,6 +79,7 @@ app.get("/event/:id/metadata", handler(getEventMetaData));
 app.post("/event", handler(createEvent));
 app.post("/event/:id/update", handler(updateEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
+app.delete("/event/:id/expense", handler(deleteExpense));
 app.post("/event/:id/payment", handler(addEventPayment));
 
 app.post("/event/:id/message", handler(addEventMessage));
