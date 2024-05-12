@@ -51,7 +51,6 @@ export async function createEvent(
     participants: [context.authedUser._id],
     expenses: [],
     payments: [],
-    status: "private",
     ...getTimestamps(),
   });
 }

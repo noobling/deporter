@@ -15,6 +15,7 @@ async function addMessageIdAndReactionsToEventMessage() {
     }
   );
   console.log("Updated all messages with reactions and id");
+  process.exit(0);
 }
 
 addMessageIdAndReactionsToEventMessage();

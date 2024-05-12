@@ -15,7 +15,7 @@ export interface Event {
    * - private events are default and can show up in feeds for friends
    * - restricted events only show up for participants
    */
-  status?: "public" | "private" | "restricted";
+  status?: EventStatusType;
   join_code?: string; // unique code users can use to join event
 
   /** Read Receipts
@@ -28,6 +28,9 @@ export interface Event {
     };
   };
 }
+
+export type EventStatusType = "public" | "private" | "restricted";
+
 export interface EventResponse extends Event {
   _id: string;
 }
@@ -35,6 +38,7 @@ export interface CreateEventRequest {
   name: string;
   photo: string;
   start_time: string;
+  status: EventStatusType;
 }
 
 export interface UpdateEventRequest {
