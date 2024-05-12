@@ -45,6 +45,8 @@ export async function createEvent(
   context: AuthContext
 ) {
   return events.createEvent({
+    // @ts-ignore - backwards compatibility
+    status: "private",
     ...payload,
     created_by: context.authedUser._id,
     messages: [],
@@ -144,8 +146,14 @@ export async function addEventMessageReaction(
     payload.reaction
   );
 
-  if (data && sender && sender._id !== data.messages[payload.message_index].created_by) {
-    const goTo = `/event/chat?id=${data._id}&messageId=${data.messages[payload.message_index].id}`;
+  if (
+    data &&
+    sender &&
+    sender._id !== data.messages[payload.message_index].created_by
+  ) {
+    const goTo = `/event/chat?id=${data._id}&messageId=${
+      data.messages[payload.message_index].id
+    }`;
     sendNotifsFromUserToUserAsync(
       data.messages[payload.message_index].created_by,
       "reacted to your message",
@@ -158,7 +166,6 @@ export async function addEventMessageReaction(
   return data;
 }
 
-
 export async function addEventMessageReadReceipt(
   payload: CreateMessageReadReceiptRequest,
   context: AuthContext
@@ -168,7 +175,6 @@ export async function addEventMessageReadReceipt(
     context.authedUser._id,
     payload.message_id
   );
-
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {

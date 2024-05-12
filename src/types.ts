@@ -45,6 +45,7 @@ export interface UpdateEventRequest {
   name: string;
   photo: string;
   start_time: string;
+  status: EventStatusType;
 }
 
 export interface AddParticipantRequest {
