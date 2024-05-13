@@ -24,6 +24,7 @@ import { adminSendMessage } from "../utils/admin";
 import { isEqual } from "../utils/mongo";
 import media from "../db/media";
 import { v4 as uuidv4 } from "uuid";
+import { messageIsPhoto } from "../utils/message";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -197,7 +198,9 @@ export async function pinEventMessage(
   await events.pinMessage(context.id!!, payload.message_id);
   const message = await events.getMessage(context.id!!, payload.message_id);
   await adminSendMessage({
-    message: `${context.authedUser.name} pinned ${message?.content}`,
+    message: `${context.authedUser.name} pinned ${
+      messageIsPhoto(message) ? "photo" : message?.content
+    }`,
     eventId: context.id,
   });
 
