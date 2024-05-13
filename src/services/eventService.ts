@@ -10,6 +10,7 @@ import {
   EventsResponse,
   Expense,
   Message,
+  PinMessageRequest,
   UpdateEventRequest,
   UserResponse,
 } from "../types";
@@ -187,6 +188,20 @@ export async function addEventMessageReadReceipt(
     context.authedUser._id,
     payload.message_id
   );
+}
+
+export async function pinEventMessage(
+  payload: PinMessageRequest,
+  context: AuthContext
+) {
+  await events.pinMessage(context.id!!, payload.message_id);
+  const message = await events.getMessage(context.id!!, payload.message_id);
+  await adminSendMessage({
+    message: `${context.authedUser.name} pinned ${message?.content}`,
+    eventId: context.id,
+  });
+
+  return message;
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {

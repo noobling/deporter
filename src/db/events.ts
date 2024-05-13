@@ -112,6 +112,34 @@ export async function addMessage(id: string, message: Message) {
   return { data, user };
 }
 
+export async function pinMessage(eventId: string, messageId: string) {
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(eventId),
+      "messages.id": messageId,
+    },
+    {
+      $set: {
+        "messages.$.pinned": true,
+      },
+    }
+  );
+}
+
+export async function getMessage(eventId: string, messageId: string) {
+  const event = await getEvent(eventId, {
+    projection: {
+      messages: {
+        $elemMatch: {
+          id: messageId,
+        },
+      },
+    },
+  });
+
+  return event?.messages[0];
+}
+
 export async function addMessageReaction(
   eventId: string,
   messageIndex: number,
@@ -267,6 +295,8 @@ export default {
   getEventMetaData,
   createEvent,
   updateEvent,
+  getMessage,
+  pinMessage,
   addMessage,
   addMessageReaction,
   addExpense,

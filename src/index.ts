@@ -17,6 +17,7 @@ import {
   getEventsToJoin,
   joinEvent,
   joinEventByCode,
+  pinEventMessage,
   updateEvent,
 } from "./services/eventService";
 import { createMedia, getMedia } from "./services/mediaService";
@@ -85,6 +86,7 @@ app.post("/event/:id/payment", handler(addEventPayment));
 app.post("/event/:id/message", handler(addEventMessage));
 app.post("/event/:id/message-read", handler(addEventMessageReadReceipt));
 app.post("/event/:id/message-react", handler(addEventMessageReaction));
+app.post("/event/:id/message/pin", handler(pinEventMessage));
 
 app.post("/event/:id/participants", handler(addEventParticipants));
 app.post("/event/:id/join", handler(joinEvent));

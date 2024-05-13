@@ -70,6 +70,7 @@ export interface Message {
   created_at: string;
   updated_at: string;
   id: string;
+  pinned?: boolean;
 }
 
 export interface CreateMessageRequest {
@@ -84,6 +85,10 @@ export interface CreateMessageReactionRequest {
 }
 
 export interface CreateMessageReadReceiptRequest {
+  message_id: string;
+}
+
+export interface PinMessageRequest {
   message_id: string;
 }
 
