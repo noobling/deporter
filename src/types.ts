@@ -15,7 +15,7 @@ export interface Event {
    * - private events are default and can show up in feeds for friends
    * - restricted events only show up for participants
    */
-  status?: "public" | "private" | "restricted";
+  status?: EventStatusType;
   join_code?: string; // unique code users can use to join event
 
   /** Read Receipts
@@ -28,6 +28,9 @@ export interface Event {
     };
   };
 }
+
+export type EventStatusType = "public" | "private" | "restricted";
+
 export interface EventResponse extends Event {
   _id: string;
 }
@@ -35,12 +38,14 @@ export interface CreateEventRequest {
   name: string;
   photo: string;
   start_time: string;
+  status: EventStatusType;
 }
 
 export interface UpdateEventRequest {
   name: string;
   photo: string;
   start_time: string;
+  status: EventStatusType;
 }
 
 export interface AddParticipantRequest {
@@ -68,6 +73,7 @@ export interface Message {
   created_at: string;
   updated_at: string;
   id: string;
+  pinned?: boolean;
 }
 
 export interface CreateMessageRequest {
@@ -82,6 +88,10 @@ export interface CreateMessageReactionRequest {
 }
 
 export interface CreateMessageReadReceiptRequest {
+  message_id: string;
+}
+
+export interface PinMessageRequest {
   message_id: string;
 }
 
@@ -190,6 +200,10 @@ export interface CreateExpenseRequest {
   amount: number;
   media: string[];
   applicable_to: string[];
+}
+
+export interface DeleteExpenseRequest {
+  name: string;
 }
 
 export interface AuthContext {

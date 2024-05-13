@@ -112,9 +112,42 @@ export async function addMessage(id: string, message: Message) {
   return { data, user };
 }
 
-export async function addMessageReaction(eventId: string, messageIndex: number, userId: string, reaction: string): Promise<{
-  data: EventResponse | null,
-  sender: UserResponse | null
+export async function pinMessage(eventId: string, messageId: string) {
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(eventId),
+      "messages.id": messageId,
+    },
+    {
+      $set: {
+        "messages.$.pinned": true,
+      },
+    }
+  );
+}
+
+export async function getMessage(eventId: string, messageId: string) {
+  const event = await getEvent(eventId, {
+    projection: {
+      messages: {
+        $elemMatch: {
+          id: messageId,
+        },
+      },
+    },
+  });
+
+  return event?.messages[0];
+}
+
+export async function addMessageReaction(
+  eventId: string,
+  messageIndex: number,
+  userId: string,
+  reaction: string
+): Promise<{
+  data: EventResponse | null;
+  sender: UserResponse | null;
 }> {
   // Update the reaction for the user or set it if it does not exist
   const updateResult = await collection.updateOne(
@@ -123,8 +156,8 @@ export async function addMessageReaction(eventId: string, messageIndex: number, 
     },
     {
       $set: {
-        [`messages.${messageIndex}.reactions.${userId.toString()}`]: [reaction]  // Set the reaction for the user
-      }
+        [`messages.${messageIndex}.reactions.${userId.toString()}`]: [reaction], // Set the reaction for the user
+      },
     }
   );
   if (updateResult.modifiedCount === 0) {
@@ -137,7 +170,11 @@ export async function addMessageReaction(eventId: string, messageIndex: number, 
   return { data, sender };
 }
 
-export async function addMessageReadReceipt(eventId: string, userId: string, messageId: string) {
+export async function addMessageReadReceipt(
+  eventId: string,
+  userId: string,
+  messageId: string
+) {
   await collection.updateOne(
     {
       _id: getMongoIdOrFail(eventId),
@@ -146,14 +183,13 @@ export async function addMessageReadReceipt(eventId: string, userId: string, mes
       $set: {
         [`read_receipts.${userId}`]: {
           message_id: messageId,
-          read_at: new Date().toISOString()
-        }
-      }
+          read_at: new Date().toISOString(),
+        },
+      },
     }
   );
-  return true
+  return true;
 }
-
 
 async function addExpense(id: string, expense: Expense) {
   await updateList(id, {
@@ -161,6 +197,25 @@ async function addExpense(id: string, expense: Expense) {
   });
 
   return getEvent(id);
+}
+
+/**
+ * We may want to delete the expense by name in the future
+ * @param id
+ * @param expenseName
+ */
+async function deleteExpense(id: string, expenseName: string) {
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(id),
+    },
+    {
+      // @ts-ignore
+      $pull: {
+        expenses: { name: expenseName },
+      },
+    }
+  );
 }
 
 async function addPayment(id: string, payment: Payment) {
@@ -240,9 +295,12 @@ export default {
   getEventMetaData,
   createEvent,
   updateEvent,
+  getMessage,
+  pinMessage,
   addMessage,
   addMessageReaction,
   addExpense,
+  deleteExpense,
   addParticipants,
   addPayment,
   getEventsToJoin,

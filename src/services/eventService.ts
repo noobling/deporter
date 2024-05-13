@@ -5,10 +5,12 @@ import {
   CreateMessageReadReceiptRequest,
   CreateMessageRequest,
   CreatePaymentRequest,
+  DeleteExpenseRequest,
   EventResponse,
   EventsResponse,
   Expense,
   Message,
+  PinMessageRequest,
   UpdateEventRequest,
   UserResponse,
 } from "../types";
@@ -22,6 +24,7 @@ import { adminSendMessage } from "../utils/admin";
 import { isEqual } from "../utils/mongo";
 import media from "../db/media";
 import { v4 as uuidv4 } from "uuid";
+import { messageIsPhoto } from "../utils/message";
 
 export async function getEvent(payload: any, context: AuthContext) {
   return events.getEvent(context.id!!);
@@ -45,13 +48,14 @@ export async function createEvent(
   context: AuthContext
 ) {
   return events.createEvent({
+    // @ts-ignore - backwards compatibility
+    status: "private",
     ...payload,
     created_by: context.authedUser._id,
     messages: [],
     participants: [context.authedUser._id],
     expenses: [],
     payments: [],
-    status: "private",
     ...getTimestamps(),
   });
 }
@@ -92,11 +96,22 @@ export async function addEventExpense(payload: any, context: AuthContext) {
   }
 
   const result = await events.addExpense(context.id!!, expense);
-  adminSendMessage({
+  await adminSendMessage({
     message: `${context.authedUser.name} added ${expense.name} expense of $${expense.amount} to ${result?.name}`,
     eventId: result!!._id,
   });
   return result;
+}
+
+export async function deleteExpense(
+  payload: DeleteExpenseRequest,
+  context: AuthContext
+) {
+  await events.deleteExpense(context.id!!, payload.name);
+  await adminSendMessage({
+    message: `${context.authedUser.name} deleted ${payload.name} expense`,
+    eventId: context.id,
+  });
 }
 
 export async function addEventPayment(
@@ -145,8 +160,14 @@ export async function addEventMessageReaction(
     payload.reaction
   );
 
-  if (data && sender && sender._id !== data.messages[payload.message_index].created_by) {
-    const goTo = `/event/chat?id=${data._id}&messageId=${data.messages[payload.message_index].id}`;
+  if (
+    data &&
+    sender &&
+    sender._id !== data.messages[payload.message_index].created_by
+  ) {
+    const goTo = `/event/chat?id=${data._id}&messageId=${
+      data.messages[payload.message_index].id
+    }`;
     sendNotifsFromUserToUserAsync(
       data.messages[payload.message_index].created_by,
       "reacted to your message",
@@ -159,7 +180,6 @@ export async function addEventMessageReaction(
   return data;
 }
 
-
 export async function addEventMessageReadReceipt(
   payload: CreateMessageReadReceiptRequest,
   context: AuthContext
@@ -169,7 +189,22 @@ export async function addEventMessageReadReceipt(
     context.authedUser._id,
     payload.message_id
   );
+}
 
+export async function pinEventMessage(
+  payload: PinMessageRequest,
+  context: AuthContext
+) {
+  await events.pinMessage(context.id!!, payload.message_id);
+  const message = await events.getMessage(context.id!!, payload.message_id);
+  await adminSendMessage({
+    message: `${context.authedUser.name} pinned ${
+      messageIsPhoto(message) ? "photo" : message?.content
+    }`,
+    eventId: context.id,
+  });
+
+  return message;
 }
 
 export async function addEventParticipants(payload: any, context: AuthContext) {

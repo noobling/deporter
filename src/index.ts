@@ -10,12 +10,14 @@ import {
   addEventParticipants,
   addEventPayment,
   createEvent,
+  deleteExpense,
   getEvent,
   getEventMetaData,
   getEventsForCurrentUser,
   getEventsToJoin,
   joinEvent,
   joinEventByCode,
+  pinEventMessage,
   updateEvent,
 } from "./services/eventService";
 import { createMedia, getMedia } from "./services/mediaService";
@@ -78,11 +80,13 @@ app.get("/event/:id/metadata", handler(getEventMetaData));
 app.post("/event", handler(createEvent));
 app.post("/event/:id/update", handler(updateEvent));
 app.post("/event/:id/expense", handler(addEventExpense));
+app.delete("/event/:id/expense", handler(deleteExpense));
 app.post("/event/:id/payment", handler(addEventPayment));
 
 app.post("/event/:id/message", handler(addEventMessage));
 app.post("/event/:id/message-read", handler(addEventMessageReadReceipt));
 app.post("/event/:id/message-react", handler(addEventMessageReaction));
+app.post("/event/:id/message/pin", handler(pinEventMessage));
 
 app.post("/event/:id/participants", handler(addEventParticipants));
 app.post("/event/:id/join", handler(joinEvent));
