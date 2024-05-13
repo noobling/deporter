@@ -57,6 +57,9 @@ export interface MessageReaction {
 export interface Message {
   interactions?: {
     response_to?: string; // id of the message this is a response to, for now it is the index
+    poll?: {
+      options: string[];
+    }
   };
   reactions: MessageReaction;
   created_by: string;
@@ -68,7 +71,7 @@ export interface Message {
 }
 
 export interface CreateMessageRequest {
-  interactions?: { response_to?: string };
+  interactions?: { response_to?: string, poll?: { options: string[] } };
   content: string;
   media: string[];
 }
