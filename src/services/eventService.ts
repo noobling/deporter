@@ -160,7 +160,7 @@ export async function addEventMessageReaction(
     payload.reaction
   );
 
-  if (
+  if (!payload.reaction.startsWith("o:") &&
     data &&
     sender &&
     sender._id !== data.messages[payload.message_index].created_by
