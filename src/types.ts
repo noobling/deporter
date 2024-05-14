@@ -1,4 +1,6 @@
-// Event
+import { ObjectId } from "mongodb";
+
+// ====================== EVENT ====================
 export interface Event {
   created_by: string;
   name: string;
@@ -92,7 +94,7 @@ export interface PinMessageRequest {
   message_id: string;
 }
 
-// Payment
+// ====================== PAYMENT ====================
 export interface Payment {
   created_by: string;
   amount: number;
@@ -110,7 +112,7 @@ export interface CreatePaymentRequest {
   media: string[];
 }
 
-// Media
+// ====================== MEDIA ====================
 export interface CreateMediaRequest {
   type: string;
   name: string;
@@ -131,7 +133,7 @@ export interface MediaResponse extends Media {
   uploadUrl?: string;
 }
 
-// User
+// ====================== User ====================
 export interface User {
   sub: string;
   name: string;
@@ -182,7 +184,7 @@ export interface ListFriendsResponse {
   addedYou: UserResponse[];
 }
 
-// Expense
+// ====================== EXPENSE ====================
 export interface Expense {
   created_by: string;
   name: string;
@@ -242,4 +244,38 @@ export interface FeedItem {
   message: string;
   created_at: string;
   created_by: string;
+}
+
+// ====================== PLAN ====================
+
+export interface BasePlan {
+  link: string;
+  note: string;
+}
+export interface Plan extends BasePlan {
+  id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CreatePlanRequest extends BasePlan {
+  event_id: string;
+}
+export interface CreatePlan extends BasePlan {
+  created_by: ObjectId; // Mongo ID of user who created this plan
+  event_id: ObjectId;
+}
+
+export interface UpdatePlanRequest extends BasePlan {}
+
+/**
+ * PlanModel Mongo DB representation of Plan
+ */
+export interface PlanModel extends BasePlan {
+  _id: ObjectId;
+  event_id: ObjectId;
+  created_by: ObjectId;
+  created_at: string;
+  updated_at: string;
 }

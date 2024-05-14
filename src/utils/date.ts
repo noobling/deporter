@@ -5,6 +5,12 @@ export function getTimestamps() {
   };
 }
 
+export function getUpdatedTimestamps() {
+  return {
+    updated_at: new Date().toISOString(),
+  };
+}
+
 const MILLISECONDS_IN_A_DAY = 86400000;
 export function getDaysToGo(startTime?: string): number {
   if (!startTime) return 0;

@@ -38,6 +38,7 @@ import swagger from "./utils/swagger";
 import { getFeed } from "./services/feedService";
 import { startCronJobs } from "./scheduler";
 import { publicGetEventById } from "./services/publicService";
+import { createPlan, listPlans, updatePlan } from "./services/planService";
 
 /*
  * Load up and parse configuration details from
@@ -99,6 +100,11 @@ app.get("/media/:id", handler(getMedia));
 
 // Feed API
 app.get("/feed", handler(getFeed));
+
+// Plan API
+app.post("/plan", handler(createPlan));
+app.get("/plans", handler(listPlans));
+app.post("/plan/:id", handler(updatePlan));
 
 swagger(app);
 
