@@ -252,8 +252,9 @@ export interface FeedItem {
 // ====================== PLAN ====================
 
 export interface BasePlan {
-  link?: string;
-  note?: string;
+  link: string;
+  note: string;
+  start_date_time: string;
 }
 export interface Plan extends BasePlan {
   id: string;
