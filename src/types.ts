@@ -66,7 +66,7 @@ export interface Message {
     response_to?: string; // id of the message this is a response to, for now it is the index
     poll?: {
       options: string[];
-    }
+    };
   };
   reactions: MessageReaction;
   created_by: string;
@@ -79,7 +79,7 @@ export interface Message {
 }
 
 export interface CreateMessageRequest {
-  interactions?: { response_to?: string, poll?: { options: string[] } };
+  interactions?: { response_to?: string; poll?: { options: string[] } };
   content: string;
   media: string[];
 }
@@ -252,8 +252,8 @@ export interface FeedItem {
 // ====================== PLAN ====================
 
 export interface BasePlan {
-  link: string;
-  note: string;
+  link?: string;
+  note?: string;
 }
 export interface Plan extends BasePlan {
   id: string;

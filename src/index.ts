@@ -102,8 +102,8 @@ app.get("/media/:id", handler(getMedia));
 app.get("/feed", handler(getFeed));
 
 // Plan API
-app.post("/plan", handler(createPlan));
-app.get("/plans", handler(listPlans));
+app.post("/event/id/plan", handler(createPlan));
+app.get("/event/:id/plans", handler(listPlans));
 app.post("/plan/:id", handler(updatePlan));
 
 swagger(app);

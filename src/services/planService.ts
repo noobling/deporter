@@ -1,4 +1,5 @@
 import plan from "../db/plan";
+import { createPlanSchema, updatePlanSchema } from "../schemas";
 import { AuthContext, CreatePlanRequest, UpdatePlanRequest } from "../types";
 import { getMongoId } from "../utils/mongo";
 
@@ -6,9 +7,10 @@ export async function createPlan(
   payload: CreatePlanRequest,
   context: AuthContext
 ) {
+  const validated = await createPlanSchema.validate(payload);
+
   return plan.create({
-    link: payload.link,
-    note: payload.note,
+    ...validated,
     event_id: getMongoId(payload.event_id),
     created_by: getMongoId(context.authedUser._id),
   });
@@ -24,6 +26,7 @@ export async function updatePlan(
   context: AuthContext
 ) {
   const planId = context.id;
+  const validated = await updatePlanSchema.validate(payload);
 
-  plan.update(planId, payload);
+  plan.update(planId, validated);
 }
