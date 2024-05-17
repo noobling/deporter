@@ -118,11 +118,20 @@ export async function addEventPayment(
   payload: CreatePaymentRequest,
   context: AuthContext
 ) {
-  return events.addPayment(context.id!!, {
+  const event = await events.addPayment(context.id!!, {
     ...payload,
     created_by: context.authedUser._id,
     ...getTimestamps(),
   });
+
+  if (event) {
+    await adminSendMessage({
+      message: `${context.authedUser.name} added a payment of $${payload.amount} to ${event.name}`,
+      eventId: event._id,
+    });
+  }
+
+  return event;
 }
 
 export async function addEventMessage(
@@ -160,7 +169,8 @@ export async function addEventMessageReaction(
     payload.reaction
   );
 
-  if (!payload.reaction.startsWith("o:") &&
+  if (
+    !payload.reaction.startsWith("o:") &&
     data &&
     sender &&
     sender._id !== data.messages[payload.message_index].created_by
