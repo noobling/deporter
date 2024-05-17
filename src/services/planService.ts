@@ -8,10 +8,11 @@ export async function createPlan(
   context: AuthContext
 ) {
   const validated = await createPlanSchema.validate(payload);
+  const id = context.id;
 
   return plan.create({
     ...validated,
-    event_id: getMongoId(payload.event_id),
+    event_id: getMongoId(id),
     created_by: getMongoId(context.authedUser._id),
   });
 }

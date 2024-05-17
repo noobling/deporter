@@ -263,9 +263,7 @@ export interface Plan extends BasePlan {
   updated_at: string;
 }
 
-export interface CreatePlanRequest extends BasePlan {
-  event_id: string;
-}
+export interface CreatePlanRequest extends BasePlan {}
 export interface CreatePlan extends BasePlan {
   created_by: ObjectId; // Mongo ID of user who created this plan
   event_id: ObjectId;
