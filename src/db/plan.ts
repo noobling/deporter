@@ -32,9 +32,16 @@ async function update(planId: string, plan: UpdatePlanRequest) {
 }
 
 async function list(eventId: string) {
-  const cursor = await collection.find({
-    event_id: getMongoIdOrFail(eventId),
-  });
+  const cursor = await collection.find(
+    {
+      event_id: getMongoIdOrFail(eventId),
+    },
+    {
+      sort: {
+        start_date_time: 1,
+      },
+    }
+  );
 
   return cursor.toArray() as unknown as PlanModel[];
 }
