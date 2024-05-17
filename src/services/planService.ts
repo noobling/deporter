@@ -1,6 +1,12 @@
 import plan from "../db/plan";
 import { createPlanSchema, updatePlanSchema } from "../schemas";
-import { AuthContext, CreatePlanRequest, UpdatePlanRequest } from "../types";
+import {
+  AuthContext,
+  CreatePlanRequest,
+  Plan,
+  PlansResponse,
+  UpdatePlanRequest,
+} from "../types";
 import { getMongoId } from "../utils/mongo";
 
 export async function createPlan(
@@ -17,9 +23,20 @@ export async function createPlan(
   });
 }
 
-export async function listPlans(_: any, context: AuthContext) {
+export async function listPlans(
+  _: any,
+  context: AuthContext
+): Promise<PlansResponse> {
   const eventId = context.id;
-  return plan.list(eventId);
+
+  const planModels = await plan.list(eventId);
+
+  const plans = planModels.map((planModel) => ({
+    ...planModel,
+    id: planModel._id,
+  })) as unknown as Plan[];
+
+  return { plans };
 }
 
 export async function updatePlan(
