@@ -65,8 +65,8 @@ export async function updatePlan(
 
 export async function deletePlan(_: any, context: AuthContext) {
   const planId = context.id;
-  await plan.deletePlan(planId);
   const deleted = await plan.find(planId);
+  await plan.deletePlan(planId);
 
   await adminSendMessage({
     message: `${context.authedUser.name} deleted plan: ${deleted?.note}`,
