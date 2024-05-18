@@ -46,8 +46,24 @@ async function list(eventId: string) {
   return cursor.toArray() as unknown as PlanModel[];
 }
 
+async function deletePlan(planId: string) {
+  return collection.deleteOne({
+    _id: getMongoIdOrFail(planId),
+  });
+}
+
+async function find(planId: string) {
+  const result = collection.findOne({
+    _id: getMongoIdOrFail(planId),
+  });
+
+  return result as unknown as PlanModel;
+}
+
 export default {
   list,
   create,
   update,
+  deletePlan,
+  find,
 };
