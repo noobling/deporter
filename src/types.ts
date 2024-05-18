@@ -261,6 +261,7 @@ export interface Plan extends BasePlan {
   created_by: string;
   created_at: string;
   updated_at: string;
+  event_id: string;
 }
 
 export interface PlansResponse {

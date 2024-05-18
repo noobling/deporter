@@ -38,7 +38,7 @@ async function list(eventId: string) {
     },
     {
       sort: {
-        start_date_time: 1,
+        start_date_time: -1,
       },
     }
   );
