@@ -264,7 +264,7 @@ export async function sendEventReminder() {
     const daysToGo = getDaysToGo(event.start_time);
 
     await adminSendMessage({
-      message: `Time to stop, drop and snap 📸, ${daysToGo} days left 🎉`,
+      message: getRandomMessage(daysToGo),
       eventId: event._id,
     });
   }
@@ -367,4 +367,23 @@ function getMessageDescription(message: Message) {
   } else {
     return message.content;
   }
+}
+
+const messages = [
+  "Time to stop, drop and snap 📸, ${daysToGo} days left 🎉",
+  "Capture the moment! Only ${daysToGo} days to go 📸✨",
+  "Don't miss out! ${daysToGo} days left to share your snaps 🎉📸",
+  "Snap away! ${daysToGo} days remaining 📸🎊",
+  "Celebrate with a photo! ${daysToGo} days left 📸🎉",
+  "Your photo awaits! Just ${daysToGo} days left 📸🎈",
+  "Get your cameras ready! ${daysToGo} days left 📸🥳",
+  "Click, Share, Smile! Only ${daysToGo} days left 📸🎁",
+  "You have been chosen by sepcial Jeremiah bot to snap a photo in ${daysToGo} days 📸🎉",
+];
+
+// Function to get a random message
+function getRandomMessage(daysToGo: number) {
+  const randomIndex = Math.floor(Math.random() * messages.length);
+  const selectedMessage = messages[randomIndex];
+  return selectedMessage.replace("${daysToGo}", daysToGo.toString());
 }
