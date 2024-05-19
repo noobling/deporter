@@ -140,10 +140,10 @@ export async function addEventMessage(
 ) {
   const message: Message = {
     created_by: context.authedUser._id,
+    id: uuidv4(),
     ...payload,
     ...getTimestamps(),
     reactions: {},
-    id: uuidv4(),
   };
 
   const { data, user } = await events.addMessage(context.id!!, message);
