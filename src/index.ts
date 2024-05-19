@@ -37,7 +37,7 @@ import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
 import { getFeed } from "./services/feedService";
 import { startCronJobs } from "./scheduler";
-import { publicGetEventById } from "./services/publicService";
+import { publicGetEventById, sharePlan } from "./services/publicService";
 import {
   createPlan,
   deletePlan,
@@ -65,6 +65,9 @@ startCronJobs();
 
 // Middleware to parse JSON bodies
 app.use(bodyParser.json());
+
+// Set the view engine to ejs
+app.set("view engine", "ejs");
 
 // User API
 app.get("/user/me", handler(currentUser));
@@ -111,6 +114,9 @@ app.post("/event/:id/plan", handler(createPlan));
 app.get("/event/:id/plans", handler(listPlans));
 app.post("/plan/:id", handler(updatePlan));
 app.delete("/plan/:id", handler(deletePlan));
+
+// Public shared
+app.get("/share/plan/:id", sharePlan);
 
 swagger(app);
 

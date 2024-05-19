@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { Media } from "../types";
+import { Media, MediaResponse } from "../types";
 import db from "./db";
 import { getMongoIdOrFail } from "../utils/mongo";
 
@@ -11,7 +11,8 @@ async function create(media: Media) {
 }
 
 async function get(id: string) {
-  return collection.findOne({ _id: getMongoIdOrFail(id) });
+  const result = await collection.findOne({ _id: getMongoIdOrFail(id) });
+  return result as unknown as MediaResponse;
 }
 
 async function addEventId(id: string, eventId: string) {

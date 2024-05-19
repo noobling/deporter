@@ -286,3 +286,18 @@ export interface PlanModel extends BasePlan {
   created_at: string;
   updated_at: string;
 }
+
+export interface SharePlanParams {
+  /**
+   * Path in app to route to
+   */
+  path: string;
+}
+
+export interface SharePlanResponse {
+  title: string;
+  image: string | null;
+  video: string | null;
+  description: string;
+  url: string;
+}
