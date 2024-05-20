@@ -1,6 +1,6 @@
 import { cacheDelete, cacheGetByPrefix, cacheSet } from "../utils/redis";
 
-const amqp = require("amqplib");
+import amqp, { Channel } from "amqplib";
 const RABBITMQ_LINK = process.env.RABBITMQ_LINK;
 
 if (!RABBITMQ_LINK) {
@@ -9,6 +9,7 @@ if (!RABBITMQ_LINK) {
 }
 
 let amqpConnection: any = null;
+let amqpChannel: Channel | null = null;
 let connectionPromise: any = null;
 
 initRabbitMQ().then((connection) => (amqpConnection = connection));
@@ -30,6 +31,9 @@ async function initRabbitMQ() {
         amqpConnection = null; // Reset the connection on error
         connectionPromise = null; // Allow new connection attempts after an error
       });
+
+      amqpChannel = await amqpConnection.createChannel();
+
       console.info("Connected to RabbitMQ");
       return amqpConnection;
     } catch (error) {
@@ -53,13 +57,14 @@ async function sendToQueue(queue: string, message: string) {
       console.error("RabbitMQ channel not initialized.");
       return;
     }
+  } else if (!amqpChannel) {
+    amqpChannel = await amqpConnection.createChannel();
   }
   try {
-    const amqpChannel = await amqpConnection.createChannel();
-    await amqpChannel.assertQueue(queue, {
+    await amqpChannel!.assertQueue(queue, {
       durable: true,
     });
-    amqpChannel.sendToQueue(queue, Buffer.from(message));
+    return amqpChannel!.sendToQueue(queue, Buffer.from(message));
   } catch (error) {
     console.error(`Failed to send message to queue ${queue}:`, error);
   }

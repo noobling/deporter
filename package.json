@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/c99rahul/ts-node-express#readme",
   "dependencies": {
+    "@types/amqplib": "^0.10.5",
     "@types/node-cron": "^3.0.11",
     "amqplib": "^0.10.3",
     "apple-signin-auth": "^1.7.6",

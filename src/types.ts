@@ -82,6 +82,7 @@ export interface CreateMessageRequest {
   interactions?: { response_to?: string; poll?: { options: string[] } };
   content: string;
   media: string[];
+  id?: string; // Nullable for backwards compatibility
 }
 
 export interface CreateMessageReactionRequest {
@@ -120,6 +121,7 @@ export interface CreateMediaRequest {
   type: string;
   name: string;
   extension: string;
+  exif?: string;
 }
 export interface Media {
   created_by: string;
@@ -129,6 +131,7 @@ export interface Media {
   created_at: string;
   updated_at: string;
   eventId?: string; // Event media is part of
+  exif?: string; // metadata on media from device
 }
 export interface MediaResponse extends Media {
   _id: string;
