@@ -52,13 +52,23 @@ async function sendToQueue(queue: string, message: string) {
     return;
   }
   if (!amqpConnection) {
+    console.warn("Connection not found creating new connection");
     amqpConnection = await initRabbitMQ();
     if (!amqpConnection) {
-      console.error("RabbitMQ channel not initialized.");
+      console.error(
+        "Failed to send message: RabbitMQ connection not initialized."
+      );
       return;
     }
   } else if (!amqpChannel) {
+    console.warn("Channel not found creating new channel");
     amqpChannel = await amqpConnection.createChannel();
+    if (!amqpChannel) {
+      console.error(
+        "Failed to send message: RabbitMQ channel not initialized."
+      );
+      return;
+    }
   }
   try {
     await amqpChannel!.assertQueue(queue, {
