@@ -85,7 +85,7 @@ export async function sharePlan(req: Request, res: Response) {
       description: `Starting at ${data.start_date_time}`,
       video: null,
       image: null,
-      url: `deporter://${path}?id=${planId}&eventId=${data.event_id}`,
+      url: `deporter://${path}?planId=${planId}&id=${data.event_id}`,
     };
     mediaData.type.startsWith("video")
       ? (result.video = downloadUrl)
