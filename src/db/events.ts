@@ -153,6 +153,7 @@ export async function addMessageReaction(
   const updateResult = await collection.updateOne(
     {
       _id: getMongoIdOrFail(eventId),
+      [`messages.${messageIndex}`]: { $exists: true },
     },
     {
       $set: {
