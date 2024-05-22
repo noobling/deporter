@@ -258,6 +258,7 @@ export interface BasePlan {
   link: string;
   note: string;
   start_date_time: string;
+  media: string[];
 }
 export interface Plan extends BasePlan {
   id: string;
