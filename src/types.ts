@@ -1,4 +1,5 @@
 import { ObjectId } from "mongodb";
+import { OpenGraphData } from "./utils/og";
 
 // ====================== EVENT ====================
 export interface Event {
@@ -117,21 +118,25 @@ export interface CreatePaymentRequest {
 }
 
 // ====================== MEDIA ====================
+export type MediaType = "image" | "video"; // Only image and video supported now but can be more
 export interface CreateMediaRequest {
-  type: string;
+  type: MediaType;
   name: string;
   extension: string;
   exif?: string;
+  mimeType?: string;
 }
 export interface Media {
   created_by: string;
-  type: string;
+  type: MediaType;
   name: string;
   extension: string;
   created_at: string;
   updated_at: string;
   eventId?: string; // Event media is part of
   exif?: string; // metadata on media from device
+  address?: string;
+  coords?: string;
 }
 export interface MediaResponse extends Media {
   _id: string;
@@ -300,8 +305,9 @@ export interface SharePlanParams {
 
 export interface SharePlanResponse {
   title: string;
-  image: string | null;
-  video: string | null;
+  time: string;
   description: string;
   url: string;
+  openGraphData: OpenGraphData | null;
+  eventName: string;
 }

@@ -13,13 +13,13 @@ import { UpdatePlanRequest } from "./types";
 export const createPlanSchema = object({
   link: string().required(),
   note: string().required(),
-  start_date_time: string().datetime().required(),
+  start_date_time: string().required(),
   media: array().of(string().required()).required(),
 });
 
 export const updatePlanSchema: ObjectSchema<UpdatePlanRequest> = object({
   link: string().required(),
   note: string().required(),
-  start_date_time: string().datetime().required(),
+  start_date_time: string().required(),
   media: array().of(string().required()).required(),
 });

@@ -6,6 +6,7 @@ import { SharePlanResponse } from "../types";
 import { getDownloadUrl } from "../utils/aws";
 import { getMedia } from "./mediaService";
 import { Request, Response } from "express";
+import { og } from "../utils/og";
 
 // This file is public facing an accessible to everyone - no auth required
 export async function publicGetEventById(
@@ -75,21 +76,16 @@ export async function sharePlan(req: Request, res: Response) {
       events.getEvent(data.event_id.toString()),
       users.getUser(data.created_by.toString()),
     ]);
-    const [mediaData, downloadUrl] = await Promise.all([
-      media.get(eventData?.photo ?? ""),
-      getDownloadUrl(eventData?.photo ?? ""),
-    ]);
+    const [ogData] = await Promise.all([og(data.link)]);
 
     const result: SharePlanResponse = {
-      title: `Check out this insane plan ${data.note} by ${user.name} in ${eventData?.name}`,
+      title: `${data.note}`,
       description: `Starting at ${data.start_date_time}`,
-      video: null,
-      image: null,
       url: `deporter://${path}?planId=${planId}&id=${data.event_id}`,
+      openGraphData: ogData ?? null,
+      eventName: eventData?.name ?? "",
+      time: data.start_date_time,
     };
-    mediaData.type.startsWith("video")
-      ? (result.video = downloadUrl)
-      : (result.image = downloadUrl);
 
     return res.render("plan", result);
   } catch (e) {

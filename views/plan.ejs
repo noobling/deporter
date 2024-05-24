@@ -9,19 +9,49 @@
   <% } else { %>
     <meta property="og:image" content="<%= image %>">
   <% } %>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+    }
+    h3, h1, h2 {
+      margin: 0;
+    }
+    a {
+      color: #007BFF;
+    }
+    img {
+      margin-top: 10px;
+    }
+  </style>
   <!-- other meta tags -->
 </head>
-<body>
-  <p><%= title %></p>
+<body style="background-color: #F4F5F7; margin: 0;">
+  <div style="background-color: #fff; height: 50px; width: 100%; padding: 10px; display: flex; align-items: center; margin-bottom: 10px;">
+    <h1 style="color: #007BFF;">Deporter</h1>
+  </div>
+  <div style="padding: 20px; padding-top: 0;">
 
-  <a href="<%= url %>" style="margin-bottom: 10px; display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 4px;">
-    Open in app</a>
 
-    <div>
-
-      <% if (image) { %><img style="max-width: 300px; max-height: 300px; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" src="<%= image %>"> <% } %>
-      <% if (video) { %><video style="max-width: 300px; max-height: 300px;" src="<%= video %>" controls></video> <% } %>
-    </div>
-
+    <h2><%= title %></h2>
+    <p>Event: <%= eventName %></p>
+    
+    
+    <a href="<%= url %>" style="margin-bottom: 10px; display: inline-block; padding: 10px 20px; color: #fff; background-color: #007BFF; text-decoration: none; border-radius: 4px;">
+      Open in app</a>
+      
+      
+      
+      <% if (openGraphData) { %>
+        <div>
+          <a href="<%= openGraphData.link %>" target="_blank">
+            <p>Location: <%= openGraphData.title%> <%= openGraphData.description %></p>
+            <img style="width: 300px; height: 300px; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" src="<%= openGraphData.image.url %>"/>
+          </div>
+        </a>
+        <% } %>
+  </div>
 </body>
 </html>
