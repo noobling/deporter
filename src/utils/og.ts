@@ -10,7 +10,8 @@ export async function og(link: string) {
   const promise = new Promise<OpenGraphData | null>((resolve, reject) => {
     OpenGraph(link, (err, data) => {
       if (err) {
-        reject(err);
+        console.error("Error fetching OpenGraph data", err);
+        resolve(null);
       } else {
         const result = { ...data, link: link } as OpenGraphData;
         resolve(result ?? null);
