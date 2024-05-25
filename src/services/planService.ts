@@ -17,7 +17,7 @@ export async function createPlan(
   const validated = await createPlanSchema.validate(payload);
   const id = context.id;
 
-  await plan.create({
+  const created = await plan.create({
     ...validated,
     event_id: getMongoId(id),
     created_by: getMongoId(context.authedUser._id),
@@ -26,6 +26,7 @@ export async function createPlan(
   await adminSendMessage({
     message: `${context.authedUser.name} created plan: ${validated.note}`,
     eventId: id,
+    route_to: `/event/plan/edit?id=${created.event_id}}&planId=${created._id}`,
   });
 }
 
@@ -58,6 +59,7 @@ export async function updatePlan(
   await adminSendMessage({
     message: `${context.authedUser.name} updated plan: ${updated?.note}`,
     eventId: updated?.event_id.toString() ?? "",
+    route_to: `/event/plan/edit?id=${updated.event_id}}&planId=${updated._id}`,
   });
 
   return updated;

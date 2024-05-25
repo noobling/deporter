@@ -99,6 +99,7 @@ export async function addEventExpense(payload: any, context: AuthContext) {
   await adminSendMessage({
     message: `${context.authedUser.name} added ${expense.name} expense of $${expense.amount} to ${result?.name}`,
     eventId: result!!._id,
+    route_to: `/event/(expense)/view-expense?id=${result?._id}`,
   });
   return result;
 }
@@ -128,6 +129,7 @@ export async function addEventPayment(
     await adminSendMessage({
       message: `${context.authedUser.name} added a payment of $${payload.amount} to ${event.name}`,
       eventId: event._id,
+      route_to: `/event/(expense)/view-expense?id=${event?._id}`,
     });
   }
 

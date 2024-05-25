@@ -11,10 +11,14 @@ import db from "./db";
 const collection = db.collection("plan");
 
 async function create(plan: CreatePlan) {
-  return collection.insertOne({
+  const result = await collection.insertOne({
     ...plan,
     ...getTimestamps(),
   });
+
+  return collection.findOne({
+    _id: result.insertedId,
+  }) as unknown as Promise<PlanModel>;
 }
 
 async function update(planId: string, plan: UpdatePlanRequest) {
