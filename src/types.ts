@@ -85,7 +85,7 @@ export interface CreateMessageRequest {
   content: string;
   media: string[];
   id?: string; // Nullable for backwards compatibility
-  routeTo?: string;
+  route_to?: string;
 }
 
 export interface CreateMessageReactionRequest {
