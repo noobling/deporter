@@ -116,7 +116,9 @@ export async function addFriend(payload: any, context: AuthContext) {
   const friendId = context.id;
   const userId = context.authedUser._id;
   const user = await users.getUser(userId);
-  await cacheNotificationToProcess(userId, {
+  const result = await users.addFriend(friendId, userId);
+
+  await cacheNotificationToProcess(friendId, {
     type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
     payload: {
       goTo: "/friends/friends",
@@ -124,7 +126,8 @@ export async function addFriend(payload: any, context: AuthContext) {
       description: "They are now sharing their memories with you.",
     },
   });
-  return users.addFriend(friendId, userId);
+
+  return result;
 }
 
 export async function listFriends(payload: any, context: AuthContext) {
