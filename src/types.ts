@@ -77,6 +77,7 @@ export interface Message {
   updated_at: string;
   id: string;
   pinned?: boolean;
+  route_to?: string; // path to route to in app.
 }
 
 export interface CreateMessageRequest {
@@ -84,6 +85,7 @@ export interface CreateMessageRequest {
   content: string;
   media: string[];
   id?: string; // Nullable for backwards compatibility
+  routeTo?: string;
 }
 
 export interface CreateMessageReactionRequest {

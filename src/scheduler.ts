@@ -24,5 +24,11 @@ export const startCronJobs = () => {
     await processNotificationsFromCache();
   });
 
-  console.log("Schedule cron jobs");
+  // Every 12 hours process upcoming plans
+  cron.schedule("0 */12 * * *", async () => {
+    console.log("Processing notifications for upcoming plans");
+    await processNotificationsFromCache();
+  });
+
+  console.log("Scheduled cron jobs");
 };

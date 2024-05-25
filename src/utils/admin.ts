@@ -14,14 +14,17 @@ const adminUser = {
 export async function adminSendMessage({
   message,
   eventId,
+  routeTo,
 }: {
   message: string;
   eventId: string;
+  routeTo?: string;
 }) {
   await addEventMessage(
     {
       content: message,
       media: [],
+      routeTo,
     },
     {
       id: eventId,

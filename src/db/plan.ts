@@ -46,6 +46,12 @@ async function list(eventId: string) {
   return cursor.toArray() as unknown as PlanModel[];
 }
 
+async function listAll() {
+  const cursor = await collection.find();
+
+  return cursor.toArray() as unknown as PlanModel[];
+}
+
 async function deletePlan(planId: string) {
   return collection.deleteOne({
     _id: getMongoIdOrFail(planId),
@@ -66,4 +72,5 @@ export default {
   update,
   deletePlan,
   find,
+  listAll,
 };
