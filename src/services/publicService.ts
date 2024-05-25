@@ -2,8 +2,7 @@ import events from "../db/events";
 import media from "../db/media";
 import plan from "../db/plan";
 import users from "../db/users";
-import { SharePlanResponse } from "../types";
-import { getDownloadUrl } from "../utils/aws";
+
 import { getMedia } from "./mediaService";
 import { Request, Response } from "express";
 import { og } from "../utils/og";
@@ -76,15 +75,15 @@ export async function sharePlan(req: Request, res: Response) {
       events.getEvent(data.event_id.toString()),
       users.getUser(data.created_by.toString()),
     ]);
-    const [ogData] = await Promise.all([og(data.link)]);
+    const ogData = await og(data.link);
 
-    const result: SharePlanResponse = {
+    const result = {
       title: `${data.note}`,
       description: `Starting at ${data.start_date_time}`,
       url: `deporter://${path}?planId=${planId}&id=${data.event_id}`,
       openGraphData: ogData ?? null,
       eventName: eventData?.name ?? "",
-      time: data.start_date_time,
+      time: new Date(data.start_date_time).toLocaleString(),
     };
 
     return res.render("plan", result);

@@ -302,12 +302,3 @@ export interface SharePlanParams {
    */
   path: string;
 }
-
-export interface SharePlanResponse {
-  title: string;
-  time: string;
-  description: string;
-  url: string;
-  openGraphData: OpenGraphData | null;
-  eventName: string;
-}

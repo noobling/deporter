@@ -4,11 +4,7 @@
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= description %>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <% if (video) { %>
-    <meta property="og:video" content="<%= video %>">
-  <% } else { %>
-    <meta property="og:image" content="<%= image %>">
-  <% } %>
+  <meta property="og:image" content="<%= openGraphData?.image %>">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -35,7 +31,7 @@
   <div style="padding: 20px; padding-top: 0;">
 
 
-    <h2><%= title %></h2>
+    <h2><%= title %> @ <%= time %></h2>
     <p>Event: <%= eventName %></p>
     
     
