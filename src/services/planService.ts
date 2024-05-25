@@ -26,7 +26,7 @@ export async function createPlan(
   await adminSendMessage({
     message: `${context.authedUser.name} created plan: ${validated.note}`,
     eventId: id,
-    route_to: `/event/plan/edit?id=${created.event_id}}&planId=${created._id}`,
+    route_to: `/event/plan/edit?id=${created.event_id}&planId=${created._id}`,
   });
 }
 
@@ -59,7 +59,7 @@ export async function updatePlan(
   await adminSendMessage({
     message: `${context.authedUser.name} updated plan: ${updated?.note}`,
     eventId: updated?.event_id.toString() ?? "",
-    route_to: `/event/plan/edit?id=${updated.event_id}}&planId=${updated._id}`,
+    route_to: `/event/plan/edit?id=${updated.event_id}&planId=${updated._id}`,
   });
 
   return updated;

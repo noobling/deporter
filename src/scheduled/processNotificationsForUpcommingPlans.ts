@@ -14,7 +14,7 @@ export async function processNotificationsForUpcomingPlans() {
       await adminSendMessage({
         message: `${plan.note} is starting today prepare yourselves! 🎉`,
         eventId: plan.event_id.toString(),
-        route_to: `/event/plan/edit?id=${plan.event_id}}&planId=${plan._id}`,
+        route_to: `/event/plan/edit?id=${plan.event_id}&planId=${plan._id}`,
       });
     }
   }
