@@ -1,7 +1,7 @@
 import events from "../db/events";
-import { AuthContext, FeedItem } from "../types";
+import { Context, FeedItem } from "../types";
 
-export async function getFeed(payload: any, context: AuthContext) {
+export async function getFeed(payload: any, context: Context) {
   const viewableEvents = await events.getEventsViewableByUser(
     context.authedUser._id
   );

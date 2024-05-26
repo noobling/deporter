@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { getUserFromToken } from "../utils/auth";
 import users from "../db/users";
 import {
-  AuthContext,
+  Context,
   CheckTokenStatusResponse,
   UpdateUserPhotoRequest,
   UpdateUserRequest,
@@ -14,17 +14,17 @@ import {
   cacheNotificationToProcess,
 } from "./notificationService";
 
-export function getUser(_: any, context: AuthContext) {
+export function getUser(_: any, context: Context) {
   return users.getUser(context.id!!);
 }
 
-export function getUsers(_: any, context: AuthContext) {
+export function getUsers(_: any, context: Context) {
   return users.getUsers();
 }
 
 export function updateMyPhoto(
   payload: UpdateUserPhotoRequest,
-  context: AuthContext
+  context: Context
 ) {
   return users.updatePhoto(context.authedUser._id, payload.photo);
 }
@@ -32,14 +32,11 @@ export function updateMyPhoto(
 /**
  * Update an existing user
  */
-export async function updateUser(
-  payload: UpdateUserRequest,
-  context: AuthContext
-) {
+export async function updateUser(payload: UpdateUserRequest, context: Context) {
   return users.updateUser(context.authedUser._id, payload);
 }
 
-export async function currentUser(_: any, context: AuthContext) {
+export async function currentUser(_: any, context: Context) {
   return users.getUser(context.authedUser._id);
 }
 
@@ -108,11 +105,11 @@ sub: ${sub}`;
   return response;
 }
 
-export async function deleteUser(_: any, context: AuthContext) {
+export async function deleteUser(_: any, context: Context) {
   return users.deleteUser(context.authedUser._id);
 }
 
-export async function addFriend(payload: any, context: AuthContext) {
+export async function addFriend(payload: any, context: Context) {
   const friendId = context.id;
   const userId = context.authedUser._id;
   const user = await users.getUser(userId);
@@ -130,6 +127,6 @@ export async function addFriend(payload: any, context: AuthContext) {
   return result;
 }
 
-export async function listFriends(payload: any, context: AuthContext) {
+export async function listFriends(payload: any, context: Context) {
   return users.listFriends(context.authedUser._id);
 }

@@ -218,7 +218,7 @@ export interface DeleteExpenseRequest {
   name: string;
 }
 
-export interface AuthContext {
+export interface Context {
   id: string;
   queryParams: any;
   authedUser: UserResponse;

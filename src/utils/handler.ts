@@ -1,19 +1,19 @@
 import { Request, Response } from "express";
 import { getLoggedInUserOrThrow } from "./auth";
-import { AuthContext } from "../types";
+import { Context } from "../types";
 import { adminSendMessage } from "./admin";
 
 export const handler = (
-  cb: (payload: any, context: AuthContext) => Promise<any | null | undefined>
+  cb: (payload: any, context: Context) => Promise<any | null | undefined>
 ) => {
   return async (req: Request, res: Response) => {
     const id = req.params.id;
     const queryParams = req.query;
     const payload = req.body;
-    const context: AuthContext = {
+    const context: Context = {
       id,
       queryParams,
-    } as AuthContext;
+    } as Context;
 
     function log(...message: any[]) {
       console.log("========================");
@@ -52,6 +52,9 @@ export const handler = (
       if (err instanceof BadRequest) {
         log("bad request", err.message);
         return res.status(400).send(err.message);
+      } else if (err instanceof AuthenticationError) {
+        log("authentication error", err.message);
+        return res.status(401).send(err.message);
       }
 
       console.error("Unexpected error", err);
@@ -73,13 +76,18 @@ export class BadRequest extends Error {
   }
 }
 
+export class AuthenticationError extends Error {
+  constructor(public message: string) {
+    super(message);
+  }
+}
 
 /**
  * This function is purely for public facing endpoints
  * The function will pass query parameters to the payloads
  * This handler expects the callback to send a response
- * @param cb 
- * @returns 
+ * @param cb
+ * @returns
  */
 export function publicHander(
   cb: (payload: any, res: Response) => Promise<any | null | undefined>
@@ -98,9 +106,7 @@ export function publicHander(
     } catch (err: any) {
       if (err instanceof BadRequest) {
         log("bad request", err.message);
-        return res
-          .status(400)
-          .send(err.message);
+        return res.status(400).send(err.message);
       }
     }
   };

@@ -1,11 +1,11 @@
 import media from "../db/media";
-import { AuthContext, CreateMediaRequest, MediaResponse } from "../types";
+import { Context, CreateMediaRequest, MediaResponse } from "../types";
 import { getDownloadUrl, getSignedUrl } from "../utils/aws";
 import { getTimestamps } from "../utils/date";
 
 export async function createMedia(
   payload: CreateMediaRequest,
-  context: AuthContext
+  context: Context
 ): Promise<MediaResponse> {
   const extension = payload.extension
     ? `${payload.extension}`
@@ -26,7 +26,7 @@ export async function createMedia(
   } as unknown as MediaResponse;
 }
 
-export async function getMedia(payload: any, context: AuthContext) {
+export async function getMedia(payload: any, context: Context) {
   const result = await media.get(context.id);
   const downloadUrl = getDownloadUrl(context.id);
   return {

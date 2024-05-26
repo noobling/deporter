@@ -2,7 +2,7 @@ import events from "../db/events";
 import plan from "../db/plan";
 import { createPlanSchema, updatePlanSchema } from "../schemas";
 import {
-  AuthContext,
+  Context,
   CreatePlanRequest,
   Plan,
   PlansResponse,
@@ -10,11 +10,9 @@ import {
 } from "../types";
 import { adminSendMessage } from "../utils/admin";
 import { getMongoId } from "../utils/mongo";
+import { ensureUserInEvent } from "./authService";
 
-export async function createPlan(
-  payload: CreatePlanRequest,
-  context: AuthContext
-) {
+export async function createPlan(payload: CreatePlanRequest, context: Context) {
   const validated = await createPlanSchema.validate(payload);
   const id = context.id;
 
@@ -31,9 +29,20 @@ export async function createPlan(
   });
 }
 
+export async function findPlan(_: any, context: Context) {
+  const planId = context.id;
+  const found = await plan.find(planId);
+  await ensureUserInEvent(
+    context.authedUser._id,
+    found?.event_id.toString() ?? ""
+  );
+
+  return found;
+}
+
 export async function listPlans(
   _: any,
-  context: AuthContext
+  context: Context
 ): Promise<PlansResponse> {
   const eventId = context.id;
 
@@ -47,7 +56,7 @@ export async function listPlans(
   return { plans };
 }
 
-export async function listPlansForUser(_: any, context: AuthContext) {
+export async function listPlansForUser(_: any, context: Context) {
   const eventIds = await events.listEventIds(context.authedUser._id);
   const planModels = await plan.listForEvents(eventIds);
 
@@ -59,10 +68,7 @@ export async function listPlansForUser(_: any, context: AuthContext) {
   return { plans };
 }
 
-export async function updatePlan(
-  payload: UpdatePlanRequest,
-  context: AuthContext
-) {
+export async function updatePlan(payload: UpdatePlanRequest, context: Context) {
   const planId = context.id;
   const validated = await updatePlanSchema.validate(payload);
 
@@ -78,7 +84,7 @@ export async function updatePlan(
   return updated;
 }
 
-export async function deletePlan(_: any, context: AuthContext) {
+export async function deletePlan(_: any, context: Context) {
   const planId = context.id;
   const deleted = await plan.find(planId);
   await plan.deletePlan(planId);

@@ -1,5 +1,5 @@
 import {
-  AuthContext,
+  Context,
   CreateEventRequest,
   CreateMessageReactionRequest,
   CreateMessageReadReceiptRequest,
@@ -26,17 +26,17 @@ import media from "../db/media";
 import { v4 as uuidv4 } from "uuid";
 import { messageIsPhoto } from "../utils/message";
 
-export async function getEvent(payload: any, context: AuthContext) {
+export async function getEvent(payload: any, context: Context) {
   return events.getEvent(context.id!!);
 }
 
-export async function getEventMetaData(payload: any, context: AuthContext) {
+export async function getEventMetaData(payload: any, context: Context) {
   return events.getEventMetaData(context.id!!);
 }
 
 export async function getEventsForCurrentUser(
   payload: any,
-  context: AuthContext
+  context: Context
 ): Promise<EventsResponse> {
   const data = await events.listEvents(context.authedUser._id);
 
@@ -45,7 +45,7 @@ export async function getEventsForCurrentUser(
 
 export async function createEvent(
   payload: CreateEventRequest,
-  context: AuthContext
+  context: Context
 ) {
   return events.createEvent({
     // @ts-ignore - backwards compatibility
@@ -62,7 +62,7 @@ export async function createEvent(
 
 export async function updateEvent(
   payload: UpdateEventRequest,
-  context: AuthContext
+  context: Context
 ) {
   const result = await events.updateEvent(context.id, payload);
   adminSendMessage({
@@ -74,7 +74,7 @@ export async function updateEvent(
   return result;
 }
 
-export async function addEventExpense(payload: any, context: AuthContext) {
+export async function addEventExpense(payload: any, context: Context) {
   const expense: Expense = {
     ...payload,
     created_by: context.authedUser._id,
@@ -106,7 +106,7 @@ export async function addEventExpense(payload: any, context: AuthContext) {
 
 export async function deleteExpense(
   payload: DeleteExpenseRequest,
-  context: AuthContext
+  context: Context
 ) {
   await events.deleteExpense(context.id!!, payload.name);
   await adminSendMessage({
@@ -117,7 +117,7 @@ export async function deleteExpense(
 
 export async function addEventPayment(
   payload: CreatePaymentRequest,
-  context: AuthContext
+  context: Context
 ) {
   const event = await events.addPayment(context.id!!, {
     ...payload,
@@ -138,7 +138,7 @@ export async function addEventPayment(
 
 export async function addEventMessage(
   payload: CreateMessageRequest,
-  context: AuthContext
+  context: Context
 ) {
   const message: Message = {
     created_by: context.authedUser._id,
@@ -162,7 +162,7 @@ export async function addEventMessage(
 
 export async function addEventMessageReaction(
   payload: CreateMessageReactionRequest,
-  context: AuthContext
+  context: Context
 ) {
   const { data, sender } = await events.addMessageReaction(
     context.id!!,
@@ -194,7 +194,7 @@ export async function addEventMessageReaction(
 
 export async function addEventMessageReadReceipt(
   payload: CreateMessageReadReceiptRequest,
-  context: AuthContext
+  context: Context
 ) {
   return await addMessageReadReceipt(
     context.id!!,
@@ -205,7 +205,7 @@ export async function addEventMessageReadReceipt(
 
 export async function pinEventMessage(
   payload: PinMessageRequest,
-  context: AuthContext
+  context: Context
 ) {
   await events.pinMessage(context.id!!, payload.message_id);
   const message = await events.getMessage(context.id!!, payload.message_id);
@@ -219,12 +219,12 @@ export async function pinEventMessage(
   return message;
 }
 
-export async function addEventParticipants(payload: any, context: AuthContext) {
+export async function addEventParticipants(payload: any, context: Context) {
   await events.addParticipants(context.id, payload);
   return events.getEvent(context.id);
 }
 
-export async function joinEvent(_: any, context: AuthContext) {
+export async function joinEvent(_: any, context: Context) {
   await events.addParticipants(context.id, {
     participants: [context.authedUser._id],
   });
@@ -237,7 +237,7 @@ export async function joinEvent(_: any, context: AuthContext) {
   return events.getEvent(context.id);
 }
 
-export async function joinEventByCode(payload: any, context: AuthContext) {
+export async function joinEventByCode(payload: any, context: Context) {
   const code = context.queryParams.code;
   const event = await events.getByCode(code);
   if (!event) {
@@ -256,7 +256,7 @@ export async function joinEventByCode(payload: any, context: AuthContext) {
   }
 }
 
-export async function getEventsToJoin(_: any, context: AuthContext) {
+export async function getEventsToJoin(_: any, context: Context) {
   return events.getEventsToJoin(context.authedUser._id);
 }
 
