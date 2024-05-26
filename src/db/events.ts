@@ -33,6 +33,23 @@ async function listEvents(currentUserId: string) {
   return cursor.toArray() as unknown as EventResponse[];
 }
 
+async function listEventIds(currentUserId: string) {
+  const cursor = await collection.find(
+    {
+      $or: [
+        { participants: { $in: [currentUserId] } },
+        { created_by: currentUserId },
+      ],
+    },
+    {
+      projection: {
+        _id: 1,
+      },
+    }
+  );
+  return (await cursor.toArray()).map((e) => e._id.toString());
+}
+
 /**
  * Events where use is not a participant and not private event
  */
@@ -292,6 +309,7 @@ async function getEventsViewableByUser(userId: string) {
 
 export default {
   listEvents,
+  listEventIds,
   getEvent,
   getEventMetaData,
   createEvent,

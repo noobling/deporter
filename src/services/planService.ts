@@ -1,3 +1,4 @@
+import events from "../db/events";
 import plan from "../db/plan";
 import { createPlanSchema, updatePlanSchema } from "../schemas";
 import {
@@ -37,6 +38,18 @@ export async function listPlans(
   const eventId = context.id;
 
   const planModels = await plan.list(eventId);
+
+  const plans = planModels.map((planModel) => ({
+    ...planModel,
+    id: planModel._id,
+  })) as unknown as Plan[];
+
+  return { plans };
+}
+
+export async function listPlansForUser(_: any, context: AuthContext) {
+  const eventIds = await events.listEventIds(context.authedUser._id);
+  const planModels = await plan.listForEvents(eventIds);
 
   const plans = planModels.map((planModel) => ({
     ...planModel,
