@@ -80,7 +80,7 @@ export async function sharePlan(req: Request, res: Response) {
     const result = {
       title: `${data.note}`,
       description: `Starting at ${data.start_date_time}`,
-      url: `deporter://${path}?planId=${planId}&id=${data.event_id}`,
+      url: `deporter://${path}?id=${planId}`,
       openGraphData: ogData ?? null,
       eventName: eventData?.name ?? "",
       time: new Date(data.start_date_time).toLocaleString(),
