@@ -20,9 +20,9 @@ export const startCronJobs = () => {
   });
 
   // Every 5 seconds
-  // cron.schedule("*/5 * * * * *", async () => {
-  //   await processNotificationsFromCache();
-  // });
+  cron.schedule("*/5 * * * * *", async () => {
+    await processNotificationsFromCache();
+  });
 
   // Every 12 hours process upcoming plans
   cron.schedule("0 */12 * * *", async () => {
