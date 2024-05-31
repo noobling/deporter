@@ -1,6 +1,6 @@
 import { cacheDelete, cacheGetByPrefix, cacheSet } from "../utils/redis";
 
-import amqp, { Channel } from "amqplib";
+import amqp, { Channel, Connection } from "amqplib";
 const RABBITMQ_LINK = process.env.RABBITMQ_LINK;
 
 if (!RABBITMQ_LINK) {
@@ -8,7 +8,7 @@ if (!RABBITMQ_LINK) {
   process.exit(1); // Exit if RabbitMQ is not configured
 }
 
-let amqpConnection: any = null;
+let amqpConnection: Connection | null = null;
 let amqpChannel: Channel | null = null;
 let connectionPromise: any = null;
 
@@ -24,6 +24,7 @@ async function initRabbitMQ() {
   // Start a new connection attempt
   connectionPromise = (async () => {
     try {
+      console.log("Attempting to create a connection and channel to rabbitmq");
       const amqpServer = RABBITMQ_LINK;
       amqpConnection = await amqp.connect(amqpServer);
       amqpConnection.on("error", (err: any) => {
@@ -32,9 +33,13 @@ async function initRabbitMQ() {
         connectionPromise = null; // Allow new connection attempts after an error
       });
 
-      amqpChannel = await amqpConnection.createChannel();
+      if (amqpConnection) {
+        amqpChannel = await amqpConnection.createChannel();
+        console.info("Connected to RabbitMQ");
+      } else {
+        console.error("Missing amqpConnection cannot create channel");
+      }
 
-      console.info("Connected to RabbitMQ");
       return amqpConnection;
     } catch (error) {
       console.error("Failed to connect to RabbitMQ:", error);
