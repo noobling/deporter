@@ -46,6 +46,11 @@ import {
   listPlansForUser,
   updatePlan,
 } from "./services/planService";
+import {
+  createPlace,
+  deletePlace,
+  getEventPlaces,
+} from "./services/placeService";
 
 /*
  * Load up and parse configuration details from
@@ -121,6 +126,11 @@ app.get("/plan/:id", handler(findPlan));
 
 // Public shared
 app.get("/share/plan/:id", sharePlan);
+
+// Place API
+app.post("/place", handler(createPlace));
+app.get("/event/:id/places", handler(getEventPlaces));
+app.delete("/place/:id", handler(deletePlace));
 
 swagger(app);
 

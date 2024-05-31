@@ -1,5 +1,6 @@
 import { ObjectId } from "mongodb";
 import { OpenGraphData } from "./utils/og";
+import { GooglePlace } from "./googleTypes";
 
 // ====================== EVENT ====================
 export interface Event {
@@ -303,4 +304,30 @@ export interface SharePlanParams {
    * Path in app to route to
    */
   path: string;
+}
+
+// ====================== PLACE ====================
+
+export interface BasePlace {
+  google_place_id: string;
+  note: string;
+  event_id: string;
+  created_by: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PlaceResponse extends BasePlace {
+  _id: string;
+}
+
+export interface Place extends Omit<BasePlace, "event_id"> {
+  _id: ObjectId;
+  event_id: ObjectId;
+}
+
+export interface CreatePlaceRequest {
+  googlePlace: GooglePlace;
+  note: string;
+  event_id: string;
 }
