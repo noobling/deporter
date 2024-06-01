@@ -9,14 +9,39 @@ const place = db.collection("place");
 const googlePlace = db.collection("google_place");
 
 async function create(
-  placeToCreate: { note: string; event_id: ObjectId; created_by: string },
+  placeToCreate: { note: string; event_id: ObjectId; created_by: ObjectId },
   googToCreate: GooglePlace
 ) {
-  const inserted = await googlePlace.insertOne(googToCreate);
+  const inserted = await googlePlace.insertOne({
+    ...googToCreate,
+    ...getTimestamps(),
+  });
+
   return place.insertOne({
     ...placeToCreate,
-    ...getTimestamps(),
     google_place_id: inserted.insertedId,
+    ...getTimestamps(),
+  });
+}
+
+async function update(placeId: string, note: string) {
+  await place.updateOne(
+    {
+      _id: getMongoIdOrFail(placeId),
+    },
+    {
+      $set: {
+        note: note,
+      },
+    }
+  );
+
+  return findById(placeId) as Promise<Place>;
+}
+
+async function findById(placeId: string) {
+  return place.findOne({
+    _id: getMongoIdOrFail(placeId),
   });
 }
 
@@ -56,4 +81,10 @@ async function findAllGooglePlaces() {
   return cursor.toArray() as unknown as Promise<GooglePlace[]>;
 }
 
-export default { create, findByEventId, deletePlace, findAllGooglePlaces };
+export default {
+  create,
+  update,
+  findByEventId,
+  deletePlace,
+  findAllGooglePlaces,
+};

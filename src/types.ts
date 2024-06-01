@@ -317,8 +317,9 @@ export interface BasePlace {
   updated_at: string;
 }
 
-export interface PlaceResponse extends BasePlace {
+export interface PlaceDto extends BasePlace {
   _id: string;
+  google_place: GooglePlace;
 }
 
 export interface Place extends Omit<BasePlace, "event_id"> {
@@ -330,4 +331,8 @@ export interface CreatePlaceRequest {
   googlePlace: GooglePlace;
   note: string;
   event_id: string;
+}
+
+export interface UpdatePlaceRequest {
+  note: string;
 }

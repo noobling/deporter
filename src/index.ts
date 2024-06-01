@@ -47,10 +47,11 @@ import {
   updatePlan,
 } from "./services/planService";
 import {
-  createPlace,
   deletePlace,
   getEventPlaces,
   getGooglePlaces,
+  createPlace,
+  updatePlace,
 } from "./services/placeService";
 
 /*
@@ -132,6 +133,7 @@ app.get("/share/plan/:id", sharePlan);
 app.get("/event/:id/places", handler(getEventPlaces));
 app.get("/places/google", handler(getGooglePlaces));
 app.post("/place", handler(createPlace));
+app.put("/place/:id", handler(updatePlace));
 app.delete("/place/:id", handler(deletePlace));
 
 swagger(app);
