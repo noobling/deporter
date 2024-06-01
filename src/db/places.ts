@@ -12,14 +12,23 @@ async function create(
   placeToCreate: { note: string; event_id: ObjectId; created_by: ObjectId },
   googToCreate: GooglePlace
 ) {
-  const inserted = await googlePlace.insertOne({
-    ...googToCreate,
-    ...getTimestamps(),
+  const found = await googlePlace.findOne({
+    id: googToCreate.id,
   });
+
+  let insertedId = found?._id;
+  if (!found) {
+    insertedId = (
+      await googlePlace.insertOne({
+        ...googToCreate,
+        ...getTimestamps(),
+      })
+    ).insertedId;
+  }
 
   return place.insertOne({
     ...placeToCreate,
-    google_place_id: inserted.insertedId,
+    google_place_id: insertedId,
     ...getTimestamps(),
   });
 }
