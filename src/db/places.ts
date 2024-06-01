@@ -21,11 +21,28 @@ async function create(
 }
 
 async function findByEventId(eventId: string) {
-  const cursor = await place.find({
-    event_id: getMongoIdOrFail(eventId),
-  });
+  const pipeline = [
+    {
+      $match: {
+        event_id: getMongoIdOrFail(eventId),
+      },
+    },
+    {
+      $lookup: {
+        from: "google_place",
+        localField: "google_place_id",
+        foreignField: "_id",
+        as: "google_place",
+      },
+    },
+    {
+      $unwind: "$google_place",
+    },
+  ];
 
-  return cursor.toArray() as Promise<Place[]>;
+  const cursor = await place.aggregate(pipeline);
+
+  return cursor.toArray() as Promise<(Place & { google_place: GooglePlace })[]>;
 }
 
 async function deletePlace(placeId: string) {
