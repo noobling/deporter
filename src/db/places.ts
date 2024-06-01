@@ -45,13 +45,32 @@ async function update(placeId: string, note: string) {
     }
   );
 
-  return findById(placeId) as Promise<Place>;
+  return findById(placeId);
 }
 
 async function findById(placeId: string) {
-  return place.findOne({
-    _id: getMongoIdOrFail(placeId),
-  });
+  const pipeline = [
+    {
+      $match: {
+        _id: getMongoIdOrFail(placeId),
+      },
+    },
+    {
+      $lookup: {
+        from: "google_place",
+        localField: "google_place_id",
+        foreignField: "_id",
+        as: "google_place",
+      },
+    },
+    {
+      $unwind: "$google_place",
+    },
+  ];
+
+  const cursor = await (await place.aggregate(pipeline)).toArray();
+
+  return cursor[0] as Promise<Place & { google_place: GooglePlace }>;
 }
 
 async function findByEventId(eventId: string) {

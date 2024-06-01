@@ -30,7 +30,7 @@ export async function updatePlace(
   const updated = await places.update(context.id, payload.note);
   const eventId = updated.event_id.toString();
   await adminSendMessage({
-    message: `${context.authedUser.name} updated place note`,
+    message: `${context.authedUser.name} updated note in place: ${updated.google_place.displayName.text}`,
     eventId,
     route_to: `/event/map?id=${eventId}&placeId=${context.id}`,
   });
