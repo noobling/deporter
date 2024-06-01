@@ -31,3 +31,7 @@ export async function getEventPlaces(payload: any, context: Context) {
 export async function deletePlace(payload: any, context: Context) {
   await places.deletePlace(context.id);
 }
+
+export async function getGooglePlaces() {
+  return places.findAllGooglePlaces();
+}

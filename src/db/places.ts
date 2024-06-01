@@ -3,6 +3,7 @@ import { GooglePlace } from "../googleTypes";
 import { getTimestamps } from "../utils/date";
 import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
+import { Place } from "../types";
 
 const place = db.collection("place");
 const googlePlace = db.collection("google_place");
@@ -20,9 +21,11 @@ async function create(
 }
 
 async function findByEventId(eventId: string) {
-  return place.find({
+  const cursor = await place.find({
     event_id: getMongoIdOrFail(eventId),
   });
+
+  return cursor.toArray() as Promise<Place[]>;
 }
 
 async function deletePlace(placeId: string) {
@@ -31,4 +34,9 @@ async function deletePlace(placeId: string) {
   });
 }
 
-export default { create, findByEventId, deletePlace };
+async function findAllGooglePlaces() {
+  const cursor = await googlePlace.find({});
+  return cursor.toArray() as unknown as Promise<GooglePlace[]>;
+}
+
+export default { create, findByEventId, deletePlace, findAllGooglePlaces };

@@ -50,6 +50,7 @@ import {
   createPlace,
   deletePlace,
   getEventPlaces,
+  getGooglePlaces,
 } from "./services/placeService";
 
 /*
@@ -128,8 +129,9 @@ app.get("/plan/:id", handler(findPlan));
 app.get("/share/plan/:id", sharePlan);
 
 // Place API
-app.post("/place", handler(createPlace));
 app.get("/event/:id/places", handler(getEventPlaces));
+app.get("/places/google", handler(getGooglePlaces));
+app.post("/place", handler(createPlace));
 app.delete("/place/:id", handler(deletePlace));
 
 swagger(app);
