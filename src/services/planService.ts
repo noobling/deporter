@@ -25,7 +25,7 @@ export async function createPlan(payload: CreatePlanRequest, context: Context) {
   await adminSendMessage({
     message: `${context.authedUser.name} created plan: ${validated.note}`,
     eventId: id,
-    route_to: `/event/plan/edit?id=${created.event_id}&planId=${created._id}`,
+    route_to: `/event/plan/view?id=${created._id}&eventId=${created.event_id}`,
   });
 }
 
