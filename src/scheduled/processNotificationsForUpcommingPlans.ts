@@ -8,17 +8,14 @@ dayjs.extend(utc);
 // We can only do daily reminders for now since we don't know the plan location timezone
 export async function sendOneHourToGoPlanReminder() {
   const plans = await plan.listAll();
-
   for (const plan of plans) {
     let googPlace = null;
     if (plan.google_place_id) {
       googPlace = await google.findPlaceById(plan.google_place_id);
     }
-    const placeUtcTime = dayjs
-      // @ts-ignore
-      .utc(data.start_date_time)
-      .utcOffset(-(googPlace?.utcOffsetMinutes ?? 0))
-      .format("hh:mm A, D MMM, YYYY");
+    const utcOffset = googPlace?.utcOffsetMinutes ?? 0;
+    // @ts-ignore
+    const placeUtcTime = dayjs.utc(plan.start_date_time).utcOffset(utcOffset);
 
     const isStartInAnHour = dayjs().isSame(placeUtcTime, "hour");
 
@@ -41,11 +38,9 @@ export async function sendDailyPlanReminder() {
     if (plan.google_place_id) {
       googPlace = await google.findPlaceById(plan.google_place_id);
     }
-    const placeUtcTime = dayjs
-      // @ts-ignore
-      .utc(data.start_date_time)
-      .utcOffset(-(googPlace?.utcOffsetMinutes ?? 0))
-      .format("hh:mm A, D MMM, YYYY");
+    const utcOffset = googPlace?.utcOffsetMinutes ?? 0;
+    // @ts-ignore
+    const placeUtcTime = dayjs.utc(plan.start_date_time).utcOffset(utcOffset);
 
     const isStartingToday = dayjs().isSame(placeUtcTime, "day");
 
