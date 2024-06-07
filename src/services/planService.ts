@@ -78,7 +78,7 @@ export async function updatePlan(payload: UpdatePlanRequest, context: Context) {
   await adminSendMessage({
     message: `${context.authedUser.name} updated plan: ${updated?.note}`,
     eventId: updated?.event_id.toString() ?? "",
-    route_to: `/event/plan/edit?id=${updated.event_id}&planId=${updated._id}`,
+    route_to: `/event/plan/view?id=${updated._id}&eventId=${updated.event_id}`,
   });
 
   return updated;

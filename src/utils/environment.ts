@@ -12,6 +12,7 @@ const environment = {
   mongo_db_name: process.env.MONGO_DB_NAME!!,
   redis_url: process.env.REDIS_URL!!,
   admins: process.env.ADMINS!!?.split(",") ?? [],
+  google_api_key: process.env.GOOGLE_API_KEY!!,
 };
 
 Object.keys(environment).forEach((key) => {

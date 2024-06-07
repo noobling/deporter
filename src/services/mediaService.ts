@@ -28,7 +28,8 @@ export async function createMedia(
 
 export async function getMedia(payload: any, context: Context) {
   const result = await media.get(context.id);
-  const downloadUrl = getDownloadUrl(context.id);
+  const downloadUrl = getDownloadUrl(result.s3Key ?? context.id);
+
   return {
     ...result,
     downloadUrl,

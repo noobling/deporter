@@ -40,13 +40,6 @@ export const handler = (
     try {
       const result = await cb(payload, context);
 
-      if (Boolean(result?.messages)) {
-        // Don't log messages its too big
-        log("result", { ...result, messages: "..." });
-      } else {
-        log("result", result);
-      }
-
       res.send(result);
     } catch (err: any) {
       if (err instanceof BadRequest) {

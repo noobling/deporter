@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { GooglePlace } from "../googleTypes";
+import { PlaceResponse } from "../googleTypes";
 import { getTimestamps } from "../utils/date";
 import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
@@ -8,27 +8,14 @@ import { Place } from "../types";
 const place = db.collection("place");
 const googlePlace = db.collection("google_place");
 
-async function create(
-  placeToCreate: { note: string; event_id: ObjectId; created_by: ObjectId },
-  googToCreate: GooglePlace
-) {
-  const found = await googlePlace.findOne({
-    id: googToCreate.id,
-  });
-
-  let insertedId = found?._id;
-  if (!found) {
-    insertedId = (
-      await googlePlace.insertOne({
-        ...googToCreate,
-        ...getTimestamps(),
-      })
-    ).insertedId;
-  }
-
+async function create(placeToCreate: {
+  note: string;
+  event_id: ObjectId;
+  created_by: ObjectId;
+  google_place_id: ObjectId;
+}) {
   return place.insertOne({
     ...placeToCreate,
-    google_place_id: insertedId,
     ...getTimestamps(),
   });
 }
@@ -70,7 +57,7 @@ async function findById(placeId: string) {
 
   const cursor = await (await place.aggregate(pipeline)).toArray();
 
-  return cursor[0] as Promise<Place & { google_place: GooglePlace }>;
+  return cursor[0] as Promise<Place & { google_place: PlaceResponse }>;
 }
 
 async function findByEventId(eventId: string) {
@@ -95,7 +82,9 @@ async function findByEventId(eventId: string) {
 
   const cursor = await place.aggregate(pipeline);
 
-  return cursor.toArray() as Promise<(Place & { google_place: GooglePlace })[]>;
+  return cursor.toArray() as Promise<
+    (Place & { google_place: PlaceResponse })[]
+  >;
 }
 
 async function deletePlace(placeId: string) {
@@ -106,7 +95,7 @@ async function deletePlace(placeId: string) {
 
 async function findAllGooglePlaces() {
   const cursor = await googlePlace.find({});
-  return cursor.toArray() as unknown as Promise<GooglePlace[]>;
+  return cursor.toArray() as unknown as Promise<PlaceResponse[]>;
 }
 
 export default {

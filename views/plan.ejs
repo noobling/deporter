@@ -4,7 +4,7 @@
   <meta property="og:title" content="<%= title %>">
   <meta property="og:description" content="<%= description %>">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta property="og:image" content="<%= openGraphData?.image %>">
+  <meta property="og:image" content="<%= image %>">
   <style>
     body {
       font-family: Arial, sans-serif;
@@ -40,14 +40,13 @@
       
       
       
-      <% if (openGraphData) { %>
+
         <div>
-          <a href="<%= openGraphData.link %>" target="_blank">
-            <p>Location: <%= openGraphData.title%> <%= openGraphData.description %></p>
-            <img style="width: 300px; height: 300px; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" src="<%= openGraphData.image.url %>"/>
+          <a href="<%= mapLink %>" target="_blank">
+            <p>Location: <%= location%> <%= address %></p>
+            <img style="width: 300px; height: 300px; border-radius: 8px; box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);" src="<%= image %>"/>
           </div>
         </a>
-        <% } %>
   </div>
 </body>
 </html>

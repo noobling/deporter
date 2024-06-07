@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 import { OpenGraphData } from "./utils/og";
-import { GooglePlace } from "./googleTypes";
+import { GooglePlaceDto, PlaceResponse } from "./googleTypes";
 
 // ====================== EVENT ====================
 export interface Event {
@@ -134,6 +134,7 @@ export interface Media {
   type: MediaType;
   name: string;
   extension: string;
+  s3Key?: string; // Used by google photos right now
   created_at: string;
   updated_at: string;
   eventId?: string; // Event media is part of
@@ -263,10 +264,14 @@ export interface FeedItem {
 // ====================== PLAN ====================
 
 export interface BasePlan {
-  link: string;
+  /**
+   * @deprecated for google_place_id now
+   */
+  link?: string;
   note: string;
   start_date_time: string;
   media: string[];
+  google_place_id?: string;
 }
 export interface Plan extends BasePlan {
   id: string;
@@ -319,7 +324,7 @@ export interface BasePlace {
 
 export interface PlaceDto extends BasePlace {
   _id: string;
-  google_place: GooglePlace;
+  google_place: GooglePlaceDto;
 }
 
 export interface Place extends Omit<BasePlace, "event_id"> {
@@ -328,7 +333,7 @@ export interface Place extends Omit<BasePlace, "event_id"> {
 }
 
 export interface CreatePlaceRequest {
-  googlePlace: GooglePlace;
+  google_place_id: string;
   note: string;
   event_id: string;
 }

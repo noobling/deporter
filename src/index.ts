@@ -2,6 +2,7 @@
 import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import express, { Express } from "express";
+import { startCronJobs } from "./scheduler";
 import {
   addEventExpense,
   addEventMessage,
@@ -20,24 +21,17 @@ import {
   pinEventMessage,
   updateEvent,
 } from "./services/eventService";
+import { getFeed } from "./services/feedService";
 import { createMedia, getMedia } from "./services/mediaService";
 import {
-  checkTokenStatus,
-  currentUser,
-  deleteUser,
-  getUser,
-  getUsers,
-  registerUserFromToken,
-  updateMyPhoto,
-  updateUser,
-  listFriends,
-  addFriend,
-} from "./services/userService";
-import { handler, publicHander } from "./utils/handler";
-import swagger from "./utils/swagger";
-import { getFeed } from "./services/feedService";
-import { startCronJobs } from "./scheduler";
-import { publicGetEventById, sharePlan } from "./services/publicService";
+  createPlace,
+  deletePlace,
+  getEventPlaces,
+  getGooglePlace,
+  getGooglePlaces,
+  searchForPlaces,
+  updatePlace,
+} from "./services/placeService";
 import {
   createPlan,
   deletePlan,
@@ -46,13 +40,21 @@ import {
   listPlansForUser,
   updatePlan,
 } from "./services/planService";
+import { publicGetEventById, sharePlan } from "./services/publicService";
 import {
-  deletePlace,
-  getEventPlaces,
-  getGooglePlaces,
-  createPlace,
-  updatePlace,
-} from "./services/placeService";
+  addFriend,
+  checkTokenStatus,
+  currentUser,
+  deleteUser,
+  getUser,
+  getUsers,
+  listFriends,
+  registerUserFromToken,
+  updateMyPhoto,
+  updateUser,
+} from "./services/userService";
+import { handler, publicHander } from "./utils/handler";
+import swagger from "./utils/swagger";
 
 /*
  * Load up and parse configuration details from
@@ -135,6 +137,8 @@ app.get("/places/google", handler(getGooglePlaces));
 app.post("/place", handler(createPlace));
 app.put("/place/:id", handler(updatePlace));
 app.delete("/place/:id", handler(deletePlace));
+app.post("/places/search", handler(searchForPlaces));
+app.get("/place/google/:id", handler(getGooglePlace));
 
 swagger(app);
 

@@ -1,5 +1,6 @@
 import AWS from "aws-sdk";
 import environment from "./environment";
+import axios from "axios";
 
 // Set AWS credentials
 AWS.config.update({
@@ -22,4 +23,21 @@ export function getDownloadUrl(key: string) {
     Bucket: environment.aws_bucket,
     Key: key,
   });
+}
+
+export async function uploadToS3(url: string, key: string) {
+  const response = await axios({
+    url,
+    method: "GET",
+    responseType: "arraybuffer",
+  });
+
+  const params = {
+    Bucket: environment.aws_bucket,
+    Key: key,
+    Body: Buffer.from(response.data, "binary"),
+    ContentType: response.headers["content-type"],
+  };
+
+  return s3.upload(params).promise();
 }

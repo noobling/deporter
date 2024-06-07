@@ -1,8 +1,22 @@
+import { ObjectId } from "mongodb";
+
 export interface PlacesResponse {
-  places: GooglePlace[];
+  places: PlaceResponse[];
 }
 
-export interface GooglePlace {
+export interface GooglePlace extends Omit<GooglePlaceDto, "_id"> {
+  _id: ObjectId;
+}
+
+// Use this is preferred
+export interface GooglePlaceDto extends PlaceResponse {
+  _id: string;
+  /**
+   * This is a list of photo names that have been downloaded to S3. We lazy populate it to save costs
+   */
+  downloadedPhotos?: string[];
+}
+export interface PlaceResponse {
   id: string;
   types: string[];
   formattedAddress: string;
@@ -20,6 +34,16 @@ export interface GooglePlace {
   iconBackgroundColor: string;
   primaryTypeDisplayName: TextWithLanguageCode;
   reviews: Review[];
+  utcOffsetMinutes: number;
+  websiteUri?: string;
+  photos: PlacePhoto[];
+}
+
+export interface PlacePhoto {
+  name: string;
+  widthPx: string;
+  heightPx: string;
+  authorAttributions: AuthorAttribution[];
 }
 
 export interface Review {

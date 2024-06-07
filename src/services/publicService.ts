@@ -3,9 +3,14 @@ import media from "../db/media";
 import plan from "../db/plan";
 import users from "../db/users";
 
-import { getMedia } from "./mediaService";
 import { Request, Response } from "express";
+import google from "../db/google";
+import { getDownloadUrl } from "../utils/aws";
 import { og } from "../utils/og";
+import { getMedia } from "./mediaService";
+import dayjs from "dayjs";
+var utc = require("dayjs/plugin/utc");
+dayjs.extend(utc);
 
 // This file is public facing an accessible to everyone - no auth required
 export async function publicGetEventById(
@@ -65,6 +70,13 @@ export async function sharePlan(req: Request, res: Response) {
     const planId = req.params.id;
     const { path } = req.query;
     const data = await plan.find(planId);
+    const placeId = data.google_place_id;
+    const googlePlace = placeId ? await google.findPlaceById(placeId) : null;
+    let image = "";
+    if (googlePlace?.downloadedPhotos) {
+      const result = await media.get(googlePlace.downloadedPhotos[0]);
+      image = await getDownloadUrl(result.s3Key!);
+    }
 
     if (!data) {
       console.log("Plan not found for id", planId);
@@ -75,15 +87,24 @@ export async function sharePlan(req: Request, res: Response) {
       events.getEvent(data.event_id.toString()),
       users.getUser(data.created_by.toString()),
     ]);
-    const ogData = await og(data.link);
+    const utcTimeExample = dayjs
+      // @ts-ignore
+      .utc(data.start_date_time)
+      .utcOffset(-(googlePlace?.utcOffsetMinutes ?? 0))
+      .format("hh:mm A, D MMM, YYYY");
+
+    const dateTime = dayjs(data.start_date_time).format("hh:mm A, D MMM, YYYY");
 
     const result = {
       title: `${data.note}`,
       description: `Starting at ${data.start_date_time}`,
       url: `deporter://${path}?id=${planId}&eventId=${data.event_id}`,
-      openGraphData: ogData ?? null,
+      image,
+      location: googlePlace?.displayName?.text ?? "",
+      address: googlePlace?.formattedAddress ?? "",
+      mapLink: googlePlace?.googleMapsUri ?? "",
       eventName: eventData?.name ?? "",
-      time: new Date(data.start_date_time).toLocaleString(),
+      time: dateTime,
     };
 
     return res.render("plan", result);
