@@ -67,5 +67,5 @@ interface AuthorAttribution {
 }
 
 export interface GoogPlaceDetailsResponse {
-  photo: PlacePhoto[];
+  photos: PlacePhoto[];
 }

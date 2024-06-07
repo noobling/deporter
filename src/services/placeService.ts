@@ -92,6 +92,7 @@ export async function searchForPlaces(payload: any, context: Context) {
   }
 }
 
+// Get google place and backfill data if needed
 export async function getGooglePlace(payload: any, context: Context) {
   const id = context.id;
   const place = await google.findPlaceById(id);
@@ -104,7 +105,7 @@ export async function getGooglePlace(payload: any, context: Context) {
   if (!placePhotos?.length) {
     try {
       const details = await googleApiPlaceDetails(place.id);
-      placePhotos = details.photo;
+      placePhotos = details.photos;
     } catch (err) {
       console.error("Error getting place details", err);
     }
