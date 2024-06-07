@@ -1,7 +1,7 @@
 import google from "../db/google";
 import media from "../db/media";
 import places from "../db/places";
-import { PlaceResponse } from "../googleTypes";
+import { PlacePhoto, PlaceResponse } from "../googleTypes";
 import { createPlaceSchema } from "../schemas";
 import {
   Context,
@@ -12,8 +12,13 @@ import {
 import { adminSendMessage } from "../utils/admin";
 import { uploadToS3 } from "../utils/aws";
 import { getTimestamps } from "../utils/date";
+import { NotFound } from "../utils/handler";
 import { getMongoId } from "../utils/mongo";
-import { googleApiPhoto, googleApiSearch } from "./googleApi";
+import {
+  googleApiPhoto,
+  googleApiPlaceDetails,
+  googleApiSearch,
+} from "./googleApi";
 import { v4 as uuidv4 } from "uuid";
 
 export async function createPlace(
@@ -90,15 +95,30 @@ export async function searchForPlaces(payload: any, context: Context) {
 export async function getGooglePlace(payload: any, context: Context) {
   const id = context.id;
   const place = await google.findPlaceById(id);
+
+  if (!place) {
+    throw new NotFound(`Google place ${id} not found`);
+  }
+
+  let placePhotos: PlacePhoto[] = place?.photos ?? [];
+  if (!placePhotos?.length) {
+    try {
+      const details = await googleApiPlaceDetails(place.id);
+      placePhotos = details.photo;
+    } catch (err) {
+      console.error("Error getting place details", err);
+    }
+  }
+
   // When not downloaded photos
-  if (place?.photos && !place.downloadedPhotos) {
-    const promises = place.photos.slice(0, 4).map(async (p) => {
+  if (!place.downloadedPhotos) {
+    const promises = placePhotos.slice(0, 5).map(async (p) => {
       return uploadPhotoToS3(p.name);
     }); // Don't take all photos to save money
     const photos = await Promise.all(promises);
     const photoIds = photos.map((p) => p._id);
     console.log("Downloaded photos", photos.length, "photos");
-    await google.updateDownloadedPhotos(id, photoIds);
+    await google.updateDownloadedPhotos(id, photoIds, placePhotos);
     return { ...place, downloadedPhotos: photoIds };
   }
 

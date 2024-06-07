@@ -1,7 +1,12 @@
 import { ObjectId } from "mongodb";
 import { getTimestamps } from "../utils/date";
 import db from "./db";
-import { GooglePlace, GooglePlaceDto, PlaceResponse } from "../googleTypes";
+import {
+  GooglePlace,
+  GooglePlaceDto,
+  PlacePhoto,
+  PlaceResponse,
+} from "../googleTypes";
 import { get } from "http";
 import { getMongoIdOrFail } from "../utils/mongo";
 
@@ -71,14 +76,19 @@ async function findPlaces(placeIds: ObjectId[]) {
   return cursor.toArray() as Promise<GooglePlace[]>;
 }
 
-async function updateDownloadedPhotos(id: string, photos: string[]) {
+async function updateDownloadedPhotos(
+  id: string,
+  downloadedPhotos: string[],
+  photos: PlacePhoto[]
+) {
   await googlePlace.updateOne(
     {
       _id: getMongoIdOrFail(id),
     },
     {
       $set: {
-        downloadedPhotos: photos,
+        downloadedPhotos: downloadedPhotos,
+        photos: photos,
       },
     }
   );

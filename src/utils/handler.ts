@@ -48,6 +48,11 @@ export const handler = (
       } else if (err instanceof AuthenticationError) {
         log("authentication error", err.message);
         return res.status(401).send(err.message);
+      } else if (err instanceof NotFound) {
+        log("not found", err.message);
+        return res
+          .status(404)
+          .send(err.message ?? "The requested resource was not found");
       }
 
       console.error("Unexpected error", err);
@@ -70,6 +75,12 @@ export class BadRequest extends Error {
 }
 
 export class AuthenticationError extends Error {
+  constructor(public message: string) {
+    super(message);
+  }
+}
+
+export class NotFound extends Error {
   constructor(public message: string) {
     super(message);
   }

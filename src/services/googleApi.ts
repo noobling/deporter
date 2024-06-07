@@ -1,8 +1,6 @@
 import axios from "axios";
+import { GoogPlaceDetailsResponse, PlacesResponse } from "../googleTypes";
 import environment from "../utils/environment";
-import { PlaceResponse, PlacesResponse } from "../googleTypes";
-import { uploadToS3 } from "../utils/aws";
-import { v4 as uuidv4 } from "uuid";
 
 const googApi = axios.create({
   baseURL: "https://places.googleapis.com/v1",
@@ -55,5 +53,16 @@ export async function googleApiPhoto(name: string) {
     }
   );
 
+  return result.data;
+}
+
+export async function googleApiPlaceDetails(id: string) {
+  const path = `/places/${id}`;
+  const result = await googApi.get<GoogPlaceDetailsResponse>(path, {
+    headers: {
+      "X-Goog-FieldMask": "photos",
+    },
+  });
+  console.log("result is", result);
   return result.data;
 }

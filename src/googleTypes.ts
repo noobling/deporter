@@ -65,3 +65,7 @@ interface AuthorAttribution {
   uri: string;
   photoUri: string;
 }
+
+export interface GoogPlaceDetailsResponse {
+  photo: PlacePhoto[];
+}

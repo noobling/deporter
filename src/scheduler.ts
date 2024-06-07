@@ -2,6 +2,10 @@ import cron from "node-cron";
 import { sendEventReminder } from "./services/eventService";
 import { adminSendMessage } from "./utils/admin";
 import { processNotificationsFromCache } from "./services/notificationService";
+import {
+  sendDailyPlanReminder,
+  sendOneHourToGoPlanReminder,
+} from "./scheduled/processNotificationsForUpcommingPlans";
 
 export const startCronJobs = () => {
   // Every 24 hours
@@ -24,10 +28,16 @@ export const startCronJobs = () => {
     await processNotificationsFromCache();
   });
 
-  // Every 12 hours process upcoming plans
-  cron.schedule("0 */12 * * *", async () => {
-    console.log("Processing notifications for upcoming plans");
-    await processNotificationsFromCache();
+  // Every hour process
+  cron.schedule("0 * * * *", async () => {
+    console.log("Sending one hour to go plan reminder");
+    await sendOneHourToGoPlanReminder();
+  });
+
+  // every 24 hours
+  cron.schedule("0 0 * * *", async () => {
+    console.log("Sending plan reminder every 24 hours");
+    sendDailyPlanReminder();
   });
 
   console.log("Scheduled cron jobs");
