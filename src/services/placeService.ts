@@ -104,12 +104,9 @@ export async function getGooglePlace(payload: any, context: Context) {
 
   let placePhotos: PlacePhoto[] = place?.photos ?? [];
   if (!placePhotos.length) {
-    try {
-      const details = await googleApiPlaceDetails(place.id);
-      placePhotos = details.photos ?? [];
-    } catch (err) {
-      console.error("Error getting place details", err);
-    }
+    const details = await googleApiPlaceDetails(place.id);
+    placePhotos = details.photos ?? [];
+    await google.updatePhotos(id, placePhotos);
   }
 
   // When not downloaded photos
@@ -120,7 +117,7 @@ export async function getGooglePlace(payload: any, context: Context) {
     const photos = await Promise.all(promises);
     const photoIds = photos.map((p) => p._id);
     console.log("Downloaded photos", photos.length, "photos");
-    await google.updateDownloadedPhotos(id, photoIds, placePhotos);
+    await google.updateDownloadedPhotos(id, photoIds);
     return { ...place, downloadedPhotos: photoIds };
   }
 

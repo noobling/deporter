@@ -76,11 +76,7 @@ async function findPlaces(placeIds: ObjectId[]) {
   return cursor.toArray() as Promise<GooglePlace[]>;
 }
 
-async function updateDownloadedPhotos(
-  id: string,
-  downloadedPhotos: string[],
-  photos: PlacePhoto[]
-) {
+async function updateDownloadedPhotos(id: string, downloadedPhotos: string[]) {
   await googlePlace.updateOne(
     {
       _id: getMongoIdOrFail(id),
@@ -88,7 +84,19 @@ async function updateDownloadedPhotos(
     {
       $set: {
         downloadedPhotos: downloadedPhotos,
-        photos: photos,
+      },
+    }
+  );
+}
+
+async function updatePhotos(id: string, photos: PlacePhoto[]) {
+  await googlePlace.updateOne(
+    {
+      _id: getMongoIdOrFail(id),
+    },
+    {
+      $set: {
+        photos,
       },
     }
   );
@@ -100,5 +108,6 @@ export default {
   findPlaceById,
   findOrCreatePlace,
   updateDownloadedPhotos,
+  updatePhotos,
   findPlaces,
 };
