@@ -34,8 +34,8 @@ export const updatePlanSchema: ObjectSchema<
   media: array().of(string().required()).required(),
 });
 
-export const createPlaceSchema: ObjectSchema<CreatePlaceRequest> = object({
-  note: string().required(),
+export const createPlaceSchema = object({
+  note: string(),
   google_place_id: string().required(),
   event_id: string().required(),
 });
