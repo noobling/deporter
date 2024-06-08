@@ -29,9 +29,13 @@ export const startCronJobs = () => {
   });
 
   // Every hour process
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule("*/5 * * * * *", async () => {
     console.log("Sending one hour to go plan reminder");
-    await sendOneHourToGoPlanReminder();
+    try {
+      await sendOneHourToGoPlanReminder();
+    } catch (err) {
+      console.error("Failed sending hourly reminder", err);
+    }
   });
 
   // every 24 hours

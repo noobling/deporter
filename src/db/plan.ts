@@ -1,3 +1,4 @@
+import { ObjectId } from "mongodb";
 import {
   CreatePlan,
   CreatePlanRequest,
@@ -50,8 +51,11 @@ async function list(eventId: string) {
   return cursor.toArray() as unknown as PlanModel[];
 }
 
-async function listAll() {
-  const cursor = await collection.find();
+async function listToRemind() {
+  const cursor = await collection.find({
+    $or: [{ "reminder.sent": false }, { reminder: { $exists: false } }],
+    google_place_id: { $exists: true },
+  });
 
   return cursor.toArray() as unknown as PlanModel[];
 }
@@ -87,12 +91,29 @@ async function find(planId: string) {
   return result as unknown as PlanModel;
 }
 
+async function updateReminderSent(planId: ObjectId) {
+  return collection.updateOne(
+    {
+      _id: planId,
+    },
+    {
+      $set: {
+        reminder: {
+          sent: true,
+          sent_at: new Date().toISOString(),
+        },
+      },
+    }
+  );
+}
+
 export default {
   list,
   create,
   update,
   deletePlan,
   find,
-  listAll,
+  listToRemind,
   listForEvents,
+  updateReminderSent,
 };

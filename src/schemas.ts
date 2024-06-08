@@ -14,7 +14,9 @@ import {
 } from "./types";
 
 // Plans
-export const createPlanSchema: ObjectSchema<CreatePlanRequest> = object({
+export const createPlanSchema: ObjectSchema<
+  Omit<CreatePlanRequest, "reminder">
+> = object({
   link: string(),
   google_place_id: string(),
   note: string().required(),
@@ -22,7 +24,9 @@ export const createPlanSchema: ObjectSchema<CreatePlanRequest> = object({
   media: array().of(string().required()).required(),
 });
 
-export const updatePlanSchema: ObjectSchema<UpdatePlanRequest> = object({
+export const updatePlanSchema: ObjectSchema<
+  Omit<UpdatePlanRequest, "reminder">
+> = object({
   link: string(),
   google_place_id: string(),
   note: string().required(),

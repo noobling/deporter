@@ -10,6 +10,7 @@ import {
 } from "../types";
 import { adminSendMessage } from "../utils/admin";
 import { getMongoId } from "../utils/mongo";
+import { urlsPlanView } from "../utils/urls";
 import { ensureUserInEvent } from "./authService";
 
 export async function createPlan(payload: CreatePlanRequest, context: Context) {
@@ -25,7 +26,7 @@ export async function createPlan(payload: CreatePlanRequest, context: Context) {
   await adminSendMessage({
     message: `${context.authedUser.name} created plan: ${validated.note}`,
     eventId: id,
-    route_to: `/event/plan/view?id=${created._id}&eventId=${created.event_id}`,
+    route_to: urlsPlanView(created),
   });
 }
 
@@ -78,7 +79,7 @@ export async function updatePlan(payload: UpdatePlanRequest, context: Context) {
   await adminSendMessage({
     message: `${context.authedUser.name} updated plan: ${updated?.note}`,
     eventId: updated?.event_id.toString() ?? "",
-    route_to: `/event/plan/view?id=${updated._id}&eventId=${updated.event_id}`,
+    route_to: urlsPlanView(updated),
   });
 
   return updated;

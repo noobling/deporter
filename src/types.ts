@@ -272,7 +272,12 @@ export interface BasePlan {
   start_date_time: string;
   media: string[];
   google_place_id?: string;
+  reminder?: {
+    sent: boolean;
+    sent_at: string;
+  };
 }
+
 export interface Plan extends BasePlan {
   id: string;
   created_by: string;
