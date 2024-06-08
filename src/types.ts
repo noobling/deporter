@@ -272,10 +272,17 @@ export interface BasePlan {
   start_date_time: string;
   media: string[];
   google_place_id?: string;
+  check_list?: CheckList[];
   reminder?: {
     sent: boolean;
     sent_at: string;
   };
+}
+
+export interface CheckList {
+  id: string;
+  name: string;
+  checked: boolean;
 }
 
 export interface Plan extends BasePlan {

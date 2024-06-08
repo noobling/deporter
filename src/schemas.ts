@@ -6,6 +6,7 @@ import {
   InferType,
   ObjectSchema,
   array,
+  boolean,
 } from "yup";
 import {
   CreatePlaceRequest,
@@ -22,6 +23,13 @@ export const createPlanSchema: ObjectSchema<
   note: string().required(),
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
+  check_list: array().of(
+    object({
+      id: string().required(),
+      name: string().required(),
+      checked: boolean().required(),
+    })
+  ),
 });
 
 export const updatePlanSchema: ObjectSchema<
@@ -32,6 +40,13 @@ export const updatePlanSchema: ObjectSchema<
   note: string().required(),
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
+  check_list: array().of(
+    object({
+      id: string().required(),
+      name: string().required(),
+      checked: boolean().required(),
+    })
+  ),
 });
 
 export const createPlaceSchema = object({
