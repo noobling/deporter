@@ -78,15 +78,16 @@ export async function searchForPlaces(payload: any, context: Context) {
     return google.findPlaces(found.placeIds);
   } else {
     const results = await googleApiSearch(query, location);
+    const places = results.places ?? [];
 
-    const promises = results.places.map(async (place) => {
+    const promises = places.map(async (place) => {
       return google.findOrCreatePlace(place);
     });
 
     const placeIds = await Promise.all(promises);
     await google.create(query, location, placeIds);
 
-    console.log("Done creating", results.places.length, "places");
+    console.log("Done creating", places.length, "places");
 
     return google.findPlaces(placeIds);
   }
@@ -102,10 +103,10 @@ export async function getGooglePlace(payload: any, context: Context) {
   }
 
   let placePhotos: PlacePhoto[] = place?.photos ?? [];
-  if (!placePhotos?.length) {
+  if (!placePhotos.length) {
     try {
       const details = await googleApiPlaceDetails(place.id);
-      placePhotos = details.photos;
+      placePhotos = details.photos ?? [];
     } catch (err) {
       console.error("Error getting place details", err);
     }
