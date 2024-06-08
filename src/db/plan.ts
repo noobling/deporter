@@ -107,6 +107,26 @@ async function updateReminderSent(planId: ObjectId) {
   );
 }
 
+async function updateCheck(planId: string, checkId: string, checked: boolean) {
+  return collection.updateOne(
+    {
+      _id: getMongoIdOrFail(planId),
+    },
+    {
+      $set: {
+        "check_list.$[elem].checked": checked,
+      },
+    },
+    {
+      arrayFilters: [
+        {
+          "elem.id": checkId,
+        },
+      ],
+    }
+  );
+}
+
 export default {
   list,
   create,
@@ -116,4 +136,5 @@ export default {
   listToRemind,
   listForEvents,
   updateReminderSent,
+  updateCheck,
 };

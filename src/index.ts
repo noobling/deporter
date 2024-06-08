@@ -38,6 +38,7 @@ import {
   findPlan,
   listPlans,
   listPlansForUser,
+  planUpdateChecklist,
   updatePlan,
 } from "./services/planService";
 import { publicGetEventById, sharePlan } from "./services/publicService";
@@ -127,6 +128,7 @@ app.get("/event/:id/plans", handler(listPlans));
 app.post("/plan/:id", handler(updatePlan));
 app.delete("/plan/:id", handler(deletePlan));
 app.get("/plan/:id", handler(findPlan));
+app.post("/plan/:id/checklist", handler(planUpdateChecklist));
 
 // Public shared
 app.get("/share/plan/:id", sharePlan);

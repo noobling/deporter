@@ -6,6 +6,7 @@ import {
   CreatePlanRequest,
   Plan,
   PlansResponse,
+  UpdateChecklistRequest,
   UpdatePlanRequest,
 } from "../types";
 import { adminSendMessage } from "../utils/admin";
@@ -96,4 +97,11 @@ export async function deletePlan(_: any, context: Context) {
   });
 
   return deleted;
+}
+
+export async function planUpdateChecklist(
+  payload: UpdateChecklistRequest,
+  context: Context
+) {
+  await plan.updateCheck(context.id, payload.id, payload.checked);
 }

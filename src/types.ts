@@ -305,6 +305,11 @@ export interface CreatePlan extends BasePlan {
 
 export interface UpdatePlanRequest extends BasePlan {}
 
+export interface UpdateChecklistRequest {
+  checked: boolean;
+  id: string;
+}
+
 /**
  * PlanModel Mongo DB representation of Plan
  */
