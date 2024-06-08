@@ -113,7 +113,7 @@ export async function getGooglePlace(payload: any, context: Context) {
   }
 
   // When not downloaded photos
-  if (!place.downloadedPhotos) {
+  if (!place.downloadedPhotos && Boolean(placePhotos?.length)) {
     const promises = placePhotos.slice(0, 5).map(async (p) => {
       return uploadPhotoToS3(p.name);
     }); // Don't take all photos to save money
