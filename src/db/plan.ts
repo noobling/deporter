@@ -71,9 +71,14 @@ async function listForEvents(eventIds: string[]) {
       },
     },
     {
+      $addFields: {
+        converted_google_place_id: { $toObjectId: "$google_place_id" },
+      },
+    },
+    {
       $lookup: {
         from: "google_place", // name of the other collection
-        localField: "google_place_id", // name of the field in this collection
+        localField: "converted_google_place_id", // name of the field in this collection
         foreignField: "_id", // name of the field in the other collection
         as: "google_place", // output array field
       },

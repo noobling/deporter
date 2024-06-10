@@ -5,6 +5,7 @@ import {
   Context,
   CreatePlanRequest,
   Plan,
+  PlanWithPlace,
   PlansResponse,
   UpdateChecklistRequest,
   UpdatePlanRequest,
@@ -65,7 +66,7 @@ export async function listPlansForUser(_: any, context: Context) {
   const plans = planModels.map((planModel) => ({
     ...planModel,
     id: planModel._id,
-  })) as unknown as Plan[];
+  })) as unknown as PlanWithPlace[];
 
   return { plans };
 }
