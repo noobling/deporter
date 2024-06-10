@@ -81,7 +81,6 @@ async function listForEvents(eventIds: string[]) {
     {
       $unwind: {
         path: "$google_place",
-        preserveNullAndEmptyArrays: true, // keep items even if they don't have a match in the other collection
       },
     },
     {
