@@ -3,6 +3,7 @@ import {
   CreatePlan,
   CreatePlanRequest,
   PlanModel,
+  PlanWithPlace,
   UpdatePlanRequest,
 } from "../types";
 import { getTimestamps, getUpdatedTimestamps } from "../utils/date";
@@ -61,20 +62,36 @@ async function listToRemind() {
 }
 
 async function listForEvents(eventIds: string[]) {
-  const cursor = await collection.find(
+  const cursor = await collection.aggregate([
     {
-      event_id: {
-        $in: eventIds.map(getMongoIdOrFail),
+      $match: {
+        event_id: {
+          $in: eventIds.map(getMongoIdOrFail),
+        },
       },
     },
     {
-      sort: {
+      $lookup: {
+        from: "google_place", // name of the other collection
+        localField: "google_place_id", // name of the field in this collection
+        foreignField: "_id", // name of the field in the other collection
+        as: "google_place", // output array field
+      },
+    },
+    {
+      $unwind: {
+        path: "$google_place",
+        preserveNullAndEmptyArrays: true, // keep items even if they don't have a match in the other collection
+      },
+    },
+    {
+      $sort: {
         start_date_time: -1,
       },
-    }
-  );
+    },
+  ]);
 
-  return cursor.toArray() as unknown as PlanModel[];
+  return cursor.toArray() as unknown as PlanWithPlace[];
 }
 
 async function deletePlan(planId: string) {

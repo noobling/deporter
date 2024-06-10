@@ -321,6 +321,11 @@ export interface PlanModel extends BasePlan {
   updated_at: string;
 }
 
+export interface PlanWithPlace extends BasePlan {
+  _id: ObjectId;
+  google_place: GooglePlaceDto;
+}
+
 export interface SharePlanParams {
   /**
    * Path in app to route to

@@ -91,6 +91,7 @@ export async function addEventExpense(payload: any, context: Context) {
         expense.name
       } of $${-expense.amount} to ${result?.name}`,
       eventId: result!!._id,
+      route_to: `/event/(expense)/view-expense?id=${result?._id}`,
     });
     return result;
   }
