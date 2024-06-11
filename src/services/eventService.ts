@@ -100,7 +100,7 @@ export async function addEventExpense(payload: any, context: Context) {
   await adminSendMessage({
     message: `${context.authedUser.name} added ${expense.name} expense of $${expense.amount} to ${result?.name}`,
     eventId: result!!._id,
-    route_to: `/event/(expense)/view-expense?id=${result?._id}`,
+    route_to: `/event/(expense)/receipt?id=${result?._id}`,
   });
   return result;
 }
