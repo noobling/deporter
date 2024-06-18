@@ -6,9 +6,10 @@ import {
   sendDailyPlanReminder,
   sendOneHourToGoPlanReminder,
 } from "./scheduled/processNotificationsForUpcommingPlans";
+import { sendExpenseReminder } from "./scheduled/sendExpenseReminder";
 
 export const startCronJobs = () => {
-  // Every 24 hours
+  // Every 24 hours send event count down
   cron.schedule("0 0 * * *", async () => {
     console.log("Sending event reminder every 24 hours");
     try {
@@ -23,13 +24,11 @@ export const startCronJobs = () => {
     }
   });
 
-  // Every 5 seconds
-  cron.schedule("*/5 * * * * *", async () => {
-    await processNotificationsFromCache();
-  });
+  // Every 5 seconds process notifications to send
+  cron.schedule("*/5 * * * * *", processNotificationsFromCache);
 
-  // Every hour process
-  cron.schedule("*/5 * * * * *", async () => {
+  // One hour to go plan reminder
+  cron.schedule("* * * * *", async () => {
     console.log("Sending one hour to go plan reminder");
     try {
       await sendOneHourToGoPlanReminder();
@@ -38,11 +37,16 @@ export const startCronJobs = () => {
     }
   });
 
-  // every 24 hours
+  // every 24 hours send plan reminder starting in 24 hours
   cron.schedule("0 0 * * *", async () => {
     console.log("Sending plan reminder every 24 hours");
     sendDailyPlanReminder();
   });
 
+  // every 24 hours send expense reminder
+  cron.schedule("0 0 * * *", async () => {
+    console.log("Sending expense reminder every 24 hours");
+    sendExpenseReminder();
+  });
   console.log("Scheduled cron jobs");
 };

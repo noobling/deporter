@@ -131,6 +131,11 @@ async function addFriend(friendId: string, userId: string) {
   return getUser(userId);
 }
 
+async function listAll() {
+  const cursor = await collection.find({});
+  return cursor.toArray() as unknown as UserResponse[];
+}
+
 export default {
   getUser,
   getUsers,
@@ -141,4 +146,5 @@ export default {
   updateUser,
   deleteUser,
   addFriend,
+  listAll,
 };

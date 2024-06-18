@@ -307,6 +307,11 @@ async function getEventsViewableByUser(userId: string) {
   });
 }
 
+async function listAll() {
+  const cursor = await collection.find({});
+  return cursor.toArray() as unknown as EventResponse[];
+}
+
 export default {
   listEvents,
   listEventIds,
@@ -326,6 +331,7 @@ export default {
   getByCode,
   joinByCode,
   getEventsViewableByUser,
+  listAll,
 };
 
 async function getJoinCode() {

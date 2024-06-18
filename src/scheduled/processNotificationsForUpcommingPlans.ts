@@ -28,12 +28,15 @@ export async function sendOneHourToGoPlanReminder() {
     if (!placeUtcTime) {
       continue;
     }
-    const isStartInAnHour = dayjs().isSame(placeUtcTime, "hour");
+    const isStartInAnHour = dayjs().isSame(
+      placeUtcTime.subtract(1, "hour"),
+      "hour"
+    );
 
     if (isStartInAnHour) {
       console.log("Plan is starting in an hour sending notification", item);
       await adminSendMessage({
-        message: `${item.note} is starting soon! 🎉`,
+        message: `${item.note} is starting in an hour! 🎉`,
         eventId: item.event_id.toString(),
         route_to: urlsPlanView(item),
       });
