@@ -207,7 +207,7 @@ export interface Expense {
   amount: number;
   media: string[];
   applicable_to: string[];
-  applicable_to_map?: {
+  adjustments: {
     [key: string]: number | null;
   }
   created_at: string;
@@ -219,6 +219,13 @@ export interface CreateExpenseRequest {
   media: string[];
   applicable_to: string[];
 }
+
+export interface CreateExpenseAdjustmentRequest {
+  name: string;
+  expense_id: string;
+  value: number;
+}
+
 
 export interface DeleteExpenseRequest {
   name: string;
