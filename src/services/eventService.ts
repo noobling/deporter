@@ -1,6 +1,8 @@
 import {
   Context,
   CreateEventRequest,
+  CreateExpenseAdjustmentRequest,
+  CreateExpenseRequest,
   CreateMessageReactionRequest,
   CreateMessageReadReceiptRequest,
   CreateMessageRequest,
@@ -114,6 +116,18 @@ export async function deleteExpense(
     message: `${context.authedUser.name} deleted ${payload.name} expense`,
     eventId: context.id,
   });
+}
+
+export async function createExpenseAdjustment(
+  payload: CreateExpenseAdjustmentRequest,
+  context: Context
+) {
+  await events.addExpenseAdjustment(context.id!!, payload.expense_id, context.authedUser._id, payload.value);
+  await adminSendMessage({
+    message: `${context.authedUser.name} updated ${payload.name} expense`,
+    eventId: context.id,
+  });
+  return await events.getEvent(context.id);
 }
 
 export async function addEventPayment(

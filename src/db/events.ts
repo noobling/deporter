@@ -219,6 +219,37 @@ async function addExpense(id: string, expense: Expense) {
 }
 
 /**
+ * @param id eventId
+ */
+async function addExpenseAdjustment(
+  eventId: string,
+  expenseId: string,
+  userId: string,
+  value: number
+) {
+
+  return collection.updateOne(
+    {
+      _id: getMongoIdOrFail(eventId),
+      expenses: {
+        $elemMatch: {
+          id: getMongoIdOrFail(expenseId),
+        },
+      },
+    },
+    {
+      $set: {
+        "expenses.$.adjustments": {
+          [userId]: value,
+        },
+      },
+    }
+  );
+}
+
+
+
+/**
  * We may want to delete the expense by name in the future
  * @param id
  * @param expenseId
@@ -325,6 +356,7 @@ export default {
   addMessage,
   addMessageReaction,
   addExpense,
+  addExpenseAdjustment,
   deleteExpense,
   addParticipants,
   addPayment,
