@@ -109,7 +109,7 @@ export async function deleteExpense(
   payload: DeleteExpenseRequest,
   context: Context
 ) {
-  await events.deleteExpense(context.id!!, payload.name);
+  await events.deleteExpense(context.id!!, payload.id);
   await adminSendMessage({
     message: `${context.authedUser.name} deleted ${payload.name} expense`,
     eventId: context.id,

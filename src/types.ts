@@ -222,6 +222,7 @@ export interface CreateExpenseRequest {
 
 export interface DeleteExpenseRequest {
   name: string;
+  id: string;
 }
 
 export interface Context {

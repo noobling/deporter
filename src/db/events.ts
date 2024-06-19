@@ -221,9 +221,9 @@ async function addExpense(id: string, expense: Expense) {
 /**
  * We may want to delete the expense by name in the future
  * @param id
- * @param expenseName
+ * @param expenseId
  */
-async function deleteExpense(id: string, expenseName: string) {
+async function deleteExpense(id: string, expenseId: string) {
   await collection.updateOne(
     {
       _id: getMongoIdOrFail(id),
@@ -231,7 +231,7 @@ async function deleteExpense(id: string, expenseName: string) {
     {
       // @ts-ignore
       $pull: {
-        expenses: { name: expenseName },
+        expenses: { id: expenseId },
       },
     }
   );
