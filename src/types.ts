@@ -201,11 +201,15 @@ export interface ListFriendsResponse {
 
 // ====================== EXPENSE ====================
 export interface Expense {
+  id: ObjectId
   created_by: string;
   name: string;
   amount: number;
   media: string[];
   applicable_to: string[];
+  applicable_to_map?: {
+    [key: string]: number | null;
+  }
   created_at: string;
   updated_at: string;
 }

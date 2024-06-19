@@ -208,12 +208,13 @@ export async function addMessageReadReceipt(
   );
   return true;
 }
-
+/**
+ * @param id eventId
+ */
 async function addExpense(id: string, expense: Expense) {
   await updateList(id, {
-    expenses: expense,
+    expenses: { ...expense, id: new ObjectId() },
   });
-
   return getEvent(id);
 }
 
