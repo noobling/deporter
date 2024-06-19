@@ -208,7 +208,7 @@ export interface Expense {
   media: string[];
   applicable_to: string[];
   adjustments: {
-    [key: string]: number | null;
+    [key: string]: number;
   }
   created_at: string;
   updated_at: string;
