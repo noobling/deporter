@@ -1,11 +1,20 @@
 import { ObjectId } from "mongodb";
 import events from "../db/events";
+import {
+  AddExpenseReminderRequest,
+  Context,
+  RemoveExpenseReminderRequest,
+  User,
+  UserResponse,
+} from "../types";
+import { adminSendMessage } from "../utils/admin";
+import users from "../db/users";
 
-const getOutstanding = async (eventId: string) => {
+const getOutstanding = async (eventId: string): Promise<Debt[]> => {
   const event = await events.getEvent(eventId);
 
   if (!event) {
-    return null;
+    return [];
   }
 
   // Get total owed
@@ -73,8 +82,68 @@ const getOutstanding = async (eventId: string) => {
   return balanced;
 };
 
+export interface Debt {
+  userId: string;
+  owedToId: string;
+  amount: number;
+}
+
+const sendReminderDebts = async (
+  eventId: string,
+  debts: Debt[],
+  users: UserResponse[]
+) => {
+  let owedMessage = "💸 Settle your debts with your mates 💸\n";
+  owedMessage += debts
+    .map((d) => {
+      const user = users.find((u) => u._id.toString() === d.userId);
+      const owedTo = users.find((u) => u._id.toString() === d.owedToId);
+      const name = user?.name ?? d.userId;
+      const owedToName = owedTo?.name ?? d.owedToId;
+      return `${name} owes ${owedToName} $${d.amount.toFixed(2)}`;
+    })
+    .join("\n");
+
+  await adminSendMessage({
+    eventId,
+    message: owedMessage,
+  });
+};
+
+const addReminder = async (
+  payload: AddExpenseReminderRequest,
+  context: Context
+) => {
+  // Fire off a message first so the user knows it works
+  const debts = await getOutstanding(payload.eventId);
+  const allUsers = await users.listAll();
+  await sendReminderDebts(payload.eventId, debts, allUsers);
+
+  // Already sent once no need
+  if (payload.frequency === "once") {
+    return;
+  }
+
+  // Schedule it
+  await events.addExpenseReminder(
+    payload.owedToUserId,
+    payload.eventId,
+    payload.frequency
+  );
+};
+
+const removeReminder = async (
+  payload: RemoveExpenseReminderRequest,
+  context: Context
+) => {
+  console.log("removeReminder", payload.owedToUserId, payload.eventId);
+  await events.removeExpenseReminder(payload);
+};
+
 export default {
   getOutstanding,
+  addReminder,
+  removeReminder,
 };
 
 export interface ExpenseOutstanding {

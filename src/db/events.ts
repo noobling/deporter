@@ -6,6 +6,7 @@ import {
   Expense,
   Message,
   Payment,
+  RemoveExpenseReminderRequest,
   UpdateEventRequest,
   UserResponse,
 } from "../types";
@@ -227,7 +228,6 @@ async function addExpenseAdjustment(
   userId: string,
   value: number
 ) {
-
   return collection.updateOne(
     {
       _id: getMongoIdOrFail(eventId),
@@ -246,8 +246,6 @@ async function addExpenseAdjustment(
     }
   );
 }
-
-
 
 /**
  * We may want to delete the expense by name in the future
@@ -339,9 +337,45 @@ async function getEventsViewableByUser(userId: string) {
   });
 }
 
-async function listAll() {
-  const cursor = await collection.find({});
+async function listEventsWithReminders() {
+  const cursor = await collection.find({
+    reminders: { $exists: true, $ne: [] },
+  });
   return cursor.toArray() as unknown as EventResponse[];
+}
+
+async function addExpenseReminder(
+  createdById: string,
+  eventId: string,
+  frequency: "once" | "daily" | "weekly"
+) {
+  await updateList(eventId, {
+    reminders: {
+      created_by: getMongoIdOrFail(createdById),
+      frequency,
+      type: "expense",
+      last_sent_at: new Date().toISOString(),
+    },
+  });
+
+  return getEvent(eventId);
+}
+
+async function removeExpenseReminder(request: RemoveExpenseReminderRequest) {
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(request.eventId),
+    },
+    {
+      // @ts-ignore
+      $pull: {
+        reminders: {
+          created_by: getMongoIdOrFail(request.owedToUserId),
+          type: "expense",
+        },
+      },
+    }
+  );
 }
 
 export default {
@@ -364,7 +398,10 @@ export default {
   getByCode,
   joinByCode,
   getEventsViewableByUser,
-  listAll,
+  listEventsWithReminders,
+
+  addExpenseReminder,
+  removeExpenseReminder,
 };
 
 async function getJoinCode() {
