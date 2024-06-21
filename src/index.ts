@@ -57,6 +57,7 @@ import {
 } from "./services/userService";
 import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
+import { storyCreate, storyGet } from "./services/storyService";
 
 /*
  * Load up and parse configuration details from
@@ -93,6 +94,11 @@ app.post("/user/delete", handler(deleteUser));
 app.get("/user/:id", handler(getUser));
 app.get("/users", handler(getUsers));
 app.post("/user/update", handler(updateUser));
+
+
+// Story API
+app.post('/story/create', handler(storyCreate));
+app.get('/story', handler(storyGet));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
