@@ -31,6 +31,14 @@ export interface Event {
       read_at: string;
     };
   };
+  reminders?: Reminder[];
+}
+
+export interface Reminder {
+  last_sent_at: string;
+  frequency: "once" | "daily" | "weekly";
+  type: "expense";
+  created_by: string;
 }
 
 export type EventStatusType = "public" | "private" | "restricted";
@@ -201,7 +209,7 @@ export interface ListFriendsResponse {
 
 // ====================== EXPENSE ====================
 export interface Expense {
-  id: ObjectId
+  id: ObjectId;
   created_by: string;
   name: string;
   amount: number;
@@ -209,7 +217,7 @@ export interface Expense {
   applicable_to: string[];
   adjustments: {
     [key: string]: number;
-  }
+  };
   created_at: string;
   updated_at: string;
 }
@@ -226,10 +234,20 @@ export interface CreateExpenseAdjustmentRequest {
   value: number;
 }
 
-
 export interface DeleteExpenseRequest {
   name: string;
   id: string;
+}
+
+export interface AddExpenseReminderRequest {
+  owedToUserId: string;
+  eventId: string;
+  frequency: "once" | "daily" | "weekly";
+}
+
+export interface RemoveExpenseReminderRequest {
+  owedToUserId: string;
+  eventId: string;
 }
 
 export interface Context {

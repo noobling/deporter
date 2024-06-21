@@ -5,7 +5,13 @@ import { adminSendMessage } from "../utils/admin";
 
 export const sendExpenseReminder = async () => {
   console.log("Sending expense reminder");
-  const result = await events.listAll();
+  const result = await events.listEventsWithReminders();
+
+  if (result.length === 0) {
+    console.log("Skipping expense reminder, no events with reminders");
+    return;
+  }
+
   const allUsers = await users.listAll();
   for (const e of result) {
     const debts = await expenseService.getOutstanding(e._id.toString());

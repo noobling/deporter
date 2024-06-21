@@ -57,6 +57,7 @@ import {
 } from "./services/userService";
 import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
+import expenseService from "./services/expenseService";
 import { storyCreate, storyGet } from "./services/storyService";
 
 /*
@@ -150,6 +151,10 @@ app.put("/place/:id", handler(updatePlace));
 app.delete("/place/:id", handler(deletePlace));
 app.post("/places/search", handler(searchForPlaces));
 app.get("/place/google/:id", handler(getGooglePlace));
+
+// Expense API
+app.post("/expense/reminder/add", handler(expenseService.addReminder));
+app.post("/expense/reminder/remove", handler(expenseService.removeReminder));
 
 swagger(app);
 
