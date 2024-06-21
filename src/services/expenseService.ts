@@ -23,8 +23,9 @@ const getOutstanding = async (eventId: string): Promise<Debt[]> => {
     e.applicable_to.forEach((userId) => {
       const byUserId = e.created_by.toString();
       if (userId !== byUserId) {
+        const amount = e?.adjustments?.[userId] ?? perUserAmount;
         const key = `${userId}:${byUserId}`;
-        acc[key] = acc[key] ? acc[key] + perUserAmount : perUserAmount;
+        acc[key] = acc[key] ? acc[key] + amount : amount;
       }
     });
 
@@ -144,6 +145,7 @@ export default {
   getOutstanding,
   addReminder,
   removeReminder,
+  sendReminderDebts,
 };
 
 export interface ExpenseOutstanding {

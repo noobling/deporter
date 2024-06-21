@@ -43,10 +43,11 @@ export const startCronJobs = () => {
     sendDailyPlanReminder();
   });
 
-  // every 24 hours send expense reminder
-  cron.schedule("0 0 * * *", async () => {
-    console.log("Sending expense reminder every 24 hours");
+  // every hour check and send expense reminders
+  cron.schedule("0 * * * *", async () => {
+    console.log("Sending expense reminder every hour");
     sendExpenseReminder();
   });
+
   console.log("Scheduled cron jobs");
 };
