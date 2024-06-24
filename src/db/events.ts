@@ -381,6 +381,19 @@ async function removeExpenseReminder(request: RemoveExpenseReminderRequest) {
   );
 }
 
+async function updateExpenseReminderSentAt(eventId: string) {
+  await collection.updateOne(
+    {
+      _id: getMongoIdOrFail(eventId),
+    },
+    {
+      $set: {
+        "reminders.$[].last_sent_at": new Date().toISOString(),
+      },
+    }
+  );
+}
+
 export default {
   listEvents,
   listEventIds,
@@ -405,6 +418,7 @@ export default {
 
   addExpenseReminder,
   removeExpenseReminder,
+  updateExpenseReminderSentAt,
 };
 
 async function getJoinCode() {
