@@ -98,8 +98,9 @@ export interface CreateMessageRequest {
 }
 
 export interface CreateMessageReactionRequest {
-  message_index: number;
+  message_id: string;
   reaction: string;
+  message_created_by: string;
 }
 
 export interface CreateMessageReadReceiptRequest {

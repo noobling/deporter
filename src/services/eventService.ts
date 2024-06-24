@@ -181,29 +181,25 @@ export async function addEventMessageReaction(
 ) {
   const { data, sender } = await events.addMessageReaction(
     context.id!!,
-    payload.message_index,
+    payload.message_id,
     context.authedUser._id,
     payload.reaction
   );
-
   if (
     !payload.reaction.startsWith("o:") &&
     data &&
-    sender &&
-    sender._id !== data.messages[payload.message_index].created_by
+    sender
   ) {
-    const goTo = `/event/chat?id=${data._id}&messageId=${
-      data.messages[payload.message_index].id
-    }`;
+    const goTo = `/event/chat?id=${data._id}&messageId=${payload.message_id
+      }`;
     sendNotifsFromUserToUserAsync(
-      data.messages[payload.message_index].created_by,
+      payload.message_created_by,
       "reacted to your message",
       goTo,
       sender,
       data._id
     );
   }
-
   return data;
 }
 
