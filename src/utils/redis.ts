@@ -30,9 +30,24 @@ export const cacheGet = async (key: string) => {
   return result ? JSON.parse(result) : null;
 };
 
-export const cacheSet = async (key: string, value: any) => {
+/**
+ * 
+ * @param key 
+ * @param value 
+ * @param expiry time in seconds
+ */
+export const cacheSet = async (
+  key: string,
+  value: any,
+  expiry?: number
+) => {
+  if (expiry !== undefined) {
+    await redis.set(key, JSON.stringify(value), "EX", expiry);
+    return
+  }
   await redis.set(key, JSON.stringify(value));
 };
+
 
 export const cacheGetByPrefix = async (prefix: string) => {
   const keys = await redis.keys(`${prefix}*`);

@@ -59,6 +59,7 @@ import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
 import expenseService from "./services/expenseService";
 import { storyCreate, storyGet } from "./services/storyService";
+import { getDailyAffirmation } from "./services/addictionService";
 
 /*
  * Load up and parse configuration details from
@@ -96,10 +97,12 @@ app.get("/user/:id", handler(getUser));
 app.get("/users", handler(getUsers));
 app.post("/user/update", handler(updateUser));
 
-
 // Story API
 app.post('/story/create', handler(storyCreate));
 app.get('/story', handler(storyGet));
+
+// Addiction Recovery API
+app.get('/daily-affirmation', publicHander(getDailyAffirmation));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
