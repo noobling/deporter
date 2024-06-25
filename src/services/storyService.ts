@@ -10,7 +10,9 @@ export async function storyCreate(
 ) {
   return story.createStory(payload, context.authedUser._id);
 }
-export async function storyGet(context: Context) {
-  const { user_id } = context.queryParams as StoryGetFilter
+export async function storyGet(
+  payload: StoryGetFilter,
+  context: Context) {
+  const { user_id } = payload
   return story.getUserStories(user_id);
 }

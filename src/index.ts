@@ -99,7 +99,7 @@ app.post("/user/update", handler(updateUser));
 
 // Story API
 app.post('/story/create', handler(storyCreate));
-app.get('/story', handler(storyGet));
+app.post('/story/get', handler(storyGet));
 
 // Addiction Recovery API
 app.get('/daily-affirmation', publicHander(getDailyAffirmation));
