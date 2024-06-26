@@ -9,8 +9,6 @@ export async function storyCreate(
   payload: StoryCreateRequest,
   context: Context
 ) {
-  console.log('create', payload, context.authedUser._id)
-
   return story.createStory(payload, context.authedUser._id);
 }
 export async function storyGet(
@@ -25,5 +23,5 @@ export async function storyGetLastUpdateTime(
   context: Context
 ) {
   const { user_ids } = payload
-  return cacheGetKeys(user_ids.map((id) => `user:${id}:stories`).flat())
+  return (await cacheGetKeys(user_ids.map((id) => `user:${id}:stories`))).filter((key) => key !== null);
 }
