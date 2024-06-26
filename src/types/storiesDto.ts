@@ -52,3 +52,6 @@ export interface StoryGetFilter {
 
 // create index on created_by and context.id
 
+export interface StoryGetLastUpdateTimeFilter {
+    user_ids: string[]
+}

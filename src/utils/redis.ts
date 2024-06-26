@@ -30,6 +30,10 @@ export const cacheGet = async (key: string) => {
   return result ? JSON.parse(result) : null;
 };
 
+export const cacheGetKeys = async (keys: string[]) => {
+  const results = await redis.mget(keys);
+  return results.flatMap((r) => (r ? [JSON.parse(r)] : []));
+}
 /**
  * 
  * @param key 
