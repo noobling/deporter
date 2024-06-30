@@ -65,6 +65,7 @@ export interface StoryCompleteFilter {
 
 export interface StoryCommentRequest {
     story_id: string,
+    comment_id?: string,
     text: string
 }
 
