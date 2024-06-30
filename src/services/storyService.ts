@@ -30,7 +30,7 @@ export async function storyReact(
     reaction,
     story_id
   );
-  await storySendNotification(story_id, userId, 'New reaction', 'Someone reacted to your story');
+  await storySendNotificationToStoryCreator(story_id, userId, 'New reaction', 'Someone reacted to your story');
   return data
 }
 
@@ -48,14 +48,27 @@ export async function storyCreateComment(
   context: Context
 ) {
   const userId = context.authedUser._id
-  const { story_id, text } = payload
-  const data = await story.addStoryComment(
-    userId,
-    text,
-    story_id
-  );
-  await storySendNotification(story_id, userId, 'New comment', text);
-  return data
+  const { story_id, text, comment_id } = payload
+
+  if (!comment_id) {
+    const data = await story.addStoryComment(
+      userId,
+      text,
+      story_id
+    );
+    await storySendNotificationToStoryCreator(story_id, userId, 'New comment', text);
+    return data
+  } else {
+    const data = await story.addStoryCommentReply(
+      userId,
+      text,
+      story_id,
+      comment_id
+    );
+    // notify the user who created the comment
+    storySendNotificationToCommentCreator(story_id, comment_id, userId, 'New reply', text);
+  }
+
 }
 
 export async function storyGetLastUpdateTime(
@@ -66,7 +79,7 @@ export async function storyGetLastUpdateTime(
   return (await cacheGetKeys(user_ids.map((id) => `user:${id}:stories`))).filter((key) => key !== null);
 }
 
-async function storySendNotification(
+async function storySendNotificationToStoryCreator(
   storyId: string,
   fromUserId: string,
   title: string,
@@ -76,6 +89,36 @@ async function storySendNotification(
   const d = await story.getStory(storyId, {
     created_by: 1,
   });
+  const promises = [];
+  if (d.created_by !== getMongoIdOrFail(fromUserId)) {
+    const goTo = `/story/?id=${storyId}`;
+    promises.push(
+      cacheNotificationToProcess(d.created_by.toString(), {
+        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+        payload: {
+          goTo,
+          title,
+          description,
+        },
+      })
+    );
+  }
+  return Promise.all(promises);
+}
+
+async function storySendNotificationToCommentCreator(
+  storyId: string,
+  commentId: string,
+  fromUserId: string,
+  title: string,
+  description: string,
+) {
+  // fetch minimal story
+  const d = await story.getStoryComment(storyId, commentId);
+  if (!d) {
+    return;
+  }
+
   const promises = [];
   if (d.created_by !== getMongoIdOrFail(fromUserId)) {
     const goTo = `/story/?id=${storyId}`;

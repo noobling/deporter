@@ -68,7 +68,7 @@ async function addStoryComment(userId: string, text: string, storyId: string) {
             type: 'story',
         },
         text,
-        created_by: userId,
+        created_by: getMongoIdOrFail(userId),
         created_at: new Date().toISOString(),
         reactions: {},
         replies: [],
@@ -84,6 +84,59 @@ async function addStoryComment(userId: string, text: string, storyId: string) {
             },
         }
     );
+}
+
+async function addStoryCommentReply(userId: string, text: string, storyId: string, commentId: string) {
+    const comment: Comment = {
+        _id: new ObjectId(),
+        context: {
+            id: storyId,
+            type: 'story',
+        },
+        text,
+        created_by: getMongoIdOrFail(userId),
+        created_at: new Date().toISOString(),
+        reactions: {},
+        replies: [],
+    }
+    await collection.updateOne(
+        {
+            _id: getMongoIdOrFail(storyId),
+        },
+        {
+            // @ts-ignore
+            $push: {
+                'comments.$[comment].replies': comment,
+            },
+        },
+        {
+            arrayFilters: [
+                {
+                    'comment._id': getMongoIdOrFail(commentId),
+                },
+            ],
+        }
+    );
+}
+
+async function getStoryComment(storyId: string, commentId: string): Promise<Comment | null> {
+    const data = await collection.findOne({
+        _id: getMongoIdOrFail(storyId),
+        'comments._id': getMongoIdOrFail(commentId),
+    }, {
+        projection: {
+            comments: {
+                $elemMatch: {
+                    _id: getMongoIdOrFail(commentId),
+                },
+            },
+        },
+    });
+    if (!data) {
+        return null;
+    }
+    data.comments = data.comments as Comment[];
+    return data.comments[0];
 }
 
 async function getStory(storyId: string, projection?: Record<string, number>) {
@@ -106,4 +159,6 @@ export default {
     addStoryReaction,
     getStory,
     addStoryComment,
+    addStoryCommentReply,
+    getStoryComment,
 };

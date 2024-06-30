@@ -13,7 +13,7 @@ export interface Comment {
         type: 'story' | 'comment'
     }
     text: string;
-    created_by: string;
+    created_by: ObjectId;
     created_at: string;
     reactions: {
         [key: string]: string[]
