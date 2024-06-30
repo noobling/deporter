@@ -58,7 +58,7 @@ import {
 import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
 import expenseService from "./services/expenseService";
-import { storyCreate, storyGetMinimal, storyGetLastUpdateTime, storyGet, storyReact } from "./services/storyService";
+import { storyCreate, storyGetMinimal, storyGetLastUpdateTime, storyGet, storyReact, storyCreateComment } from "./services/storyService";
 import { getDailyAffirmation } from "./services/addictionService";
 
 /*
@@ -103,6 +103,7 @@ app.post('/story/get', handler(storyGetMinimal));
 app.post('/story/get-last-update-time', handler(storyGetLastUpdateTime));
 app.post('/story/get-complete', handler(storyGet));
 app.post('/story/react', handler(storyReact));
+app.post('/story/comment', handler(storyCreateComment));
 
 // Addiction Recovery API
 app.get('/daily-affirmation', publicHander(getDailyAffirmation));

@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
-import { Story, StoryCreateRequest } from "../types/storiesDto";
+import { Comment, Story, StoryCreateRequest } from "../types/storiesDto";
 import { cacheGet, cacheSet } from "../utils/redis";
 
 const collection = db.collection("story");
@@ -60,6 +60,33 @@ async function addStoryReaction(userId: string, reaction: string, storyId: strin
     );
 }
 
+async function addStoryComment(userId: string, text: string, storyId: string) {
+
+    const comment: Comment = {
+        _id: new ObjectId(),
+        context: {
+            id: storyId,
+            type: 'story',
+        },
+        text,
+        created_by: userId,
+        created_at: new Date().toISOString(),
+        reactions: {},
+        replies: [],
+    }
+    await collection.updateOne(
+        {
+            _id: getMongoIdOrFail(storyId),
+        },
+        {
+            // @ts-ignore
+            $push: {
+                comments: comment,
+            },
+        }
+    );
+}
+
 async function getStory(storyId: string) {
     const story = await collection.findOne({
         _id: getMongoIdOrFail(storyId),
@@ -72,5 +99,6 @@ export default {
     createStory,
     getUserStories: getUserStoriesMinimal,
     addStoryReaction,
-    getStory
+    getStory,
+    addStoryComment,
 };

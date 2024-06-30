@@ -2,7 +2,7 @@ import {
   Context,
 } from "../types";
 import story from "../db/story";
-import { MinimalStory, StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter, StoryReactionRequest, StoryCompleteFilter } from "../types/storiesDto";
+import { MinimalStory, StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter, StoryReactionRequest, StoryCompleteFilter, StoryCommentRequest } from "../types/storiesDto";
 import { cacheGetKeys } from "../utils/redis";
 
 export async function storyCreate(
@@ -35,9 +35,24 @@ export async function storyGet(
   context: Context
 ) {
   const data = await story.getStory(payload.story_id);
-  return story.getStory(story_id);
+  console.log(data, payload.story_id)
   return data
 }
+
+export async function storyCreateComment(
+  payload: StoryCommentRequest,
+  context: Context
+) {
+  const userId = context.authedUser._id
+  const { story_id, text } = payload
+  const data = await story.addStoryComment(
+    userId,
+    text,
+    story_id
+  );
+  return data
+}
+
 
 export async function storyGetLastUpdateTime(
   payload: StoryGetLastUpdateTimeFilter,
