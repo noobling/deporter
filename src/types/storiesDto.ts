@@ -62,6 +62,12 @@ export interface StoryCompleteFilter {
     story_id: string
 }
 
+
+export interface StoryCommentRequest {
+    story_id: string,
+    text: string
+}
+
 // create index on created_by and context.id
 export interface StoryGetLastUpdateTimeFilter {
     user_ids: string[]
