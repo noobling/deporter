@@ -23,7 +23,7 @@ export async function storyReact(
   context: Context) {
   const userId = context.authedUser._id
   const { story_id, reaction } = payload
-  return story.addStoryReaction(
+  return await story.addStoryReaction(
     userId,
     reaction,
     story_id
@@ -34,8 +34,9 @@ export async function storyGet(
   payload: StoryCompleteFilter,
   context: Context
 ) {
-  const { story_id } = payload
+  const data = await story.getStory(payload.story_id);
   return story.getStory(story_id);
+  return data
 }
 
 export async function storyGetLastUpdateTime(
