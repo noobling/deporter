@@ -38,7 +38,7 @@ export const updatePlanSchema: ObjectSchema<
   Omit<UpdatePlanRequest, "reminder">
 > = object({
   link: string(),
-  google_place_id: string(),
+  google_place_id: string().optional().nullable(),
   note: string().required(),
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
