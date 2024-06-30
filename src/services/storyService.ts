@@ -2,7 +2,7 @@ import {
   Context,
 } from "../types";
 import story from "../db/story";
-import { MinimalStory, StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter, StoryReactionRequest, StoryReactionsAndCommentsFilter } from "../types/storiesDto";
+import { MinimalStory, StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter, StoryReactionRequest, StoryCompleteFilter } from "../types/storiesDto";
 import { cacheGetKeys } from "../utils/redis";
 
 export async function storyCreate(
@@ -31,7 +31,7 @@ export async function storyReact(
 }
 
 export async function storyGet(
-  payload: StoryReactionsAndCommentsFilter,
+  payload: StoryCompleteFilter,
   context: Context
 ) {
   const { story_id } = payload

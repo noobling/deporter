@@ -58,7 +58,7 @@ export interface StoryReactionRequest {
 }
 
 
-export interface StoryReactionsAndCommentsFilter {
+export interface StoryCompleteFilter {
     story_id: string
 }
 
