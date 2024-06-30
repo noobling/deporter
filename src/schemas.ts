@@ -7,6 +7,7 @@ import {
   ObjectSchema,
   array,
   boolean,
+  mixed,
 } from "yup";
 import {
   CreatePlaceRequest,
@@ -23,6 +24,7 @@ export const createPlanSchema: ObjectSchema<
   note: string().required(),
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
+  recurring: mixed(),
   check_list: array().of(
     object({
       id: string().required(),
@@ -40,6 +42,7 @@ export const updatePlanSchema: ObjectSchema<
   note: string().required(),
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
+  recurring: mixed(),
   check_list: array().of(
     object({
       id: string().required(),
