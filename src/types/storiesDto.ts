@@ -21,7 +21,7 @@ export interface Comment {
     replies: Comment[]
 }
 
-export interface Story {
+export interface MinimalStory {
     _id: ObjectId;
     created_by: ObjectId;
     created_at: string;
@@ -31,6 +31,8 @@ export interface Story {
     }
     type: StoryType
     data: any
+}
+export interface Story extends MinimalStory {
     reactions: {
         [key: string]: string[]
     }
@@ -50,8 +52,17 @@ export interface StoryGetFilter {
     user_id: string
 }
 
-// create index on created_by and context.id
+export interface StoryReactionRequest {
+    story_id: string
+    reaction: string
+}
 
+
+export interface StoryReactionsAndCommentsFilter {
+    story_id: string
+}
+
+// create index on created_by and context.id
 export interface StoryGetLastUpdateTimeFilter {
     user_ids: string[]
 }

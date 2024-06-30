@@ -21,12 +21,23 @@ async function createStory(item: StoryCreateRequest, userId: string) {
     cacheSet(`user:${userId}:stories`, story, 60 * 60 * 24)
 }
 
-async function getUserStories(userId: string) {
+async function getUserStoriesMinimal(userId: string) {
     const cursor = await collection.find(
         {
             created_by: getMongoIdOrFail(userId),
         },
         {
+            projection: {
+                _id: 1,
+                created_by: 1,
+                created_at: 1,
+                context: {
+                    id: 1,
+                    type: 1,
+                },
+                type: 1,
+                data: 1,
+            },
             sort: {
                 created_at: -1,
             },
@@ -35,7 +46,31 @@ async function getUserStories(userId: string) {
     return cursor.toArray() as unknown as Story[];
 }
 
+
+async function addStoryReaction(userId: string, reaction: string, storyId: string) {
+    await collection.updateOne(
+        {
+            _id: getMongoIdOrFail(storyId),
+        },
+        {
+            $addToSet: {
+                [`reactions.${userId}`]: [reaction],
+            },
+        }
+    );
+}
+
+async function getStory(storyId: string) {
+    const story = await collection.findOne({
+        _id: getMongoIdOrFail(storyId),
+    });
+    return story as Story;
+}
+
+
 export default {
     createStory,
-    getUserStories
+    getUserStories: getUserStoriesMinimal,
+    addStoryReaction,
+    getStory
 };

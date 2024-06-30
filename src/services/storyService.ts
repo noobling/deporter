@@ -2,7 +2,7 @@ import {
   Context,
 } from "../types";
 import story from "../db/story";
-import { StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter } from "../types/storiesDto";
+import { MinimalStory, StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter, StoryReactionRequest, StoryReactionsAndCommentsFilter } from "../types/storiesDto";
 import { cacheGetKeys } from "../utils/redis";
 
 export async function storyCreate(
@@ -11,11 +11,31 @@ export async function storyCreate(
 ) {
   return story.createStory(payload, context.authedUser._id);
 }
-export async function storyGet(
+export async function storyGetMinimal(
   payload: StoryGetFilter,
   context: Context) {
   const { user_id } = payload
-  return story.getUserStories(user_id);
+  return story.getUserStories(user_id) as unknown as MinimalStory[];
+}
+
+export async function storyReact(
+  payload: StoryReactionRequest,
+  context: Context) {
+  const userId = context.authedUser._id
+  const { story_id, reaction } = payload
+  return story.addStoryReaction(
+    userId,
+    reaction,
+    story_id
+  );
+}
+
+export async function storyGet(
+  payload: StoryReactionsAndCommentsFilter,
+  context: Context
+) {
+  const { story_id } = payload
+  return story.getStory(story_id);
 }
 
 export async function storyGetLastUpdateTime(
