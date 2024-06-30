@@ -160,25 +160,28 @@ export async function getMessage(eventId: string, messageId: string) {
 
 export async function addMessageReaction(
   eventId: string,
-  messageIndex: number,
+  message_id: string,
   userId: string,
   reaction: string
 ): Promise<{
   data: EventResponse | null;
   sender: UserResponse | null;
 }> {
-  // Update the reaction for the user or set it if it does not exist
-  const updateResult = await collection.updateOne(
-    {
-      _id: getMongoIdOrFail(eventId),
-      [`messages.${messageIndex}`]: { $exists: true },
-    },
-    {
-      $set: {
-        [`messages.${messageIndex}.reactions.${userId.toString()}`]: [reaction], // Set the reaction for the user
+  // update the message with id message_id
+  const updateResult = await collection
+    .updateOne(
+      {
+        _id: getMongoIdOrFail(eventId),
+        "messages.id": message_id,
       },
-    }
-  );
+      {
+        $set: {
+          "messages.$.reactions": {
+            ...{ [userId]: reaction },
+          },
+        },
+      }
+    );
   if (updateResult.modifiedCount === 0) {
     return { data: null, sender: null };
   }

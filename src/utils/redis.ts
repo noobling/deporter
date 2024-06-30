@@ -1,4 +1,4 @@
-import Redis from "ioredis";
+import Redis, { RedisKey } from "ioredis";
 import environment from "./environment";
 
 let redis = {
@@ -30,9 +30,34 @@ export const cacheGet = async (key: string) => {
   return result ? JSON.parse(result) : null;
 };
 
-export const cacheSet = async (key: string, value: any) => {
+export const cacheGetKeys = async (keys: string[]) => {
+  try {
+    const results = await redis.mget(keys);
+    return results.flatMap((r) => (r ? [JSON.parse(r)] : []));
+  }
+  catch (err) {
+    console.log("error", err);
+  }
+  return [];
+}
+/**
+ * 
+ * @param key 
+ * @param value 
+ * @param expiry time in seconds
+ */
+export const cacheSet = async (
+  key: string,
+  value: any,
+  expiry?: number
+) => {
+  if (expiry !== undefined) {
+    await redis.set(key, JSON.stringify(value), "EX", expiry);
+    return
+  }
   await redis.set(key, JSON.stringify(value));
 };
+
 
 export const cacheGetByPrefix = async (prefix: string) => {
   const keys = await redis.keys(`${prefix}*`);
