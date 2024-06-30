@@ -54,7 +54,7 @@ async function addStoryReaction(userId: string, reaction: string, storyId: strin
         },
         {
             $addToSet: {
-                [`reactions.${userId}`]: [reaction],
+                [`reactions.${userId}`]: reaction,
             },
         }
     );
