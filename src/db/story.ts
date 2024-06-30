@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+import { FindOptions, ObjectId } from "mongodb";
 import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
 import { Comment, Story, StoryCreateRequest } from "../types/storiesDto";
@@ -61,7 +61,6 @@ async function addStoryReaction(userId: string, reaction: string, storyId: strin
 }
 
 async function addStoryComment(userId: string, text: string, storyId: string) {
-
     const comment: Comment = {
         _id: new ObjectId(),
         context: {
@@ -87,17 +86,23 @@ async function addStoryComment(userId: string, text: string, storyId: string) {
     );
 }
 
-async function getStory(storyId: string) {
+async function getStory(storyId: string, projection?: Record<string, number>) {
+    const options: FindOptions = {}
+
+    if (projection) {
+        options.projection = projection
+    }
+
     const story = await collection.findOne({
         _id: getMongoIdOrFail(storyId),
-    });
+    }, options);
     return story as Story;
 }
 
 
 export default {
     createStory,
-    getUserStories: getUserStoriesMinimal,
+    getUserStoriesMinimal,
     addStoryReaction,
     getStory,
     addStoryComment,

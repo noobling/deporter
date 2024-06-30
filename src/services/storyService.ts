@@ -4,6 +4,8 @@ import {
 import story from "../db/story";
 import { MinimalStory, StoryCreateRequest, StoryGetFilter, StoryGetLastUpdateTimeFilter, StoryReactionRequest, StoryCompleteFilter, StoryCommentRequest } from "../types/storiesDto";
 import { cacheGetKeys } from "../utils/redis";
+import { getMongoIdOrFail } from "../utils/mongo";
+import { cacheNotificationToProcess, sendPushNotification, WebsocketEventType } from "./notificationService";
 
 export async function storyCreate(
   payload: StoryCreateRequest,
@@ -15,7 +17,7 @@ export async function storyGetMinimal(
   payload: StoryGetFilter,
   context: Context) {
   const { user_id } = payload
-  return story.getUserStories(user_id) as unknown as MinimalStory[];
+  return story.getUserStoriesMinimal(user_id) as unknown as MinimalStory[];
 }
 
 export async function storyReact(
@@ -23,11 +25,13 @@ export async function storyReact(
   context: Context) {
   const userId = context.authedUser._id
   const { story_id, reaction } = payload
-  return await story.addStoryReaction(
+  const data = await story.addStoryReaction(
     userId,
     reaction,
     story_id
   );
+  await storySendNotification(story_id, userId, 'New reaction', 'Someone reacted to your story');
+  return data
 }
 
 export async function storyGet(
@@ -50,9 +54,9 @@ export async function storyCreateComment(
     text,
     story_id
   );
+  await storySendNotification(story_id, userId, 'New comment', text);
   return data
 }
-
 
 export async function storyGetLastUpdateTime(
   payload: StoryGetLastUpdateTimeFilter,
@@ -60,4 +64,31 @@ export async function storyGetLastUpdateTime(
 ) {
   const { user_ids } = payload
   return (await cacheGetKeys(user_ids.map((id) => `user:${id}:stories`))).filter((key) => key !== null);
+}
+
+async function storySendNotification(
+  storyId: string,
+  fromUserId: string,
+  title: string,
+  description: string,
+) {
+  // fetch minimal story
+  const d = await story.getStory(storyId, {
+    created_by: 1,
+  });
+  const promises = [];
+  if (d.created_by !== getMongoIdOrFail(fromUserId)) {
+    const goTo = `/story/?id=${storyId}`;
+    promises.push(
+      cacheNotificationToProcess(d.created_by.toString(), {
+        type: WebsocketEventType.ROUTING_PUSH_NOTIFICATION,
+        payload: {
+          goTo,
+          title,
+          description,
+        },
+      })
+    );
+  }
+  return Promise.all(promises);
 }
