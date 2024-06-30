@@ -302,13 +302,21 @@ export interface BasePlan {
   note: string;
   start_date_time: string;
   media: string[];
-  google_place_id?: string;
+  google_place_id?: string | null;
   check_list?: CheckList[];
+  recurring?: RecurringType;
   reminder?: {
     sent: boolean;
     sent_at: string;
   };
 }
+
+export type RecurringType =
+  | "none"
+  | "daily"
+  | "weekly"
+  | "fortnightly"
+  | "monthly";
 
 export interface CheckList {
   id: string;

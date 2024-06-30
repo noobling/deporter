@@ -1,3 +1,5 @@
+import dayjs, { Dayjs } from "dayjs";
+
 export function getTimestamps() {
   return {
     updated_at: new Date().toISOString(),
@@ -24,4 +26,16 @@ export function getDaysToGo(startTime?: string): number {
   } catch {
     return 0;
   }
+}
+
+/**
+ * Convert date to timezone agnostic string
+ *
+ * @example 2021-08-16T20:02:17
+ *
+ * @param date
+ * @returns
+ */
+export function toTimezoneAgnosticString(date: Dayjs) {
+  return date.format("YYYY-MM-DDTHH:mm:ss");
 }

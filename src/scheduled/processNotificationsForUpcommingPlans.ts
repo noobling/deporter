@@ -4,21 +4,9 @@ import { adminSendMessage } from "../utils/admin";
 import dayjs from "dayjs";
 import { urlsPlanView } from "../utils/urls";
 import { PlanModel } from "../types";
+import { getPlaceTimeInUtc } from "../utils/plan";
 var utc = require("dayjs/plugin/utc");
 dayjs.extend(utc);
-
-async function getPlaceTimeInUtc(plan: PlanModel) {
-  let googPlace = null;
-  if (plan.google_place_id) {
-    googPlace = await google.findPlaceById(plan.google_place_id);
-  }
-  if (!googPlace) {
-    // Can't accurately send reminder without timezone info
-    return null;
-  }
-  const utcOffset = googPlace?.utcOffsetMinutes ?? 0;
-  return dayjs(`${plan.start_date_time}Z`).add(-utcOffset, "minute");
-}
 
 // We can only do daily reminders for now since we don't know the plan location timezone
 export async function sendOneHourToGoPlanReminder() {
@@ -28,10 +16,11 @@ export async function sendOneHourToGoPlanReminder() {
     if (!placeUtcTime) {
       continue;
     }
-    const isStartInAnHour = dayjs().isSame(
-      placeUtcTime.subtract(1, "hour"),
-      "hour"
-    );
+    const nowInUtc = dayjs();
+    const minutesUntilStart = placeUtcTime.diff(nowInUtc, "minutes");
+
+    // Check if the event is starting within about an hour (with some leeway)
+    const isStartInAnHour = minutesUntilStart >= 58 && minutesUntilStart <= 62;
 
     if (isStartInAnHour) {
       console.log("Plan is starting in an hour sending notification", item);

@@ -7,6 +7,9 @@ import {
   sendOneHourToGoPlanReminder,
 } from "./scheduled/processNotificationsForUpcommingPlans";
 import { sendExpenseReminder } from "./scheduled/sendExpenseReminder";
+import { updateDateTimeForRecurringPlans } from "./scheduled/updateDateTimeForRecurringPlans";
+
+const HOURLY_CRON = "0 * * * *";
 
 export const startCronJobs = () => {
   // Every 24 hours send event count down
@@ -43,8 +46,11 @@ export const startCronJobs = () => {
     sendDailyPlanReminder();
   });
 
+  // every hour update start time for recurring plans
+  cron.schedule(HOURLY_CRON, updateDateTimeForRecurringPlans);
+
   // every hour check and send expense reminders
-  cron.schedule("0 * * * *", async () => {
+  cron.schedule(HOURLY_CRON, async () => {
     console.log("Sending expense reminder every hour");
     sendExpenseReminder();
   });
