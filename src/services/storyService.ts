@@ -86,9 +86,7 @@ async function storySendNotificationToStoryCreator(
   description: string,
 ) {
   // fetch minimal story
-  const d = await story.getStory(storyId, {
-    created_by: 1,
-  });
+  const d = await story.getStory(storyId);
   const promises = [];
   if (d.created_by !== getMongoIdOrFail(fromUserId)) {
     const goTo = `/story/?id=${storyId}`;
