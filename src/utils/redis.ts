@@ -34,30 +34,24 @@ export const cacheGetKeys = async (keys: string[]) => {
   try {
     const results = await redis.mget(keys);
     return results.flatMap((r) => (r ? [JSON.parse(r)] : []));
-  }
-  catch (err) {
+  } catch (err) {
     console.log("error", err);
   }
   return [];
-}
+};
 /**
- * 
- * @param key 
- * @param value 
+ *
+ * @param key
+ * @param value
  * @param expiry time in seconds
  */
-export const cacheSet = async (
-  key: string,
-  value: any,
-  expiry?: number
-) => {
+export const cacheSet = async (key: string, value: any, expiry?: number) => {
   if (expiry !== undefined) {
     await redis.set(key, JSON.stringify(value), "EX", expiry);
-    return
+    return;
   }
   await redis.set(key, JSON.stringify(value));
 };
-
 
 export const cacheGetByPrefix = async (prefix: string) => {
   const keys = await redis.keys(`${prefix}*`);
@@ -67,4 +61,12 @@ export const cacheGetByPrefix = async (prefix: string) => {
 
 export const cacheDelete = async (key: string) => {
   await redis.del(key);
+};
+
+/**
+ * Cache reset
+ */
+export const cacheReset = async () => {
+  const result = await redis.flushall();
+  console.log("Reset redis cache");
 };

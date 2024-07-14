@@ -1,6 +1,5 @@
 import dayjs from "dayjs";
 import plan from "../db/plan";
-import { getPlaceTimeInUtc } from "../utils/plan";
 
 export const updateDateTimeForRecurringPlans = async () => {
   console.log("Updating date time for recurring plans");
@@ -9,7 +8,7 @@ export const updateDateTimeForRecurringPlans = async () => {
     (p) =>
       p.recurring &&
       p.recurring !== "none" &&
-      dayjs().isAfter(p.start_date_time)
+      dayjs().isAfter(dayjs(p.start_date_time).add(1, "day")) // Allow a day buffer before moving the date. We can update this as needed
   );
 
   for (const planToUpdate of recurringPlans) {

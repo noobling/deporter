@@ -137,6 +137,7 @@ export interface CreateMediaRequest {
   extension: string;
   exif?: string;
   mimeType?: string;
+  thumbnail_media_id?: string; // Media Id of thumbnail image
 }
 export interface Media {
   created_by: string;
@@ -150,6 +151,7 @@ export interface Media {
   exif?: string; // metadata on media from device
   address?: string;
   coords?: string;
+  thumbnail_media_id?: string; // Media Id of thumbnail image, use this to display a preview
 }
 export interface MediaResponse extends Media {
   _id: string;

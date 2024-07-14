@@ -60,6 +60,8 @@ import swagger from "./utils/swagger";
 import expenseService from "./services/expenseService";
 import { storyCreate, storyGetMinimal, storyGetLastUpdateTime, storyGet, storyReact, storyCreateComment } from "./services/storyService";
 import { getDailyAffirmation } from "./services/addictionService";
+import { adminCacheReset, adminList } from "./services/adminService";
+import { cacheReset } from "./utils/redis";
 
 /*
  * Load up and parse configuration details from
@@ -106,7 +108,7 @@ app.post('/story/react', handler(storyReact));
 app.post('/story/comment', handler(storyCreateComment));
 
 // Addiction Recovery API
-app.get('/daily-affirmation', publicHander(getDailyAffirmation));
+app.get("/daily-affirmation", publicHander(getDailyAffirmation));
 
 // Event API
 app.get("/events", handler(getEventsForCurrentUser));
@@ -162,6 +164,10 @@ app.get("/place/google/:id", handler(getGooglePlace));
 // Expense API
 app.post("/expense/reminder/add", handler(expenseService.addReminder));
 app.post("/expense/reminder/remove", handler(expenseService.removeReminder));
+
+// Admin API
+app.post("/admin/cache/reset", handler(adminCacheReset));
+app.get("/admin/list", handler(adminList));
 
 swagger(app);
 
