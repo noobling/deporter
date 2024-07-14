@@ -149,8 +149,8 @@ export interface Media {
   updated_at: string;
   eventId?: string; // Event media is part of
   exif?: string; // metadata on media from device
-  address?: string;
-  coords?: string;
+  address?: Object; // Contains object with address fields
+  location?: Object; // Contains the coords
   thumbnail_media_id?: string; // Media Id of thumbnail image, use this to display a preview
 }
 export interface MediaResponse extends Media {
