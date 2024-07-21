@@ -81,6 +81,7 @@ export async function updateEvent(
 export async function addEventExpense(payload: any, context: Context) {
   const expense: Expense = {
     ...payload,
+    payer: payload.payer ?? context.authedUser._id,
     created_by: context.authedUser._id,
     ...getTimestamps(),
   };
