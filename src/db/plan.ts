@@ -126,6 +126,17 @@ async function find(planId: string) {
   return result as unknown as PlanModel;
 }
 
+async function listFuturePlansWithCountdown() {
+  const cursor = await collection.find({
+    countdown: true,
+    start_date_time: {
+      $gte: new Date().toISOString(),
+    },
+  });
+
+  return cursor.toArray() as unknown as PlanModel[];
+}
+
 async function updateReminderSent(planId: ObjectId) {
   return collection.updateOne(
     {
@@ -210,6 +221,7 @@ export default {
   listToRemind,
   listForEvents,
   listAll,
+  listFuturePlansWithCountdown,
 
   updateReminderSent,
   updateCheck,

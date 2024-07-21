@@ -13,6 +13,7 @@ import {
   Expense,
   Message,
   PinMessageRequest,
+  PlanModel,
   UpdateEventRequest,
   UserResponse,
 } from "../types";
@@ -27,6 +28,7 @@ import { isEqual } from "../utils/mongo";
 import media from "../db/media";
 import { v4 as uuidv4 } from "uuid";
 import { messageIsPhoto } from "../utils/message";
+import plan from "../db/plan";
 
 export async function getEvent(payload: any, context: Context) {
   return events.getEvent(context.id!!);
@@ -122,7 +124,12 @@ export async function createExpenseAdjustment(
   payload: CreateExpenseAdjustmentRequest,
   context: Context
 ) {
-  await events.addExpenseAdjustment(context.id!!, payload.expense_id, context.authedUser._id, payload.value);
+  await events.addExpenseAdjustment(
+    context.id!!,
+    payload.expense_id,
+    context.authedUser._id,
+    payload.value
+  );
   await adminSendMessage({
     message: `${context.authedUser.name} updated ${payload.name} expense`,
     eventId: context.id,
@@ -185,13 +192,8 @@ export async function addEventMessageReaction(
     context.authedUser._id,
     payload.reaction
   );
-  if (
-    !payload.reaction.startsWith("o:") &&
-    data &&
-    sender
-  ) {
-    const goTo = `/event/chat?id=${data._id}&messageId=${payload.message_id
-      }`;
+  if (!payload.reaction.startsWith("o:") && data && sender) {
+    const goTo = `/event/chat?id=${data._id}&messageId=${payload.message_id}`;
     sendNotifsFromUserToUserAsync(
       payload.message_created_by,
       "reacted to your message",
@@ -272,34 +274,15 @@ export async function getEventsToJoin(_: any, context: Context) {
 }
 
 export async function sendEventReminder() {
-  const eventsToRemind = await getEventsToRemind();
+  const eventsToRemind = await plan.listFuturePlansWithCountdown();
   for (const event of eventsToRemind) {
-    const daysToGo = getDaysToGo(event.start_time);
+    const daysToGo = getDaysToGo(event.start_date_time);
 
     await adminSendMessage({
       message: getRandomMessage(daysToGo),
-      eventId: event._id,
+      eventId: event.event_id.toString(),
     });
   }
-}
-
-export async function getEventsToRemind(): Promise<EventResponse[]> {
-  // Hard coded for now since we have a lot of test events and no real users
-  const TEMP_HARD_CODED_EVENTS_TO_REMIND: string[] = [
-    "661f347eb00ae385b0528bc2",
-  ];
-  const items = TEMP_HARD_CODED_EVENTS_TO_REMIND.map(async (id) => {
-    const result = await events.getEvent(id);
-    if (!result) return null;
-    if (getDaysToGo(result?.start_time) > 0) {
-      return result;
-    } else {
-      null;
-    }
-  });
-  const promises = await Promise.all(items);
-  const filtered = promises.filter((p) => Boolean(p)) as EventResponse[];
-  return filtered;
 }
 
 async function sendNotifsForMessageInEventAsync(
