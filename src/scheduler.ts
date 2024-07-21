@@ -30,7 +30,7 @@ export const startCronJobs = () => {
   // Every 5 seconds process notifications to send
   cron.schedule("*/5 * * * * *", processNotificationsFromCache);
 
-  // One hour to go plan reminder
+  // Check and send one hour to go plan reminder every minute
   cron.schedule("* * * * *", async () => {
     console.log("Sending one hour to go plan reminder");
     try {

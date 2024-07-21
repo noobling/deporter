@@ -307,6 +307,7 @@ export interface BasePlan {
   google_place_id?: string | null;
   check_list?: CheckList[];
   recurring?: RecurringType;
+  countdown?: boolean; // Should we show a countdown to the event, when true may be noisy
   reminder?: {
     sent: boolean;
     sent_at: string;

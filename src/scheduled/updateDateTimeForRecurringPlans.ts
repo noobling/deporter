@@ -8,7 +8,7 @@ export const updateDateTimeForRecurringPlans = async () => {
     (p) =>
       p.recurring &&
       p.recurring !== "none" &&
-      dayjs().isAfter(dayjs(p.start_date_time).add(1, "day")) // Allow a day buffer before moving the date. We can update this as needed
+      dayjs().isAfter(dayjs(p.start_date_time).add(2, "hours")) // Allow a 2 hour buffer before moving the date. We can update this as needed
   );
 
   for (const planToUpdate of recurringPlans) {

@@ -25,6 +25,7 @@ export const createPlanSchema: ObjectSchema<
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
   recurring: mixed(),
+  countdown: boolean(),
   check_list: array().of(
     object({
       id: string().required(),
@@ -43,6 +44,7 @@ export const updatePlanSchema: ObjectSchema<
   start_date_time: string().required(),
   media: array().of(string().required()).required(),
   recurring: mixed(),
+  countdown: boolean(),
   check_list: array().of(
     object({
       id: string().required(),
