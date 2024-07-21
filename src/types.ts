@@ -213,6 +213,7 @@ export interface ListFriendsResponse {
 // ====================== EXPENSE ====================
 export interface Expense {
   id: ObjectId;
+  payer?: string;
   created_by: string;
   name: string;
   amount: number;
@@ -225,6 +226,7 @@ export interface Expense {
   updated_at: string;
 }
 export interface CreateExpenseRequest {
+  payer?: string;
   name: string;
   amount: number;
   media: string[];
