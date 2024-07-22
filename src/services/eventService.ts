@@ -280,7 +280,7 @@ export async function sendEventReminder() {
     const daysToGo = getDaysToGo(event.start_date_time);
 
     await adminSendMessage({
-      message: getRandomMessage(daysToGo),
+      message: getRandomMessage(daysToGo, event.note),
       eventId: event.event_id.toString(),
     });
   }
@@ -379,8 +379,8 @@ const messages = [
 ];
 
 // Function to get a random message
-function getRandomMessage(daysToGo: number) {
+function getRandomMessage(daysToGo: number, eventName: string) {
   const randomIndex = Math.floor(Math.random() * messages.length);
-  const selectedMessage = messages[randomIndex];
+  const selectedMessage = messages[randomIndex] + ` for ${eventName}`;
   return selectedMessage.replace("${daysToGo}", daysToGo.toString());
 }
