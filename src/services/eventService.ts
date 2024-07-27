@@ -30,7 +30,7 @@ import media from "../db/media";
 import { v4 as uuidv4 } from "uuid";
 import { messageIsPhoto } from "../utils/message";
 import plan from "../db/plan";
-import { Currency } from "../types/MoneyTransactionDto";
+import { Currency } from "../types/moneyTransactionDto";
 
 export async function getEvent(payload: any, context: Context) {
   return events.getEvent(context.id!!);
