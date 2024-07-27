@@ -62,6 +62,7 @@ import { storyCreate, storyGetMinimal, storyGetLastUpdateTime, storyGet, storyRe
 import { getDailyAffirmation } from "./services/addictionService";
 import { adminCacheReset, adminList } from "./services/adminService";
 import { cacheReset } from "./utils/redis";
+import { migrateExpenses } from "./migrations/2024-07-27-global-finances";
 
 /*
  * Load up and parse configuration details from
@@ -163,7 +164,9 @@ app.get("/place/google/:id", handler(getGooglePlace));
 
 // Expense API
 app.post("/expense/create", handler(expenseService.createMoneyTransaction));
-app.get("/expense/get", handler(expenseService.getMoneyTransactions));
+app.post("/expense/get", handler(expenseService.getMoneyTransactions));
+app.post("/expense/delete", handler(expenseService.deleteMoneyTransaction));
+app.post("/expense/adjustment", handler(expenseService.addMoneyTransactionAdjustment));
 
 app.post("/expense/reminder/add", handler(expenseService.addReminder));
 app.post("/expense/reminder/remove", handler(expenseService.removeReminder));

@@ -35,8 +35,9 @@ export interface MinimalMoneyTransaction {
 
     /** Every user involved in the transaction
      * and their adjustments
+     * string as these can be new users
      */
-    applicable_to: ObjectId[];
+    applicable_to: string[];
     adjustments: {
         [key: string]: number;
     };
@@ -78,4 +79,9 @@ export interface getMoneyTransactionsFilter {
         id: string;
         type: MoneyTransactionContextType
     }
+}
+
+export interface MoneyTransactionAdjustment {
+    id: string;
+    amount: number;
 }

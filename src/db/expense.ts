@@ -5,19 +5,22 @@ import { CreateMoneyTransaction, getMoneyTransactionsFilter, MinimalMoneyTransac
 
 const collection = db.collection("moneyTransaction");
 
-async function createMoneyTransaction(item: CreateMoneyTransaction, userId: string) {
+async function createMoneyTransaction(item: CreateMoneyTransaction & {
+    created_at?: string,
+    updated_at?: string,
+}, userId: string) {
     const moneyTransaction: MinimalMoneyTransaction = {
         ...item,
         context: {
             id: getMongoIdOrFail(item.context.id),
             type: item.context.type
         },
-        applicable_to: item.applicable_to.map(getMongoIdOrFail),
+        applicable_to: item.applicable_to,
         owed_to: getMongoIdOrFail(item.owed_to),
         _id: new ObjectId(),
         adjustments: item.adjustments ?? {},
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
+        created_at: item.created_at || new Date().toISOString(),
+        updated_at: item.updated_at || new Date().toISOString(),
         created_by: getMongoIdOrFail(userId),
         notes: [],
     };
@@ -31,6 +34,8 @@ async function getMoneyTransaction(
     owed: MinimalMoneyTransaction[]
     owedTo: MinimalMoneyTransaction[]
 }> {
+    console.log("filter")
+    console.log(filter)
     // all related transactions for user and context
     const context = filter.context;
     const result: {
@@ -45,14 +50,16 @@ async function getMoneyTransaction(
             .find({
                 owed_to: getMongoIdOrFail(userId),
             })
+            .sort({ created_at: -1 })
             .toArray();
         result.owed = owed as MinimalMoneyTransaction[];
         const owedTo = await collection
             .find({
                 applicable_to: {
-                    $in: [getMongoIdOrFail(userId)]
+                    $in: [userId]
                 },
             })
+            .sort({ created_at: -1 })
             .toArray();
         result.owedTo = owedTo as MinimalMoneyTransaction[];
         return result;
@@ -60,6 +67,7 @@ async function getMoneyTransaction(
 
     // If there is a context, fetch with that context. 
     const contextId = getMongoIdOrFail(context.id);
+
     const owed = await collection
         .find({
             owed_to: getMongoIdOrFail(userId),
@@ -71,7 +79,7 @@ async function getMoneyTransaction(
     const owedTo = await collection
         .find({
             applicable_to: {
-                $in: [getMongoIdOrFail(userId)]
+                $in: [userId]
             },
             "context.id": contextId,
             "context.type": context.type,
@@ -81,9 +89,41 @@ async function getMoneyTransaction(
     return result;
 }
 
+function deleteMoneyTransaction(id: string, userId: string) {
+    // check if the transaction exists and the user is the creator / owner
+    return collection.deleteOne({
+        _id: getMongoIdOrFail(id),
+        $or: [
+            { created_by: getMongoIdOrFail(userId) },
+            { owed_to: getMongoIdOrFail(userId) },
+        ],
+    });
+}
+
+function addMoneyTransactionAdjustment(
+    id: string,
+    userId: string,
+    adjustments: {
+        [key: string]: number;
+    }
+) {
+    return collection.updateOne(
+        {
+            _id: getMongoIdOrFail(id),
+        },
+        {
+            $set: {
+                adjustments: adjustments,
+            },
+        }
+    );
+}
+
 export default {
     createMoneyTransaction,
-    getMoneyTransaction
+    getMoneyTransaction,
+    deleteMoneyTransaction,
+    addMoneyTransactionAdjustment,
 };
 
 
