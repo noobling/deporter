@@ -9,6 +9,22 @@ import {
 } from "../types";
 import { adminSendMessage } from "../utils/admin";
 import users from "../db/users";
+import expenses from "../db/expense";
+import { CreateMoneyTransaction, getMoneyTransactionsFilter } from "../types/MoneyTransactionDto";
+
+
+const createMoneyTransaction = async (payload: CreateMoneyTransaction, context: Context) => {
+  const userId = context.authedUser._id;
+  const expense = await expenses.createMoneyTransaction(payload, userId);
+  return expense;
+}
+
+const getMoneyTransactions = async (payload: getMoneyTransactionsFilter, context: Context) => {
+  // all related transactions for user and context
+  const userId = context.authedUser._id;
+  const result = await expenses.getMoneyTransaction(payload, userId);
+  return result;
+}
 
 const getOutstanding = async (eventId: string): Promise<Debt[]> => {
   const event = await events.getEvent(eventId);
@@ -146,6 +162,8 @@ export default {
   addReminder,
   removeReminder,
   sendReminderDebts,
+  createMoneyTransaction,
+  getMoneyTransactions,
 };
 
 export interface ExpenseOutstanding {

@@ -18,6 +18,7 @@ import {
   UserResponse,
 } from "../types";
 import events, { addMessageReadReceipt } from "../db/events";
+import expenseRepository from "../db/expense";
 import { getDaysToGo, getTimestamps } from "../utils/date";
 import {
   cacheNotificationToProcess,
@@ -29,6 +30,7 @@ import media from "../db/media";
 import { v4 as uuidv4 } from "uuid";
 import { messageIsPhoto } from "../utils/message";
 import plan from "../db/plan";
+import { Currency } from "../types/MoneyTransactionDto";
 
 export async function getEvent(payload: any, context: Context) {
   return events.getEvent(context.id!!);
@@ -70,9 +72,8 @@ export async function updateEvent(
 ) {
   const result = await events.updateEvent(context.id, payload);
   adminSendMessage({
-    message: `Event ${result!!.name} has been updated by ${
-      context.authedUser.name
-    }!`,
+    message: `Event ${result!!.name} has been updated by ${context.authedUser.name
+      }!`,
     eventId: result!!._id,
   });
   return result;
@@ -90,11 +91,28 @@ export async function addEventExpense(payload: any, context: Context) {
     if (expense.applicable_to.length > 1) {
       throw new Error("Negative expense can only be applicable to one person");
     }
+
+    // TODO get rid of this
     const result = await events.addExpense(context.id!!, expense);
+
+    expenseRepository.createMoneyTransaction({
+      owed_to: payload.payer ?? context.authedUser._id,
+      name: expense.name,
+      currency: Currency.AUD,
+      amount: expense.amount,
+      media: expense.media,
+      applicable_to: expense.applicable_to,
+      context: {
+        id: result!!._id,
+        type: 'event',
+      },
+      type: "expense",
+      adjustments: {},
+    }, context.authedUser._id);
+
     adminSendMessage({
-      message: `${context.authedUser.name} received a payment: ${
-        expense.name
-      } of $${-expense.amount} to ${result?.name}`,
+      message: `${context.authedUser.name} received a payment: ${expense.name
+        } of $${-expense.amount} to ${result?.name}`,
       eventId: result!!._id,
       route_to: `/event/(expense)/receipt?id=${result?._id}`,
     });
