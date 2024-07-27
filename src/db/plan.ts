@@ -61,7 +61,11 @@ async function list(eventId: string) {
 
 async function listToRemind() {
   const cursor = await collection.find({
-    $or: [{ "reminder.sent": false }, { reminder: { $exists: false } }],
+    $or: [
+      { "reminder.sent": false },
+      { reminder: { $exists: false } }, // exclude once off plans
+      { recurring: { $ne: "none" } }, // Include recurring plans
+    ],
     google_place_id: { $exists: true },
   });
 

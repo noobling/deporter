@@ -1,7 +1,7 @@
 import { ObjectId } from "mongodb";
 import { getMongoIdOrFail } from "../utils/mongo";
 import db from "./db";
-import { CreateMoneyTransaction, getMoneyTransactionsFilter, MinimalMoneyTransaction, MoneyTransactionContextType } from "../types/MoneyTransactionDto";
+import { CreateMoneyTransaction, getMoneyTransactionsFilter, MinimalMoneyTransaction, MoneyTransactionContextType } from "../types/moneyTransactionDto";
 
 const collection = db.collection("moneyTransaction");
 
