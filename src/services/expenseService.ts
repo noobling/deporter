@@ -10,7 +10,7 @@ import {
 import { adminSendMessage } from "../utils/admin";
 import users from "../db/users";
 import expenses from "../db/expense";
-import { CreateMoneyTransaction, getMoneyTransactionsFilter } from "../types/moneyTransactionDto";
+import { CreateMoneyTransaction, getMoneyTransactionsFilter, MoneyTransactionAdjustment } from "../types/moneyTransactionDto";
 
 
 const createMoneyTransaction = async (payload: CreateMoneyTransaction, context: Context) => {
