@@ -61,8 +61,6 @@ import expenseService from "./services/expenseService";
 import { storyCreate, storyGetMinimal, storyGetLastUpdateTime, storyGet, storyReact, storyCreateComment } from "./services/storyService";
 import { getDailyAffirmation } from "./services/addictionService";
 import { adminCacheReset, adminList } from "./services/adminService";
-import { cacheReset } from "./utils/redis";
-import { migrateExpenses } from "./migrations/2024-07-27-global-finances";
 
 /*
  * Load up and parse configuration details from

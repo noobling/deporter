@@ -2,9 +2,9 @@ import db from "../db/db";
 import { Event } from "../types";
 
 import expenseRepo from "../db/expense";
-import { Currency } from "../types/MoneyTransactionDto";
+import { Currency } from "../types/moneyTransactionDto";
 
-export async function migrateExpenses() {
+async function migrateExpenses() {
   const events = db.collection("event");
   const c = events.find()
   while (await c.hasNext()) {
@@ -16,25 +16,27 @@ export async function migrateExpenses() {
     for (const expense of event.expenses) {
       await expenseRepo.createMoneyTransaction({
         amount: expense.amount,
-        
+
         context: {
           id: event._id,
           type: "event"
         },
 
         applicable_to: expense.applicable_to.map((id) => id.toString()),
-        
+        adjustments: expense.adjustments,
+
         currency: Currency.AUD,
         media: expense.media,
         name: expense.name,
-        
+
         owed_to: expense.payer?.toString() || expense.created_by.toString(),
-        
+
         type: "expense",
-        adjustments: expense.adjustments,
+
 
         created_at: expense.created_at,
         updated_at: expense.updated_at
+
       }, expense.created_by.toString());
     }
 
