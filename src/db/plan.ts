@@ -64,7 +64,6 @@ async function listToRemind() {
     $or: [
       { "reminder.sent": false },
       { reminder: { $exists: false } }, // exclude once off plans
-      { recurring: { $ne: "none" } }, // Include recurring plans
     ],
     google_place_id: { $exists: true },
   });
@@ -189,6 +188,11 @@ async function moveStartDateTimeToNextOccurrence(planId: ObjectId) {
       {
         $set: {
           start_date_time: toTimezoneAgnosticString(nextStartDateTime),
+          reminder: {
+            // Reset this field so we can send reminders again
+            sent: false,
+            sent_at: "",
+          },
         },
       }
     );
