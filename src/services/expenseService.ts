@@ -10,20 +10,34 @@ import {
 import { adminSendMessage } from "../utils/admin";
 import users from "../db/users";
 import expenses from "../db/expense";
-import { CreateMoneyTransaction, getMoneyTransactionsFilter } from "../types/moneyTransactionDto";
+import { CreateMoneyTransaction, getMoneyTransactionsFilter, MoneyTransactionAdjustment } from "../types/moneyTransactionDto";
 
 
 const createMoneyTransaction = async (payload: CreateMoneyTransaction, context: Context) => {
-  const userId = context.authedUser._id;
+  const userId = context.authedUser._id.toString();
   const expense = await expenses.createMoneyTransaction(payload, userId);
   return expense;
 }
 
 const getMoneyTransactions = async (payload: getMoneyTransactionsFilter, context: Context) => {
   // all related transactions for user and context
-  const userId = context.authedUser._id;
+  const userId = context.authedUser._id.toString();
   const result = await expenses.getMoneyTransaction(payload, userId);
   return result;
+}
+
+const deleteMoneyTransaction = async (payload: {
+  _id: string;
+}, context: Context) => {
+  const userId = context.authedUser._id.toString();
+  await expenses.deleteMoneyTransaction(payload._id, userId);
+}
+
+const addMoneyTransactionAdjustment = async (payload: MoneyTransactionAdjustment, context: Context) => {
+  const userId = context.authedUser._id.toString();
+  await expenses.addMoneyTransactionAdjustment(payload.id, userId, {
+    [userId]: payload.amount
+  });
 }
 
 const getOutstanding = async (eventId: string): Promise<Debt[]> => {
@@ -164,6 +178,8 @@ export default {
   sendReminderDebts,
   createMoneyTransaction,
   getMoneyTransactions,
+  deleteMoneyTransaction,
+  addMoneyTransactionAdjustment,
 };
 
 export interface ExpenseOutstanding {
