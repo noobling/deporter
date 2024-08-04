@@ -69,7 +69,7 @@ import {
 import { getDailyAffirmation } from "./services/addictionService";
 import { adminCacheReset, adminList } from "./services/adminService";
 import { AnalyticViewRequest } from "./types";
-import { analyticsView } from "./services/analyticsService";
+import { analyticsGetViews, analyticsView } from "./services/analyticsService";
 import cors from "cors";
 
 /*
@@ -197,6 +197,7 @@ app.get("/admin/list", handler(adminList));
 
 // Analytics API used by various clients
 app.post("/analytics/view", analyticsView);
+app.get("/analytics/views", analyticsGetViews);
 
 swagger(app);
 

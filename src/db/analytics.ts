@@ -14,6 +14,16 @@ function addView(
   });
 }
 
+async function getViews(page: string) {
+  return await analyticsDb
+    .collection("views")
+    .find({
+      page,
+    })
+    .toArray();
+}
+
 export default {
   addView,
+  getViews,
 };

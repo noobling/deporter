@@ -10,3 +10,12 @@ export async function analyticsView(req: Request, res: Response) {
   });
   res.send("ok");
 }
+
+export async function analyticsGetViews(req: Request, res: Response) {
+  const page = req.query.page as string;
+  const views = await analytics.getViews(page);
+
+  res.send({
+    views: views.length,
+  });
+}
