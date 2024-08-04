@@ -18,7 +18,10 @@ async function getViews(page: string) {
   return await analyticsDb
     .collection("views")
     .find({
-      page,
+      // starts with page
+      page: {
+        $regex: new RegExp(`^${page}`),
+      },
     })
     .toArray();
 }
