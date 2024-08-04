@@ -70,6 +70,7 @@ import { getDailyAffirmation } from "./services/addictionService";
 import { adminCacheReset, adminList } from "./services/adminService";
 import { AnalyticViewRequest } from "./types";
 import { analyticsView } from "./services/analyticsService";
+import cors from "cors";
 
 /*
  * Load up and parse configuration details from
@@ -85,6 +86,15 @@ dotenv.config();
  */
 const app: Express = express();
 const port = process.env.PORT || 3000;
+
+/**
+ * Allow all clients to connect to api
+ */
+app.use(
+  cors({
+    origin: "*",
+  })
+);
 
 // Start cron jobs
 startCronJobs();
