@@ -407,3 +407,11 @@ export interface CreatePlaceRequest {
 export interface UpdatePlaceRequest {
   note: string;
 }
+
+// ====================== ANALYTICS ====================
+export interface AnalyticViewRequest {
+  /**
+   * Page that was viewed
+   */
+  page: string;
+}

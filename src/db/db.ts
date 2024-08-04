@@ -11,7 +11,10 @@ const client = new MongoClient(environment.mongodb_uri, {
 });
 
 const DB_NAME = environment.mongo_db_name;
+const ANALYTICS_DB_NAME = "analytics";
+
 const db = client.db(DB_NAME);
+const analyticsDb = client.db(ANALYTICS_DB_NAME);
 
 async function run() {
   try {
@@ -23,10 +26,12 @@ async function run() {
       "Pinged your deployment. You successfully connected to MongoDB!"
     );
   } catch {
-    // Ensures that the client will close when you finish/error
+    // Ensures that the client will pclose when you finish/error
     await client.close();
   }
 }
 run().catch(console.dir);
 
 export default db;
+
+export { analyticsDb };

@@ -58,9 +58,18 @@ import {
 import { handler, publicHander } from "./utils/handler";
 import swagger from "./utils/swagger";
 import expenseService from "./services/expenseService";
-import { storyCreate, storyGetMinimal, storyGetLastUpdateTime, storyGet, storyReact, storyCreateComment } from "./services/storyService";
+import {
+  storyCreate,
+  storyGetMinimal,
+  storyGetLastUpdateTime,
+  storyGet,
+  storyReact,
+  storyCreateComment,
+} from "./services/storyService";
 import { getDailyAffirmation } from "./services/addictionService";
 import { adminCacheReset, adminList } from "./services/adminService";
+import { AnalyticViewRequest } from "./types";
+import { analyticsView } from "./services/analyticsService";
 
 /*
  * Load up and parse configuration details from
@@ -99,12 +108,12 @@ app.get("/users", handler(getUsers));
 app.post("/user/update", handler(updateUser));
 
 // Story API
-app.post('/story/create', handler(storyCreate));
-app.post('/story/get', handler(storyGetMinimal));
-app.post('/story/get-last-update-time', handler(storyGetLastUpdateTime));
-app.post('/story/get-complete', handler(storyGet));
-app.post('/story/react', handler(storyReact));
-app.post('/story/comment', handler(storyCreateComment));
+app.post("/story/create", handler(storyCreate));
+app.post("/story/get", handler(storyGetMinimal));
+app.post("/story/get-last-update-time", handler(storyGetLastUpdateTime));
+app.post("/story/get-complete", handler(storyGet));
+app.post("/story/react", handler(storyReact));
+app.post("/story/comment", handler(storyCreateComment));
 
 // Addiction Recovery API
 app.get("/daily-affirmation", publicHander(getDailyAffirmation));
@@ -164,7 +173,10 @@ app.get("/place/google/:id", handler(getGooglePlace));
 app.post("/expense/create", handler(expenseService.createMoneyTransaction));
 app.post("/expense/get", handler(expenseService.getMoneyTransactions));
 app.post("/expense/delete", handler(expenseService.deleteMoneyTransaction));
-app.post("/expense/adjustment", handler(expenseService.addMoneyTransactionAdjustment));
+app.post(
+  "/expense/adjustment",
+  handler(expenseService.addMoneyTransactionAdjustment)
+);
 
 app.post("/expense/reminder/add", handler(expenseService.addReminder));
 app.post("/expense/reminder/remove", handler(expenseService.removeReminder));
@@ -172,6 +184,9 @@ app.post("/expense/reminder/remove", handler(expenseService.removeReminder));
 // Admin API
 app.post("/admin/cache/reset", handler(adminCacheReset));
 app.get("/admin/list", handler(adminList));
+
+// Analytics API used by various clients
+app.post("/analytics/view", analyticsView);
 
 swagger(app);
 
