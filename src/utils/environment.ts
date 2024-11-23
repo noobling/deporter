@@ -13,6 +13,8 @@ const environment = {
   redis_url: process.env.REDIS_URL!!,
   admins: process.env.ADMINS!!?.split(",") ?? [],
   google_api_key: process.env.GOOGLE_API_KEY!!,
+  supabase_url: process.env.SUPABASE_URL!!,
+  supabase_key: process.env.SUPABASE_KEY!!,
 };
 
 Object.keys(environment).forEach((key) => {

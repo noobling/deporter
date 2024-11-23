@@ -8,6 +8,7 @@ import {
 } from "./scheduled/processNotificationsForUpcommingPlans";
 import { sendExpenseReminder } from "./scheduled/sendExpenseReminder";
 import { updateDateTimeForRecurringPlans } from "./scheduled/updateDateTimeForRecurringPlans";
+import { fetchFriends } from "./scheduled/fetchFriends";
 
 const HOURLY_CRON = "0 * * * *";
 
@@ -53,6 +54,12 @@ export const startCronJobs = () => {
   cron.schedule(HOURLY_CRON, async () => {
     console.log("Sending expense reminder every hour");
     sendExpenseReminder();
+  });
+
+  // every day fetch friends
+  cron.schedule("0 0 * * *", async () => {
+    console.log("Fetching friends every day");
+    fetchFriends();
   });
 
   console.log("Scheduled cron jobs");
