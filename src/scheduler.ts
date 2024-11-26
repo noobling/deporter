@@ -59,7 +59,8 @@ export const startCronJobs = () => {
   // every day fetch friends
   cron.schedule("0 0 * * *", async () => {
     console.log("Fetching friends every day");
-    fetchFriends();
+    await fetchFriends();
+    console.log("Successfully fetched friends");
   });
 
   console.log("Scheduled cron jobs");
