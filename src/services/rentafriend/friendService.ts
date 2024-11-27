@@ -15,7 +15,7 @@ function chunk<T>(array: T[], size: number): T[][] {
 async function fetchLocationFriends(location: string): Promise<Friend[]> {
   try {
     const encodedLocation = encodeURIComponent(location);
-    const CHUNK_SIZE = 10; // Process pages in chunks of 5
+    const CHUNK_SIZE = 5; // Process pages in chunks of 5
     
     // First fetch to get total pages
     const firstUrl = `https://rentafriend.com/search/friends-scroll?isSearch=true&location=${encodedLocation}&page=1&only_gender=-1&my_gender=-1&target_gender=-1&age_range=-1`;
@@ -129,7 +129,7 @@ export function mapFriendToModel(friend: Friend, phoneMap: Map<number, string>):
 }
 
 async function updateSupabasePeople(friends: Friend[]): Promise<void> {
-  const CHUNK_SIZE = 1000; // Supabase has limits on batch size
+  const CHUNK_SIZE = 100; // Supabase has limits on batch size
   const chunks = chunk(friends, CHUNK_SIZE);
   
   // Create empty phone map since we don't have phone data
