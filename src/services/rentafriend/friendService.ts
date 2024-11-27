@@ -129,10 +129,14 @@ export function mapFriendToModel(friend: Friend, phoneMap: Map<number, string>):
 }
 
 async function updateSupabasePeople(friends: Friend[]): Promise<void> {
-  const CHUNK_SIZE = 100; // Supabase has limits on batch size
-  const chunks = chunk(friends, CHUNK_SIZE);
+  // Deduplicate friends by ID, keeping the last occurrence
+  const uniqueFriends = Array.from(
+    new Map(friends.map(friend => [friend.id, friend])).values()
+  );
   
-  // Create empty phone map since we don't have phone data
+  const CHUNK_SIZE = 100;
+  const chunks = chunk(uniqueFriends, CHUNK_SIZE);
+  
   const phoneMap = new Map<number, string>();
   
   for (const friendsChunk of chunks) {
@@ -152,7 +156,6 @@ async function updateSupabasePeople(friends: Friend[]): Promise<void> {
       }
     });
     
-    // Add a small delay between chunks to avoid rate limits
     await new Promise(resolve => setTimeout(resolve, 500));
   }
 }
