@@ -56,13 +56,15 @@ export async function sendDailyPlanReminder() {
     }
   }
 
-  Object.keys(plansStartingTodayByEvent).forEach(async (eventId) => {
-    const plans = plansStartingTodayByEvent[eventId];
-    const eventPlans = plans.map((plan) => plan.note).join(", ");
-    console.log("Sending daily plan reminder for event", eventId, eventPlans);
-    await adminSendMessage({
-      message: `There are ${plans.length} plans starting today, prepare yourselves 🎉: ${eventPlans}`,
-      eventId,
+  Object.keys(plansStartingTodayByEvent)
+    .filter((eventId) => Boolean(eventId))
+    .forEach(async (eventId) => {
+      const plans = plansStartingTodayByEvent[eventId];
+      const eventPlans = plans.map((plan) => plan.note).join(", ");
+      console.log("Sending daily plan reminder for event", eventId, eventPlans);
+      await adminSendMessage({
+        message: `There are ${plans.length} plans starting today, prepare yourselves 🎉: ${eventPlans}`,
+        eventId,
+      });
     });
-  });
 }
