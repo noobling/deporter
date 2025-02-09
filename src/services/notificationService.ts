@@ -67,7 +67,12 @@ async function sendToQueue(queue: string, message: string) {
     }
   } else if (!amqpChannel) {
     console.warn("Channel not found creating new channel");
-    amqpChannel = await amqpConnection.createChannel();
+    try {
+      amqpChannel = await amqpConnection.createChannel();
+    } catch (error) {
+      console.error("Failed to create channel:", error);
+    }
+
     if (!amqpChannel) {
       console.error(
         "Failed to send message: RabbitMQ channel not initialized."
