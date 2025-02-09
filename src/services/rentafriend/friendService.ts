@@ -179,11 +179,18 @@ async function updateSupabasePeople(friends: Friend[]): Promise<void> {
   const phoneMap = new Map<number, string>();
 
   for (const friendsChunk of chunks) {
+    const validFriends = friendsChunk.filter((friend) => friend.profile);
+
+    console.warn(
+      `Found ${
+        friendsChunk.length - validFriends.length
+      } friends with no profile data`
+    );
     await profileAsync(
-      `Upserting ${friendsChunk.length} friends to Supabase`,
+      `Upserting ${validFriends.length} friends to Supabase`,
       async () => {
         const { error } = await supabase.from("people").upsert(
-          friendsChunk.map((friend) => ({
+          validFriends.map((friend) => ({
             ...mapFriendToModel(friend, phoneMap),
             updated_at: new Date().toISOString(),
           })),
